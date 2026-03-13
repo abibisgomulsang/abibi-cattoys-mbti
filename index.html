@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#0d0b1e"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="아비비고물상"/>
+<link rel="manifest" href="manifest.json"/>
+<title>아비비의고물상 🐱</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0d0b1e;--bg2:#16213e;--card:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.13);--g1:#FFD93D;--g2:#FF6B6B;--tx:#fff;--mu:rgba(255,255,255,0.55)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;overflow-x:hidden}
+body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);transition:background .4s}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(100,60,200,0.18) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(255,107,107,0.12) 0%,transparent 60%);pointer-events:none;z-index:0}
+.scr{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px 16px;position:relative;z-index:1;animation:fi .35s ease}
+.scr.on{display:flex}
+#s-res{justify-content:flex-start;padding-top:32px}
+@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.card{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:22px;padding:26px 20px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.prog{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.pd{height:8px;border-radius:10px;background:rgba(255,255,255,.18);transition:all .35s;width:10px}
+.pd.a{background:var(--g1);width:28px}.pd.d{background:rgba(255,217,61,.4)}
+.ttl{font-family:"Jua",sans-serif;font-size:22px;text-align:center;color:var(--g1);margin-bottom:6px}
+.sub{font-size:13px;color:var(--mu);text-align:center;margin-bottom:20px;line-height:1.6}
+.btn{display:block;width:100%;border:none;border-radius:14px;cursor:pointer;font-size:15px;padding:13px;text-align:center;text-decoration:none;margin-top:10px;transition:transform .15s;font-family:"Jua",sans-serif}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.35;pointer-events:none}
+.bp{background:linear-gradient(135deg,var(--g1),var(--g2));color:#1a1a2e;box-shadow:0 4px 18px rgba(255,217,61,.25)}
+.bg{background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--tx)}
+.bgr{background:linear-gradient(135deg,#03C75A,#029944);color:#fff;display:block;text-align:center;box-shadow:0 4px 16px rgba(3,199,90,.3)}
+input[type=text],input[type=password],input[type=url],textarea{width:100%;background:rgba(255,255,255,.09);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--tx);font-size:14px;font-family:"Noto Sans KR",sans-serif;outline:none;transition:border-color .2s}
+input:focus,textarea:focus{border-color:var(--g1)}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.3)}
+.lbl{font-size:12px;color:rgba(255,255,255,.7);display:block;margin-bottom:5px;margin-top:13px}
+.gw{display:flex;gap:10px;margin-top:4px}
+.gb{flex:1;background:rgba(255,255,255,.08);border:1.5px solid var(--border);border-radius:16px;color:var(--tx);cursor:pointer;padding:15px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:"Jua",sans-serif;font-size:14px;transition:all .2s}
+.gb .gi{font-size:30px}
+.gb.s{background:rgba(255,217,61,.15);border-color:var(--g1);color:var(--g1)}
+.abig{font-family:"Jua",sans-serif;font-size:68px;color:var(--g1);line-height:1;text-align:center;text-shadow:0 0 40px rgba(255,217,61,.35)}
+.asub{font-size:13px;color:var(--mu);text-align:center;margin:4px 0 16px}
+input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
+.aq{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;justify-content:center}
+.aqb{background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--tx);font-size:12px;padding:5px 13px;cursor:pointer;transition:all .2s;font-family:"Jua",sans-serif}
+.aqb.s{background:rgba(255,217,61,.18);border-color:var(--g1);color:var(--g1)}
+.tg{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.tb{background:rgba(255,255,255,.08);border:1.5px solid var(--border);border-radius:22px;color:var(--tx);cursor:pointer;padding:9px 15px;font-size:14px;font-family:"Jua",sans-serif;display:flex;align-items:center;gap:5px;transition:all .2s}
+.tb.s{background:rgba(255,217,61,.2);border-color:var(--g1);color:var(--g1);box-shadow:0 3px 12px rgba(255,217,61,.2)}
+.tc{text-align:center;color:var(--g1);font-size:12px;margin-bottom:14px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.pb{background:rgba(255,255,255,.07);border:1.5px solid var(--border);border-radius:15px;color:var(--tx);cursor:pointer;padding:13px 9px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s}
+.pb .pi{font-size:28px}.pb .pn{font-family:"Jua",sans-serif;font-size:14px}.pb .pd2{font-size:10px;color:var(--mu);line-height:1.4}
+.pb.s{background:rgba(255,217,61,.16);border-color:var(--g1)}.pb.s .pn,.pb.s .pd2{color:var(--g1)}
+.rh{text-align:center;width:100%;max-width:440px;margin-bottom:18px}
+.rh h2{font-family:"Jua",sans-serif;font-size:22px;color:var(--g1);margin-top:8px}
+.cps{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:8px}
+.cp{background:rgba(255,217,61,.13);border:1px solid rgba(255,217,61,.3);border-radius:20px;padding:3px 11px;color:var(--g1);font-size:12px}
+.pc{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:18px;padding:16px;width:100%;max-width:440px;margin-bottom:12px;position:relative;overflow:hidden;animation:fi .4s ease both}
+.pc.best{border-color:var(--g1);border-width:2px}
+.bb{position:absolute;top:0;right:0;background:linear-gradient(135deg,var(--g1),var(--g2));color:#1a1a2e;font-family:"Jua",sans-serif;font-size:11px;padding:4px 12px;border-bottom-left-radius:11px}
+.pi2{display:flex;gap:13px}
+.pt{width:86px;height:86px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden}
+.pt img{width:100%;height:100%;object-fit:cover}
+.pif{flex:1}.pn2{font-family:"Jua",sans-serif;font-size:16px;margin-bottom:4px}
+.pde{font-size:12px;color:var(--mu);line-height:1.5;margin-bottom:5px}
+.ppr{color:var(--g1);font-family:"Jua",sans-serif;font-size:15px}
+.ptgs{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
+.ptg{background:rgba(255,255,255,.09);border-radius:20px;padding:2px 8px;font-size:10px;color:var(--mu)}
+.ra{display:flex;gap:9px;width:100%;max-width:440px;margin-bottom:40px}
+.ra .btn{margin-top:0}
+.hlogo{display:block;text-align:center;margin-bottom:6px}
+.hlogo img{max-width:260px;width:85%;height:auto;animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+.hsub{color:var(--mu);font-size:13px;text-align:center;margin:6px 0 18px;line-height:1.6}
+.feats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;width:100%;max-width:420px}
+.feat{text-align:center;background:rgba(255,217,61,.09);border-radius:14px;padding:13px 7px}
+.feat .fi{font-size:24px}.feat .fl{font-size:11px;color:var(--g1);margin-top:3px}
+.nb{width:100%;max-width:420px;margin-bottom:14px;background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);border-radius:14px;padding:11px 16px;font-size:13px;color:var(--g1);text-align:center;line-height:1.5;display:none}
+.admbtn{margin-top:16px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:20px;color:rgba(255,255,255,.35);padding:8px 20px;cursor:pointer;font-size:12px;transition:all .2s}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;overflow-y:auto;padding:16px;align-items:flex-start;justify-content:center}
+.ov.on{display:flex}
+.ap{background:#111827;border:1.5px solid #374151;border-radius:22px;padding:22px 18px;width:100%;max-width:680px;color:#fff;margin:auto}
+.ath{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.attl{font-family:"Jua",sans-serif;font-size:19px;color:var(--g1)}
+.acls{background:#e94560;border:none;border-radius:8px;color:#fff;padding:7px 13px;cursor:pointer;font-size:13px}
+.atbs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.atb{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:rgba(255,255,255,.6);padding:7px 13px;cursor:pointer;font-size:12px;font-family:"Jua",sans-serif;transition:all .2s}
+.atb.on{background:rgba(255,217,61,.18);border-color:var(--g1);color:var(--g1)}
+.atc{display:none}.atc.on{display:block}
+.asec{background:#1f2937;border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid #374151}
+.ast{font-family:"Jua",sans-serif;color:var(--g1);font-size:15px;margin-bottom:13px}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.af{display:flex;flex-direction:column;gap:4px}.af label{font-size:11px;color:#9ca3af}
+.af input,.af textarea{background:#111827;border:1px solid #374151;border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;font-family:"Noto Sans KR",sans-serif}
+.afc{grid-column:1/-1}
+.asb{background:var(--g1);border:none;border-radius:10px;color:#1a1a2e;padding:10px 22px;cursor:pointer;font-family:"Jua",sans-serif;font-size:14px;margin-top:12px;transition:opacity .2s}
+.asb:hover{opacity:.9}
+.pli{background:#1f2937;border-radius:11px;padding:13px;margin-bottom:9px;border:1px solid #374151;display:flex;align-items:center;gap:11px}
+.plt{width:50px;height:50px;border-radius:8px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0}
+.plt img{width:100%;height:100%;object-fit:cover}
+.pli-i{flex:1;min-width:0}.pli-n{font-family:"Jua",sans-serif;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pli-p{font-size:11px;color:var(--g1)}.pli-t{font-size:10px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pla{display:flex;gap:5px;flex-shrink:0}
+.be{background:#111827;border:1px solid #4ECDC4;border-radius:6px;color:#4ECDC4;padding:4px 9px;cursor:pointer;font-size:11px}
+.bd{background:#111827;border:1px solid #e94560;border-radius:6px;color:#e94560;padding:4px 9px;cursor:pointer;font-size:11px}
+.ef{background:#111827;border-radius:10px;padding:13px;margin-top:8px}
+.cr{display:flex;gap:7px;align-items:center;margin-bottom:9px}
+.cr label{font-size:12px;color:#9ca3af;flex:1}
+.cr input[type=color]{width:42px;height:30px;border-radius:7px;cursor:pointer;padding:2px;border:1px solid #374151;background:#111827}
+.sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:#03C75A;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sync-status{font-size:11px;color:#9ca3af;display:flex;align-items:center;margin-bottom:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,20,40,.96);border:1px solid var(--g1);border-radius:12px;padding:10px 22px;color:var(--g1);font-size:13px;font-family:"Jua",sans-serif;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.pw-msg{display:none;margin-top:8px;padding:9px;border-radius:8px;font-size:12px}
+.loading-scr{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998;transition:opacity .5s}
+.loading-scr.hidden{opacity:0;pointer-events:none}
+.lbar{width:160px;height:4px;background:rgba(255,255,255,.1);border-radius:10px;margin-top:20px;overflow:hidden}
+.lfill{height:100%;background:linear-gradient(90deg,var(--g1),var(--g2));border-radius:10px;animation:lf 1.4s ease forwards}
+@keyframes lf{from{width:0}to{width:100%}}
+.ltxt{font-family:"Jua",sans-serif;color:var(--g1);font-size:14px;margin-top:12px}
+.nt{margin-top:10px;padding:10px;background:#111827;border-radius:8px;font-size:11px;color:#9ca3af;line-height:1.6}
+@media(max-width:380px){.card{padding:20px 14px}.abig{font-size:56px}.pg{gap:6px}}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-scr" id="loading">
+  <div style="font-size:64px;animation:fl 1.5s ease-in-out infinite">🐱</div>
+  <div class="lbar"><div class="lfill"></div></div>
+  <div class="ltxt" id="ltxt">데이터 불러오는 중...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HOME -->
+<div class="scr" id="s-home" style="padding-top:36px">
+  <div class="hlogo">
+    <img id="logo-el" src="" alt="아비비의고물상" style="max-width:260px;width:85%;height:auto;animation:fl 3s ease-in-out infinite" onerror="this.style.display='none';document.getElementById('logo-txt').style.display='block'"/>
+    <div id="logo-txt" style="display:none;font-family:Jua,sans-serif;font-size:26px;color:var(--g1)">아비비의고물상</div>
+  </div>
+  <div class="hsub" id="h-sub">우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁</div>
+  <div class="nb" id="notice-el"></div>
+  <div class="feats">
+    <div class="feat"><div class="fi">🪶</div><div class="fl">재질 선택</div></div>
+    <div class="feat"><div class="fi">😺</div><div class="fl">성격 분석</div></div>
+    <div class="feat"><div class="fi">🎁</div><div class="fl">맞춤 추천</div></div>
+  </div>
+  <div class="card">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:32px">🧬</div>
+      <div style="font-family:Jua,sans-serif;font-size:18px;margin-top:5px">고양이 장난감 MBTI 테스트</div>
+      <div style="font-size:13px;color:var(--mu);margin-top:5px;line-height:1.6">간단한 질문으로 우리 아이에게<br>딱 맞는 장난감을 추천해드릴게요!</div>
+    </div>
+    <button class="btn bp" onclick="go('name')">테스트 시작하기 🐾</button>
+  </div>
+  <button class="admbtn" onclick="showLogin()">⚙️ 관리자</button>
+</div>
+
+<!-- NAME -->
+<div class="scr" id="s-name">
+  <div style="width:100%;max-width:420px">
+    <div class="prog" id="pg-name"></div>
+    <div class="card">
+      <div class="ttl">😺 우리 아이를 소개해요</div>
+      <div class="sub">이름과 성별을 알려주세요!</div>
+      <label class="lbl">고양이 이름</label>
+      <input type="text" id="cat-name" placeholder="예) 나비, 뽀짝이..." oninput="chkName()"/>
+      <label class="lbl" style="margin-top:15px">성별</label>
+      <div class="gw">
+        <button class="gb" id="gm" onclick="selG('수컷')"><span class="gi">♂️</span><span>남아 (수컷)</span></button>
+        <button class="gb" id="gf" onclick="selG('암컷')"><span class="gi">♀️</span><span>여아 (암컷)</span></button>
+      </div>
+      <button class="btn bp" id="btn-n" disabled onclick="go('age')">다음으로 →</button>
+      <button class="btn bg" onclick="go('home')">← 처음으로</button>
+    </div>
+  </div>
+</div>
+
+<!-- AGE -->
+<div class="scr" id="s-age">
+  <div style="width:100%;max-width:420px">
+    <div class="prog" id="pg-age"></div>
+    <div class="card">
+      <div class="ttl" id="age-ttl">🎂 나이는?</div>
+      <div class="sub">나이에 맞는 장난감을 추천해드려요!</div>
+      <div class="abig" id="age-v">1</div>
+      <div class="asub" id="age-g">😺 아기 고양이 (0~1살)</div>
+      <input type="range" min="0" max="20" step="1" value="1" id="age-sl" oninput="updAge(this.value)"/>
+      <div style="display:flex;justify-content:space-between;color:var(--mu);font-size:11px;margin-top:3px"><span>0살</span><span>10살</span><span>20살</span></div>
+      <div class="aq" id="age-q"></div>
+      <button class="btn bp" onclick="go('mat')">다음으로 →</button>
+      <button class="btn bg" onclick="go('name')">← 이전</button>
+    </div>
+  </div>
+</div>
+
+<!-- MATERIAL -->
+<div class="scr" id="s-mat">
+  <div style="width:100%;max-width:420px">
+    <div class="prog" id="pg-mat"></div>
+    <div class="card">
+      <div class="ttl">🪄 좋아하는 재질은?</div>
+      <div class="sub">최대 3개까지 선택할 수 있어요!</div>
+      <div class="tc" id="mc">선택됨 0/3</div>
+      <div class="tg" id="mat-tg"></div>
+      <button class="btn bp" id="btn-m" disabled onclick="go('pers')">다음으로 →</button>
+      <button class="btn bg" onclick="go('age')">← 이전</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONALITY -->
+<div class="scr" id="s-pers">
+  <div style="width:100%;max-width:420px">
+    <div class="prog" id="pg-pers"></div>
+    <div class="card">
+      <div class="ttl" id="pers-ttl">😸 성격은?</div>
+      <div class="sub">가장 잘 맞는 성격을 골라주세요!</div>
+      <div class="pg" id="pers-g"></div>
+      <button class="btn bp" id="btn-p" disabled onclick="showResult()">🎁 추천 결과 보기</button>
+      <button class="btn bg" onclick="go('mat')">← 이전</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="scr" id="s-res">
+  <div class="rh">
+    <div style="font-size:54px">🎉</div>
+    <h2 id="res-ttl">추천 장난감</h2>
+    <div class="cps" id="res-cp"></div>
+  </div>
+  <div id="res-cards" style="width:100%;max-width:440px"></div>
+  <div class="ra">
+    <button class="btn bp" onclick="restart()">🔄 다시 테스트</button>
+    <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank">🏪 전체 상품</a>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="ov" id="ov-login">
+  <div class="card" style="max-width:320px;text-align:center">
+    <div style="font-size:38px;margin-bottom:10px">🔐</div>
+    <div style="font-family:Jua,sans-serif;font-size:18px;margin-bottom:14px">관리자 로그인</div>
+    <input type="password" id="adm-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')chkAdm()"/>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn bg" style="margin-top:0" onclick="closeOv('ov-login')">취소</button>
+      <button class="btn bp" style="margin-top:0" onclick="chkAdm()">입장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="ov" id="ov-adm">
+<div class="ap">
+  <div class="ath">
+    <div class="attl">⚙️ 관리자 패널</div>
+    <button class="acls" onclick="closeOv('ov-adm')">✕ 닫기</button>
+  </div>
+  <!-- 동기화 상태 표시 -->
+  <div class="sync-status" id="sync-status">
+    <span class="sync-dot" id="sync-dot"></span>
+    <span id="sync-txt">Firebase 연결됨 — 변경사항이 실시간으로 반영돼요</span>
+  </div>
+  <div class="atbs">
+    <button class="atb on" onclick="swTab('t-prod',this)">📦 상품관리</button>
+    <button class="atb" onclick="swTab('t-theme',this)">🎨 테마</button>
+    <button class="atb" onclick="swTab('t-brand',this)">🏷️ 브랜딩</button>
+    <button class="atb" onclick="swTab('t-notice',this)">📢 공지</button>
+    <button class="atb" onclick="swTab('t-logo',this)">🖼️ 로고</button>
+    <button class="atb" onclick="swTab('t-pw',this)">🔑 비밀번호</button>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="atc on" id="t-prod">
+    <div class="asec" style="border-color:#FFD93D">
+      <div class="ast">⚡ 빠른 상품 추가</div>
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:12px;line-height:1.6">
+        스마트스토어 이미지 우클릭 → <strong style="color:#FFD93D">이미지 주소 복사</strong> → 이미지URL에 붙여넣기
+      </div>
+      <div class="ag">
+        <div class="af"><label>상품명 *</label><input type="text" id="qi-n" placeholder="장난감 이름"/></div>
+        <div class="af"><label>가격</label><input type="text" id="qi-p" placeholder="12,900원"/></div>
+        <div class="af afc"><label>스마트스토어 URL</label><input type="text" id="qi-u" placeholder="https://smartstore.naver.com/..."/></div>
+        <div class="af afc">
+          <label>이미지 URL</label>
+          <input type="text" id="qi-img" placeholder="https://shop-phinf.pstatic.net/..." oninput="prevQI()"/>
+          <img id="qi-iprev" style="width:64px;height:64px;object-fit:cover;border-radius:8px;margin-top:6px;display:none"/>
+        </div>
+        <div class="af afc"><label>또는 이미지 파일 업로드</label>
+          <input type="file" accept="image/*" id="qi-file" onchange="uploadImgFile(this)" style="color:#fff;font-size:12px"/>
+        </div>
+        <div class="af afc"><label>태그 * (쉼표 구분 — 추천에 사용)</label><input type="text" id="qi-t" placeholder="깃털, 활발한, 젊은"/></div>
+        <div class="af afc"><label>설명</label><textarea id="qi-d" rows="2" placeholder="상품 설명"></textarea></div>
+      </div>
+      <button class="asb" onclick="addProduct()">Firebase에 저장 ✓</button>
+    </div>
+    <div style="font-family:Jua,sans-serif;color:var(--g1);font-size:15px;margin-bottom:10px">📋 등록된 상품 목록</div>
+    <div id="plist"></div>
+  </div>
+
+  <!-- THEME -->
+  <div class="atc" id="t-theme">
+    <div class="asec">
+      <div class="ast">🎨 앱 색상 편집</div>
+      <div class="cr"><label>배경색</label><input type="color" id="c-bg" value="#0d0b1e" oninput="liveClr()"/></div>
+      <div class="cr"><label>강조색 1 (골드)</label><input type="color" id="c-a1" value="#FFD93D" oninput="liveClr()"/></div>
+      <div class="cr"><label>강조색 2 (레드)</label><input type="color" id="c-a2" value="#FF6B6B" oninput="liveClr()"/></div>
+      <div class="ast" style="margin-top:16px">프리셋</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button onclick="applyPreset('dark')" style="background:#1a1a2e;border:1px solid #444;border-radius:8px;color:#FFD93D;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">🌙 다크</button>
+        <button onclick="applyPreset('light')" style="background:#f0ece0;border:1px solid #ccc;border-radius:8px;color:#333;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">☀️ 라이트</button>
+        <button onclick="applyPreset('forest')" style="background:#0d1f0f;border:1px solid #2d5a33;border-radius:8px;color:#7ecf82;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">🌿 포레스트</button>
+        <button onclick="applyPreset('pink')" style="background:#1e0a18;border:1px solid #8b1a4a;border-radius:8px;color:#ff85c2;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">🌸 핑크</button>
+      </div>
+      <button class="asb" onclick="saveTheme()">테마 저장 → Firebase ✓</button>
+    </div>
+  </div>
+
+  <!-- BRANDING -->
+  <div class="atc" id="t-brand">
+    <div class="asec">
+      <div class="ast">🏷️ 브랜드 정보</div>
+      <div class="af"><label>홈 소개 문구</label><input type="text" id="b-sub" placeholder="우리 아이 성격에 딱 맞는..."/></div>
+      <div class="af"><label>스마트스토어 URL</label><input type="text" id="b-url" placeholder="https://smartstore.naver.com/avivi"/></div>
+      <button class="asb" onclick="saveBrand()">저장 → Firebase ✓</button>
+    </div>
+  </div>
+
+  <!-- NOTICE -->
+  <div class="atc" id="t-notice">
+    <div class="asec">
+      <div class="ast">📢 홈 화면 공지사항</div>
+      <div class="af"><label>공지 내용 (비워두면 숨김)</label>
+        <textarea id="n-txt" rows="3" placeholder="예) 🎉 5월 신상품 입고! 깃털 낚싯대 20% 할인"></textarea>
+      </div>
+      <button class="asb" onclick="saveNotice()">공지 저장 → Firebase ✓</button>
+      <button style="background:#374151;border:none;border-radius:8px;color:#fff;padding:8px 14px;cursor:pointer;font-size:13px;margin-top:8px;width:100%" onclick="clearNotice()">공지 숨기기</button>
+    </div>
+  </div>
+
+  <!-- LOGO -->
+  <div class="atc" id="t-logo">
+    <div class="asec">
+      <div class="ast">🖼️ 로고 관리</div>
+      <div style="text-align:center;margin-bottom:14px;padding:14px;background:#111827;border-radius:12px">
+        <img id="logo-adm" style="max-width:200px;width:80%;height:auto;border-radius:8px"/>
+      </div>
+      <div class="af">
+        <label>새 로고 이미지 업로드 (PNG 투명배경 권장)</label>
+        <input type="file" accept="image/*" id="logo-up" onchange="prevLogo(this)" style="color:#fff;font-size:12px"/>
+      </div>
+      <div class="nt">💡 투명 PNG, 가로형 이미지 권장 (예: 400×120px)</div>
+      <button class="asb" onclick="saveLogo()">로고 저장 → Firebase ✓</button>
+      <button style="background:#374151;border:none;border-radius:8px;color:#fff;padding:8px 14px;cursor:pointer;font-size:13px;margin-top:8px;width:100%" onclick="resetLogo()">기본 로고로 되돌리기</button>
+    </div>
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="atc" id="t-pw">
+    <div class="asec">
+      <div class="ast">🔑 관리자 비밀번호 변경</div>
+      <div class="af"><label>현재 비밀번호</label><input type="password" id="pw-cur" placeholder="현재 비밀번호"/></div>
+      <div class="af"><label>새 비밀번호 (4자 이상)</label><input type="password" id="pw-new" placeholder="새 비밀번호"/></div>
+      <div class="af"><label>새 비밀번호 확인</label><input type="password" id="pw-cf" placeholder="새 비밀번호 확인"/></div>
+      <div class="pw-msg" id="pw-msg"></div>
+      <button class="asb" onclick="chgPw()">비밀번호 변경 → Firebase ✓</button>
+      <div class="nt">⚠️ 비밀번호를 잊으면 복구가 어렵습니다. 반드시 기억해두세요!</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Firebase SDK (CDN) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── Firebase 설정 ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDy709twpl3cqrjjrPeZhDBIh-sgzQCFm4",
+  authDomain: "abibi-75d78.firebaseapp.com",
+  databaseURL: "https://abibi-75d78-default-rtdb.firebaseio.com",
+  projectId: "abibi-75d78",
+  storageBucket: "abibi-75d78.firebasestorage.app",
+  messagingSenderId: "1004155424401",
+  appId: "1:1004155424401:web:0d97e6c275eaea3856b930",
+  measurementId: "G-XV61WV1GW8"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── 데이터 구조 ──
+// Firestore 컬렉션: products (상품 목록)
+// Firestore 문서:   config/app (테마/브랜딩/공지/로고/비밀번호)
+
+// ── 기본 상품 데이터 ──
+const DEFAULT_PRODUCTS = [
+  {name:"무지개 깃털 낚싯대",image:"",tags:["깃털","활발한","호기심많은","젊은"],description:"형형색색 깃털이 달린 낚싯대로 사냥 본능을 자극해요!",price:"12,900원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"바스락 비닐 터널",image:"",tags:["비닐","활발한","호기심많은"],description:"바스락거리는 소리에 고양이가 미쳐요!",price:"18,500원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"폼폼이 공 세트",image:"",tags:["폼폼이","활발한","젊은","중년"],description:"가볍고 부드러운 폼폼이 공!",price:"8,900원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"실리콘 물고기 장난감",image:"",tags:["실리콘","진지한","중년","노령"],description:"내구성 최강 실리콘! 씹고 뜯는 물고기 모양",price:"14,000원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"끈 달린 낚시 세트",image:"",tags:["끈","활발한","호기심많은","젊은"],description:"주인이 직접 놀아주는 끈 낚시! 유대감 UP",price:"9,500원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"고급 깃털 왕관",image:"",tags:["깃털","진지한","중년"],description:"우아한 고양이를 위한 고급 깃털 왕관",price:"22,000원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"노령묘 전용 폼폼이",image:"",tags:["폼폼이","실리콘","노령","진지한"],description:"관절이 약한 노령묘를 위해 특별 제작",price:"11,000원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"비닐 바스락 쥐돌이",image:"",tags:["비닐","끈","호기심많은","젊은"],description:"쥐 모양에 바스락 소재! 사냥 본능을 깨워요",price:"7,900원",storeUrl:"https://smartstore.naver.com/avivi"},
+];
+
+// ── 상태 ──
+let PRODS = [];
+let CFG = {sub:"우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁", url:"https://smartstore.naver.com/avivi", notice:"", logo:"", pw:"avivi2024", theme:{bg:"#0d0b1e",a1:"#FFD93D",a2:"#FF6B6B"}};
+let CAT = {name:"",gender:"",age:1,mats:[],pers:""};
+let pendLogo = null;
+let uploadedImgData = "";
+let editId = null;
+
+const EM = {"깃털":"🪶","비닐":"🛍️","폼폼이":"🎾","실리콘":"🔵","끈":"🧵","천":"🧶","종이":"📄","나무":"🪵"};
+const MATS = [{n:"깃털",i:"🪶"},{n:"비닐",i:"🛍️"},{n:"폼폼이",i:"🎾"},{n:"실리콘",i:"🔵"},{n:"끈",i:"🧵"},{n:"천",i:"🧶"},{n:"종이",i:"📄"},{n:"나무",i:"🪵"}];
+const PERS = [{n:"활발한",i:"⚡",d:"뛰고 점프하는 걸 좋아해요"},{n:"진지한",i:"🧐",d:"차분하고 신중해요"},{n:"호기심많은",i:"👀",d:"뭐든 살펴보고 탐험해요"},{n:"겁쟁이",i:"🙈",d:"새로운 것에 조심스러워요"},{n:"식탐이많은",i:"🍗",d:"먹는 것에 관심이 많아요"},{n:"게으른",i:"💤",d:"낮잠을 즐겨요"}];
+
+function pe(p){for(const t of p.tags){if(EM[t])return EM[t];}return"🐱";}
+function th(p){
+  if(!p.image) return pe(p);
+  return `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit" onerror="this.parentElement.innerHTML='${pe(p)}'">`;
+}
+
+// ── Firebase 초기화: 앱 설정 + 상품 로드 ──
+async function initFirebase(){
+  setSyncStatus("connecting");
+  try {
+    // 1) 설정(config) 로드
+    const cfgSnap = await getDoc(doc(db,"config","app"));
+    if(cfgSnap.exists()){
+      CFG = Object.assign(CFG, cfgSnap.data());
+    } else {
+      // 최초 실행: 기본 config 저장
+      await setDoc(doc(db,"config","app"), CFG);
+    }
+
+    // 2) 상품 로드
+    const prodSnap = await getDocs(collection(db,"products"));
+    if(prodSnap.empty){
+      // 최초 실행: 기본 상품 저장
+      for(const p of DEFAULT_PRODUCTS){
+        await addDoc(collection(db,"products"), p);
+      }
+      const prodSnap2 = await getDocs(collection(db,"products"));
+      PRODS = prodSnap2.docs.map(d=>({id:d.id,...d.data()}));
+    } else {
+      PRODS = prodSnap.docs.map(d=>({id:d.id,...d.data()}));
+    }
+
+    applyConfig();
+    setSyncStatus("connected");
+
+    // 3) 실시간 리스닝 — config 변경 감지
+    onSnapshot(doc(db,"config","app"), snap=>{
+      if(snap.exists()){
+        CFG = Object.assign(CFG, snap.data());
+        applyConfig();
+      }
+    });
+
+    // 4) 실시간 리스닝 — products 변경 감지
+    onSnapshot(collection(db,"products"), snap=>{
+      PRODS = snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(document.getElementById('plist')) rPlist();
+    });
+
+    // 로딩 완료
+    document.getElementById('ltxt').textContent="완료!";
+    setTimeout(()=>{
+      document.getElementById('loading').classList.add('hidden');
+      go('home');
+    }, 500);
+
+  } catch(err){
+    console.error(err);
+    setSyncStatus("error");
+    // 오프라인 fallback: 기본 데이터로 진행
+    PRODS = DEFAULT_PRODUCTS.map((p,i)=>({id:"default_"+i,...p}));
+    applyConfig();
+    document.getElementById('ltxt').textContent="오프라인 모드";
+    setTimeout(()=>{
+      document.getElementById('loading').classList.add('hidden');
+      go('home');
+    }, 800);
+  }
+}
+
+function setSyncStatus(state){
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-txt');
+  if(!dot||!txt) return;
+  if(state==="connected"){dot.style.background="#03C75A";txt.textContent="Firebase 연결됨 — 변경사항이 실시간으로 모든 기기에 반영돼요";}
+  else if(state==="connecting"){dot.style.background="#FFD93D";txt.textContent="Firebase 연결 중...";}
+  else{dot.style.background="#e94560";txt.textContent="오프라인 — 인터넷 연결을 확인해주세요";}
+}
+
+function applyConfig(){
+  // 로고
+  const logoEl = document.getElementById('logo-el');
+  if(logoEl && CFG.logo){ logoEl.src = CFG.logo; logoEl.style.display="block"; document.getElementById('logo-txt').style.display="none"; }
+  // 소개
+  const subEl = document.getElementById('h-sub');
+  if(subEl) subEl.textContent = CFG.sub;
+  // 공지
+  const nb = document.getElementById('notice-el');
+  if(nb){ if(CFG.notice){nb.textContent=CFG.notice;nb.style.display="block";}else{nb.style.display="none";} }
+  // 스토어 URL
+  const sa = document.getElementById('store-all');
+  if(sa) sa.href = CFG.url||"https://smartstore.naver.com/avivi";
+  // 테마
+  if(CFG.theme){
+    const r = document.documentElement.style;
+    r.setProperty('--bg', CFG.theme.bg||"#0d0b1e");
+    r.setProperty('--g1', CFG.theme.a1||"#FFD93D");
+    r.setProperty('--g2', CFG.theme.a2||"#FF6B6B");
+  }
+}
+
+// ── 화면 이동 ──
+window.go = function(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='age') rAge();
+  if(id==='mat') rMat();
+  if(id==='pers') rPers();
+  rProg(id);
+};
+
+window.rProg = function(id){
+  const steps={name:1,age:2,mat:3,pers:4};
+  const step=steps[id]; if(!step)return;
+  const el=document.getElementById('pg-'+id); if(!el)return;
+  el.innerHTML=[1,2,3,4].map(i=>`<div class="pd ${i===step?'a':i<step?'d':''}" style="width:${i===step?28:10}px"></div>`).join('');
+};
+
+// ── STEP 1: 이름/성별 ──
+window.chkName = function(){
+  CAT.name = document.getElementById('cat-name').value.trim();
+  document.getElementById('btn-n').disabled = !(CAT.name && CAT.gender);
+};
+window.selG = function(g){
+  CAT.gender=g;
+  document.getElementById('gm').classList.toggle('s',g==='수컷');
+  document.getElementById('gf').classList.toggle('s',g==='암컷');
+  window.chkName();
+};
+
+// ── STEP 2: 나이 ──
+window.rAge = function(){
+  document.getElementById('age-ttl').textContent=`🎂 ${CAT.name||'아이'}(이)의 나이는?`;
+  document.getElementById('age-sl').value=CAT.age;
+  window.updAge(CAT.age);
+  const ages=[0,1,2,3,4,5,6,7,8,10,12,15,18,20];
+  document.getElementById('age-q').innerHTML=ages.map(n=>`<button class="aqb ${CAT.age===n?'s':''}" onclick="updAge(${n})">${n}살</button>`).join('');
+};
+window.updAge = function(v){
+  CAT.age=parseInt(v);
+  document.getElementById('age-v').textContent=v;
+  document.getElementById('age-g').textContent=v<=1?"😺 아기 고양이 (0~1살)":v<=7?"😼 청년 고양이 (2~7살)":"🐱 시니어 고양이 (8살+)";
+  document.getElementById('age-sl').value=v;
+  document.querySelectorAll('.aqb').forEach(b=>b.classList.toggle('s',parseInt(b.textContent)===CAT.age));
+};
+
+// ── STEP 3: 재질 ──
+window.rMat = function(){
+  document.getElementById('mat-tg').innerHTML=MATS.map(m=>`<button class="tb ${CAT.mats.includes(m.n)?'s':''}" onclick="togM('${m.n}')"><span>${m.i}</span><span>${m.n}</span></button>`).join('');
+  const n=CAT.mats.length;
+  document.getElementById('mc').textContent=`선택됨 ${n}/3`;
+  document.getElementById('btn-m').disabled=n===0;
+};
+window.togM = function(m){
+  if(CAT.mats.includes(m)) CAT.mats=CAT.mats.filter(x=>x!==m);
+  else if(CAT.mats.length<3) CAT.mats.push(m);
+  window.rMat();
+};
+
+// ── STEP 4: 성격 ──
+window.rPers = function(){
+  document.getElementById('pers-ttl').textContent=`😸 ${CAT.name||'아이'}(이)의 성격은?`;
+  document.getElementById('pers-g').innerHTML=PERS.map(p=>`<button class="pb ${CAT.pers===p.n?'s':''}" onclick="selP('${p.n}')"><span class="pi">${p.i}</span><span class="pn">${p.n}</span><span class="pd2">${p.d}</span></button>`).join('');
+  document.getElementById('btn-p').disabled=!CAT.pers;
+};
+window.selP = function(p){CAT.pers=p;window.rPers();};
+
+// ── 결과 ──
+function atag(a){return a<=1?"젊은":a<=7?"중년":"노령";}
+function getRecs(){
+  const at=atag(CAT.age);
+  const pt=CAT.pers==="활발한"?["활발한","호기심많은"]:CAT.pers==="호기심많은"?["호기심많은","활발한"]:CAT.pers==="게으른"?["진지한"]:["진지한",CAT.pers];
+  return PRODS.map(p=>{
+    let s=0;
+    if(p.tags&&p.tags.includes(at)) s+=3;
+    CAT.mats.forEach(m=>{if(p.tags&&p.tags.includes(m)) s+=2;});
+    pt.forEach(t=>{if(p.tags&&p.tags.includes(t)) s+=2;});
+    return {...p,score:s};
+  }).filter(p=>p.score>0).sort((a,b)=>b.score-a.score).slice(0,4);
+}
+window.showResult = function(){
+  const recs=getRecs();
+  document.getElementById('res-ttl').textContent=`${CAT.name}(이)의 추천 장난감`;
+  document.getElementById('res-cp').innerHTML=[CAT.gender,CAT.age+'살',CAT.pers,...CAT.mats].map(c=>`<span class="cp">${c}</span>`).join('');
+  document.getElementById('store-all').href=CFG.url||"https://smartstore.naver.com/avivi";
+  if(!recs.length){
+    document.getElementById('res-cards').innerHTML=`<div class="pc" style="text-align:center;padding:30px"><div style="font-size:46px">😿</div><p style="margin-top:10px;color:var(--mu)">조건에 맞는 상품이 없어요.<br>다시 테스트해보세요!</p></div>`;
+  } else {
+    document.getElementById('res-cards').innerHTML=recs.map((p,i)=>`
+      <div class="pc ${i===0?'best':''}" style="animation-delay:${i*0.1}s">
+        ${i===0?'<div class="bb">👑 BEST 추천</div>':''}
+        <div class="pi2">
+          <div class="pt">${th(p)}</div>
+          <div class="pif">
+            <div class="pn2">${p.name}</div>
+            <div class="pde">${p.description||''}</div>
+            <div class="ppr">${p.price||''}</div>
+          </div>
+        </div>
+        <div class="ptgs">${(p.tags||[]).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
+        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px">🛒 스마트스토어에서 보기</a>
+      </div>`).join('');
+  }
+  go('res');
+};
+window.restart = function(){
+  CAT={name:"",gender:"",age:1,mats:[],pers:""};
+  document.getElementById('cat-name').value='';
+  document.getElementById('gm').classList.remove('s');
+  document.getElementById('gf').classList.remove('s');
+  document.getElementById('btn-n').disabled=true;
+  go('home');
+};
+
+// ── 관리자 ──
+window.showLogin = function(){document.getElementById('ov-login').classList.add('on');document.getElementById('adm-pw').value='';};
+window.closeOv = function(id){document.getElementById(id).classList.remove('on');};
+window.chkAdm = function(){
+  if(document.getElementById('adm-pw').value===CFG.pw){
+    window.closeOv('ov-login'); openAdm();
+  } else { toast('비밀번호가 틀렸어요! 😅'); }
+};
+function openAdm(){
+  document.getElementById('ov-adm').classList.add('on');
+  document.getElementById('b-sub').value=CFG.sub||'';
+  document.getElementById('b-url').value=CFG.url||'';
+  document.getElementById('n-txt').value=CFG.notice||'';
+  document.getElementById('c-bg').value=CFG.theme?.bg||'#0d0b1e';
+  document.getElementById('c-a1').value=CFG.theme?.a1||'#FFD93D';
+  document.getElementById('c-a2').value=CFG.theme?.a2||'#FF6B6B';
+  const la=document.getElementById('logo-adm');
+  if(la) la.src=CFG.logo||'';
+  pendLogo=null; uploadedImgData="";
+  rPlist();
+}
+window.swTab = function(tid,btn){
+  document.querySelectorAll('.atb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.atc').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(tid).classList.add('on');
+};
+
+// ── 상품 관리 (Firebase CRUD) ──
+window.prevQI = function(){
+  const url=document.getElementById('qi-img').value.trim();
+  const p=document.getElementById('qi-iprev');
+  if(url){p.src=url;p.style.display='block';p.onerror=()=>{p.style.display='none';};}
+  else p.style.display='none';
+};
+window.uploadImgFile = function(input){
+  const f=input.files[0]; if(!f) return;
+  if(f.size>2*1024*1024){toast('2MB 이하 이미지를 사용해주세요!');return;}
+  const r=new FileReader();
+  r.onloadend=()=>{
+    uploadedImgData=r.result;
+    const p=document.getElementById('qi-iprev');
+    p.src=r.result; p.style.display='block';
+    document.getElementById('qi-img').value='';
+  };
+  r.readAsDataURL(f);
+};
+window.addProduct = async function(){
+  const name=document.getElementById('qi-n').value.trim();
+  if(!name){toast('상품명을 입력해주세요!');return;}
+  const tags=document.getElementById('qi-t').value.split(',').map(t=>t.trim()).filter(Boolean);
+  if(!tags.length){toast('태그를 입력해주세요!');return;}
+  const imgSrc = uploadedImgData || document.getElementById('qi-img').value.trim();
+  try{
+    await addDoc(collection(db,"products"),{
+      name, price:document.getElementById('qi-p').value.trim()||'가격 미정',
+      storeUrl:document.getElementById('qi-u').value.trim()||CFG.url,
+      tags, description:document.getElementById('qi-d').value.trim()||name,
+      image:imgSrc, createdAt:Date.now()
+    });
+    ['qi-n','qi-p','qi-u','qi-img','qi-t'].forEach(id=>document.getElementById(id).value='');
+    document.querySelector('textarea#qi-d').value='';
+    document.getElementById('qi-iprev').style.display='none';
+    document.getElementById('qi-file').value='';
+    uploadedImgData='';
+    toast('Firebase에 저장됐어요! 🎉');
+  }catch(e){toast('저장 실패: '+e.message);}
+};
+
+function rPlist(){
+  document.getElementById('plist').innerHTML=PRODS.map(p=>{
+    let editHtml='';
+    if(editId===p.id){
+      editHtml=`<div class="ef">
+        <div class="ag" style="margin-bottom:9px">
+          <div class="af"><label>상품명</label><input type="text" id="ep-n" value="${p.name}"/></div>
+          <div class="af"><label>가격</label><input type="text" id="ep-p" value="${p.price||''}"/></div>
+          <div class="af afc"><label>URL</label><input type="text" id="ep-u" value="${p.storeUrl||''}"/></div>
+          <div class="af afc"><label>이미지URL</label><input type="text" id="ep-img" value="${p.image&&!p.image.startsWith('data:')?p.image:''}"/></div>
+          <div class="af afc"><label>태그</label><input type="text" id="ep-t" value="${(p.tags||[]).join(', ')}"/></div>
+          <div class="af afc"><label>설명</label><textarea id="ep-d" rows="2">${p.description||''}</textarea></div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button onclick="saveEd('${p.id}')" class="asb" style="margin-top:0;font-size:12px">💾 Firebase 저장</button>
+          <button onclick="cancelEd()" style="background:#374151;border:none;border-radius:8px;color:#fff;padding:7px 12px;cursor:pointer;font-size:12px">취소</button>
+        </div>
+      </div>`;
+    }
+    return `<div class="pli">
+      <div class="plt">${th(p)}</div>
+      <div class="pli-i"><div class="pli-n">${p.name}</div><div class="pli-p">${p.price||''}</div><div class="pli-t">${(p.tags||[]).join(', ')}</div></div>
+      <div class="pla"><button class="be" onclick="startEd('${p.id}')">✏️</button><button class="bd" onclick="delP('${p.id}')">🗑️</button></div>
+    </div>${editHtml}`;
+  }).join('');
+}
+window.startEd = function(id){editId=id;rPlist();};
+window.cancelEd = function(){editId=null;rPlist();};
+window.saveEd = async function(id){
+  try{
+    await updateDoc(doc(db,"products",id),{
+      name:document.getElementById('ep-n').value,
+      price:document.getElementById('ep-p').value,
+      storeUrl:document.getElementById('ep-u').value,
+      image:document.getElementById('ep-img').value.trim(),
+      tags:document.getElementById('ep-t').value.split(',').map(t=>t.trim()).filter(Boolean),
+      description:document.getElementById('ep-d').value,
+    });
+    editId=null; toast('Firebase에 저장됐어요! ✓');
+  }catch(e){toast('저장 실패: '+e.message);}
+};
+window.delP = async function(id){
+  if(confirm('정말 삭제할까요?')){
+    try{ await deleteDoc(doc(db,"products",id)); toast('삭제됐어요!'); }
+    catch(e){ toast('삭제 실패: '+e.message); }
+  }
+};
+
+// ── 테마 ──
+window.liveClr = function(){
+  const r=document.documentElement.style;
+  r.setProperty('--bg',document.getElementById('c-bg').value);
+  r.setProperty('--g1',document.getElementById('c-a1').value);
+  r.setProperty('--g2',document.getElementById('c-a2').value);
+};
+window.applyPreset = function(n){
+  const presets={dark:{bg:'#0d0b1e',a1:'#FFD93D',a2:'#FF6B6B'},light:{bg:'#f8f4ec',a1:'#e67e00',a2:'#c0392b'},forest:{bg:'#0d1f0f',a1:'#7ecf82',a2:'#4aba50'},pink:{bg:'#1e0a18',a1:'#ff85c2',a2:'#c94f8a'}};
+  const p=presets[n];
+  document.getElementById('c-bg').value=p.bg;
+  document.getElementById('c-a1').value=p.a1;
+  document.getElementById('c-a2').value=p.a2;
+  window.liveClr();
+};
+window.saveTheme = async function(){
+  const theme={bg:document.getElementById('c-bg').value,a1:document.getElementById('c-a1').value,a2:document.getElementById('c-a2').value};
+  try{ await updateDoc(doc(db,"config","app"),{theme}); toast('테마가 모든 기기에 반영됐어요! 🎨'); }
+  catch(e){ toast('저장 실패: '+e.message); }
+};
+
+// ── 브랜딩 ──
+window.saveBrand = async function(){
+  const sub=document.getElementById('b-sub').value||CFG.sub;
+  const url=document.getElementById('b-url').value||CFG.url;
+  try{ await updateDoc(doc(db,"config","app"),{sub,url}); toast('브랜딩이 모든 기기에 반영됐어요! 🏷️'); }
+  catch(e){ toast('저장 실패: '+e.message); }
+};
+
+// ── 공지 ──
+window.saveNotice = async function(){
+  const notice=document.getElementById('n-txt').value.trim();
+  try{ await updateDoc(doc(db,"config","app"),{notice}); toast('공지가 모든 기기에 반영됐어요! 📢'); }
+  catch(e){ toast('저장 실패: '+e.message); }
+};
+window.clearNotice = async function(){
+  document.getElementById('n-txt').value='';
+  try{ await updateDoc(doc(db,"config","app"),{notice:''}); toast('공지가 숨겨졌어요!'); }
+  catch(e){ toast('저장 실패: '+e.message); }
+};
+
+// ── 로고 ──
+window.prevLogo = function(input){
+  const f=input.files[0]; if(!f) return;
+  if(f.size>2*1024*1024){toast('2MB 이하 이미지를 사용해주세요!');return;}
+  const r=new FileReader();
+  r.onloadend=()=>{ pendLogo=r.result; document.getElementById('logo-adm').src=r.result; };
+  r.readAsDataURL(f);
+};
+window.saveLogo = async function(){
+  if(!pendLogo){toast('먼저 이미지를 선택해주세요!');return;}
+  try{ await updateDoc(doc(db,"config","app"),{logo:pendLogo}); pendLogo=null; toast('로고가 모든 기기에 반영됐어요! 🖼️'); }
+  catch(e){ toast('저장 실패: '+e.message); }
+};
+window.resetLogo = async function(){
+  if(confirm('기본 로고로 되돌릴까요?')){
+    try{ await updateDoc(doc(db,"config","app"),{logo:''}); document.getElementById('logo-adm').src=''; toast('기본 로고로 됐어요!'); }
+    catch(e){ toast('저장 실패: '+e.message); }
+  }
+};
+
+// ── 비밀번호 변경 ──
+window.chgPw = async function(){
+  const cur=document.getElementById('pw-cur').value;
+  const nw=document.getElementById('pw-new').value.trim();
+  const cf=document.getElementById('pw-cf').value.trim();
+  const msg=document.getElementById('pw-msg');
+  const show=(txt,ok)=>{
+    msg.style.display='block';
+    msg.style.background=ok?'rgba(3,199,90,0.12)':'rgba(233,69,96,0.12)';
+    msg.style.border=ok?'1px solid #03C75A':'1px solid #e94560';
+    msg.style.color=ok?'#03C75A':'#e94560';
+    msg.textContent=txt;
+  };
+  if(cur!==CFG.pw){show('현재 비밀번호가 틀렸어요!',false);return;}
+  if(nw.length<4){show('새 비밀번호는 4자 이상이어야 해요!',false);return;}
+  if(nw!==cf){show('새 비밀번호가 서로 달라요!',false);return;}
+  try{
+    await updateDoc(doc(db,"config","app"),{pw:nw});
+    ['pw-cur','pw-new','pw-cf'].forEach(id=>document.getElementById(id).value='');
+    show('✅ 비밀번호가 변경됐어요!',true);
+    toast('비밀번호 변경 완료! 🔑');
+  }catch(e){toast('저장 실패: '+e.message);}
+};
+
+// ── 토스트 ──
+let toastT=null;
+window.toast = function(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('on');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('on'),2500);
+};
+
+// ── 시작 ──
+initFirebase();
+</script>
+</body>
+</html>
