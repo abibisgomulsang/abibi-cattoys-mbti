@@ -273,6 +273,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
     <button class="atb" onclick="swTab('t-notice',this)">📢 공지</button>
     <button class="atb" onclick="swTab('t-logo',this)">🖼️ 로고</button>
     <button class="atb" onclick="swTab('t-pw',this)">🔑 비밀번호</button>
+    <button class="atb" onclick="swTab('t-tags',this)">✏️ 태그편집</button>
   </div>
 
   <!-- PRODUCTS -->
@@ -405,6 +406,35 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <div class="nt">⚠️ 비밀번호를 잊으면 복구가 어렵습니다. 반드시 기억해두세요!</div>
     </div>
   </div>
+
+  <!-- TAG EDITOR -->
+  <div class="atc" id="t-tags">
+    <!-- 재질 편집 -->
+    <div class="asec" style="border-color:#4ECDC4">
+      <div class="ast" style="color:#4ECDC4">🪶 재질 목록 편집</div>
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:12px;line-height:1.6">재질을 추가/삭제할 수 있어요. 상품 태그와 일치해야 추천이 돼요!</div>
+      <div id="mats-list" style="margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <input type="text" id="new-mat-n" placeholder="재질 이름 (예: 고무)" style="flex:1;font-size:12px"/>
+        <input type="text" id="new-mat-i" placeholder="이모지" style="width:56px;font-size:12px;text-align:center"/>
+        <button onclick="addMat()" style="background:linear-gradient(135deg,#4ECDC4,#2bb5ac);border:none;border-radius:9px;color:#1a1a2e;padding:9px 14px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px;white-space:nowrap;flex-shrink:0">+ 추가</button>
+      </div>
+      <button class="asb" style="background:linear-gradient(135deg,#4ECDC4,#2bb5ac);color:#1a1a2e;margin-top:12px" onclick="saveMats()">재질 저장 → Firebase ✓</button>
+    </div>
+    <!-- 성격 편집 -->
+    <div class="asec" style="border-color:#C77DFF">
+      <div class="ast" style="color:#C77DFF">😺 성격 목록 편집</div>
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:12px;line-height:1.6">성격을 추가/삭제할 수 있어요. 설명도 함께 수정 가능해요!</div>
+      <div id="pers-list" style="margin-bottom:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 56px 1fr;gap:8px;align-items:flex-start">
+        <input type="text" id="new-pers-n" placeholder="성격 이름 (예: 사교적인)" style="font-size:12px"/>
+        <input type="text" id="new-pers-i" placeholder="😊" style="font-size:12px;text-align:center"/>
+        <input type="text" id="new-pers-d" placeholder="설명 (예: 사람을 좋아해요)" style="font-size:12px"/>
+      </div>
+      <button onclick="addPers()" style="background:linear-gradient(135deg,#C77DFF,#9b5de5);border:none;border-radius:9px;color:#fff;padding:9px 14px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px;margin-top:8px;width:100%">+ 성격 추가</button>
+      <button class="asb" style="background:linear-gradient(135deg,#C77DFF,#9b5de5);color:#fff;margin-top:8px" onclick="savePers()">성격 저장 → Firebase ✓</button>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -452,8 +482,8 @@ let uploadedImgData = "";
 let editId = null;
 
 const EM = {"깃털":"🪶","비닐":"🛍️","폼폼이":"🎾","실리콘":"🔵","끈":"🧵","천":"🧶","종이":"📄","나무":"🪵"};
-const MATS = [{n:"깃털",i:"🪶"},{n:"비닐",i:"🛍️"},{n:"폼폼이",i:"🎾"},{n:"실리콘",i:"🔵"},{n:"끈",i:"🧵"},{n:"천",i:"🧶"},{n:"종이",i:"📄"},{n:"나무",i:"🪵"}];
-const PERS = [{n:"활발한",i:"⚡",d:"뛰고 점프하는 걸 좋아해요"},{n:"진지한",i:"🧐",d:"차분하고 신중해요"},{n:"호기심많은",i:"👀",d:"뭐든 살펴보고 탐험해요"},{n:"겁쟁이",i:"🙈",d:"새로운 것에 조심스러워요"},{n:"식탐이많은",i:"🍗",d:"먹는 것에 관심이 많아요"},{n:"게으른",i:"💤",d:"낮잠을 즐겨요"}];
+let MATS = [{n:"깃털",i:"🪶"},{n:"비닐",i:"🛍️"},{n:"폼폼이",i:"🎾"},{n:"실리콘",i:"🔵"},{n:"끈",i:"🧵"},{n:"천",i:"🧶"},{n:"종이",i:"📄"},{n:"나무",i:"🪵"}];
+let PERS = [{n:"활발한",i:"⚡",d:"뛰고 점프하는 걸 좋아해요"},{n:"진지한",i:"🧐",d:"차분하고 신중해요"},{n:"호기심많은",i:"👀",d:"뭐든 살펴보고 탐험해요"},{n:"겁쟁이",i:"🙈",d:"새로운 것에 조심스러워요"},{n:"식탐이많은",i:"🍗",d:"먹는 것에 관심이 많아요"},{n:"게으른",i:"💤",d:"낮잠을 즐겨요"}];
 
 function pe(p){for(const t of p.tags){if(EM[t])return EM[t];}return"🐱";}
 function th(p){
@@ -474,7 +504,17 @@ async function initFirebase(){
       await setDoc(doc(db,"config","app"), CFG);
     }
 
-    // 2) 상품 로드
+    // 2) 태그(재질/성격) 로드
+    const tagSnap = await getDoc(doc(db,"config","tags"));
+    if(tagSnap.exists()){
+      const td = tagSnap.data();
+      if(td.mats && td.mats.length) MATS = td.mats;
+      if(td.pers && td.pers.length) PERS = td.pers;
+    } else {
+      await setDoc(doc(db,"config","tags"),{mats:MATS, pers:PERS});
+    }
+
+    // 3) 상품 로드
     const prodSnap = await getDocs(collection(db,"products"));
     if(prodSnap.empty){
       // 최초 실행: 기본 상품 저장
@@ -498,7 +538,16 @@ async function initFirebase(){
       }
     });
 
-    // 4) 실시간 리스닝 — products 변경 감지
+    // 4) 실시간 리스닝 — tags 변경 감지
+    onSnapshot(doc(db,"config","tags"), snap=>{
+      if(snap.exists()){
+        const td=snap.data();
+        if(td.mats && td.mats.length) MATS=td.mats;
+        if(td.pers && td.pers.length) PERS=td.pers;
+      }
+    });
+
+    // 5) 실시간 리스닝 — products 변경 감지
     onSnapshot(collection(db,"products"), snap=>{
       PRODS = snap.docs.map(d=>({id:d.id,...d.data()}));
       if(document.getElementById('plist')) rPlist();
@@ -696,6 +745,7 @@ window.swTab = function(tid,btn){
   document.querySelectorAll('.atc').forEach(c=>c.classList.remove('on'));
   btn.classList.add('on');
   document.getElementById(tid).classList.add('on');
+  if(tid==='t-tags'){ renderMatsList(); renderPersList(); }
 };
 
 // ── 상품 관리 (Firebase CRUD) ──
@@ -870,6 +920,83 @@ window.chgPw = async function(){
     show('✅ 비밀번호가 변경됐어요!',true);
     toast('비밀번호 변경 완료! 🔑');
   }catch(e){toast('저장 실패: '+e.message);}
+};
+
+// ── 태그 편집 (재질 / 성격) ──
+window.openAdmTags = function(){
+  renderMatsList();
+  renderPersList();
+};
+
+function renderMatsList(){
+  const el = document.getElementById('mats-list');
+  if(!el) return;
+  el.innerHTML = MATS.map((m,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;background:#111827;border-radius:8px;padding:8px 10px">
+      <span style="font-size:20px">${m.i}</span>
+      <input type="text" value="${m.n}" onchange="MATS[${i}].n=this.value" style="flex:1;font-size:12px;background:#1f2937;border:1px solid #374151;border-radius:6px;padding:5px 8px;color:#fff"/>
+      <input type="text" value="${m.i}" onchange="MATS[${i}].i=this.value;this.previousElementSibling.previousElementSibling.textContent=this.value" style="width:48px;font-size:12px;text-align:center;background:#1f2937;border:1px solid #374151;border-radius:6px;padding:5px 6px;color:#fff"/>
+      <button onclick="delMat(${i})" style="background:none;border:1px solid #e94560;border-radius:6px;color:#e94560;padding:4px 8px;cursor:pointer;font-size:11px;flex-shrink:0">삭제</button>
+    </div>`).join('');
+}
+
+function renderPersList(){
+  const el = document.getElementById('pers-list');
+  if(!el) return;
+  el.innerHTML = PERS.map((p,i)=>`
+    <div style="background:#111827;border-radius:8px;padding:9px 10px;margin-bottom:7px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:5px">
+        <span style="font-size:20px">${p.i}</span>
+        <input type="text" value="${p.n}" onchange="PERS[${i}].n=this.value" placeholder="성격명" style="flex:1;font-size:12px;background:#1f2937;border:1px solid #374151;border-radius:6px;padding:5px 8px;color:#fff"/>
+        <input type="text" value="${p.i}" onchange="PERS[${i}].i=this.value;this.parentElement.querySelector('span').textContent=this.value" placeholder="이모지" style="width:48px;font-size:12px;text-align:center;background:#1f2937;border:1px solid #374151;border-radius:6px;padding:5px 6px;color:#fff"/>
+        <button onclick="delPers(${i})" style="background:none;border:1px solid #e94560;border-radius:6px;color:#e94560;padding:4px 8px;cursor:pointer;font-size:11px;flex-shrink:0">삭제</button>
+      </div>
+      <input type="text" value="${p.d}" onchange="PERS[${i}].d=this.value" placeholder="설명" style="width:100%;font-size:11px;background:#1f2937;border:1px solid #374151;border-radius:6px;padding:5px 8px;color:#9ca3af"/>
+    </div>`).join('');
+}
+
+window.addMat = function(){
+  const n = document.getElementById('new-mat-n').value.trim();
+  const i = document.getElementById('new-mat-i').value.trim();
+  if(!n){ toast('재질 이름을 입력해주세요!'); return; }
+  MATS.push({n, i: i||'🏷️'});
+  document.getElementById('new-mat-n').value='';
+  document.getElementById('new-mat-i').value='';
+  renderMatsList();
+};
+window.delMat = function(idx){
+  if(MATS.length<=1){ toast('재질은 최소 1개 이상이어야 해요!'); return; }
+  MATS.splice(idx,1);
+  renderMatsList();
+};
+window.saveMats = async function(){
+  try{
+    await updateDoc(doc(db,"config","tags"),{mats:MATS});
+    toast('재질이 모든 기기에 반영됐어요! 🪶');
+  } catch(e){ toast('저장 실패: '+e.message); }
+};
+
+window.addPers = function(){
+  const n = document.getElementById('new-pers-n').value.trim();
+  const i = document.getElementById('new-pers-i').value.trim();
+  const d = document.getElementById('new-pers-d').value.trim();
+  if(!n){ toast('성격 이름을 입력해주세요!'); return; }
+  PERS.push({n, i: i||'😺', d: d||n});
+  document.getElementById('new-pers-n').value='';
+  document.getElementById('new-pers-i').value='';
+  document.getElementById('new-pers-d').value='';
+  renderPersList();
+};
+window.delPers = function(idx){
+  if(PERS.length<=1){ toast('성격은 최소 1개 이상이어야 해요!'); return; }
+  PERS.splice(idx,1);
+  renderPersList();
+};
+window.savePers = async function(){
+  try{
+    await updateDoc(doc(db,"config","tags"),{pers:PERS});
+    toast('성격이 모든 기기에 반영됐어요! 😺');
+  } catch(e){ toast('저장 실패: '+e.message); }
 };
 
 // ── CSV / 엑셀 일괄 업로드 ──
