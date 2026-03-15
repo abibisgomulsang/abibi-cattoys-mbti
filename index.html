@@ -2169,7 +2169,7 @@ async function recordTest(cat){
 }
 
 // 스토어 클릭 기록
-async function recordStoreClick(){
+window.recordStoreClick = async function recordStoreClick(){
   try{
     const testRef = doc(db,'stats','tests');
     const snap = await getDoc(testRef);
