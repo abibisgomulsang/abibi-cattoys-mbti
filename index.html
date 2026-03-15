@@ -1709,10 +1709,60 @@ function copyLink(){
 
 // ── 결과 캡처/저장 ──
 window.captureResult = async function(){
-  toast('이미지 저장 중... 📸');
+  toast('이미지 생성 중... 📸');
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   try{
+    // ── 캡처용 깔끔한 클론 div 생성 ──
+    const src = document.getElementById('capture-area');
+
+    // 숨겨진 렌더 컨테이너 생성
+    const container = document.createElement('div');
+    container.style.cssText = [
+      'position:fixed',
+      'left:-9999px',
+      'top:0',
+      'width:420px',
+      'background:#0d0b1e',
+      'padding:20px',
+      'font-family:Noto Sans KR,sans-serif',
+      'color:#fff',
+      'z-index:-1',
+    ].join(';');
+    document.body.appendChild(container);
+
+    // 내용 복제 + CSS 변수 인라인으로 교체
+    const clone = src.cloneNode(true);
+    clone.style.cssText = 'width:100%;background:#0d0b1e;padding:0';
+
+    // backdrop-filter 제거 (html2canvas가 못 읽음)
+    clone.querySelectorAll('*').forEach(el=>{
+      const cs = window.getComputedStyle(el);
+      // 배경색 인라인 적용
+      const bg = cs.backgroundColor;
+      const color = cs.color;
+      if(bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent'){
+        el.style.backgroundColor = bg;
+      }
+      if(color) el.style.color = color;
+      // backdrop-filter 제거
+      el.style.backdropFilter = 'none';
+      el.style.webkitBackdropFilter = 'none';
+      // 카드 배경 강제 적용
+      if(el.classList && (el.classList.contains('pc') || el.classList.contains('rh'))){
+        el.style.backgroundColor = 'rgba(255,255,255,0.1)';
+        el.style.border = '1px solid rgba(255,255,255,0.2)';
+      }
+    });
+
+    // 워터마크
+    const wm = document.createElement('div');
+    wm.style.cssText = 'text-align:center;padding:14px 0 4px;font-size:12px;color:rgba(255,217,61,0.7);letter-spacing:1px';
+    wm.textContent = '🐱 아비비의고물상 | abibi-cat-choice.vercel.app';
+    clone.appendChild(wm);
+    container.appendChild(clone);
+
+    // html2canvas 로드
     if(!window.html2canvas){
       await new Promise((res,rej)=>{
         const s=document.createElement('script');
@@ -1722,30 +1772,29 @@ window.captureResult = async function(){
       });
     }
 
-    // ── 캡처 전용 래퍼 생성 ──
-    const captureEl = document.getElementById('capture-area');
-
-    // 워터마크 임시 추가
-    const wm = document.createElement('div');
-    wm.id = 'capture-wm';
-    wm.style.cssText = 'text-align:center;padding:14px 0 6px;font-family:Jua,sans-serif;font-size:13px;color:rgba(255,217,61,0.7);letter-spacing:1px';
-    wm.textContent = '🐱 아비비의고물상 | abibi-cat-choice.vercel.app';
-    captureEl.appendChild(wm);
-
-    const canvas = await html2canvas(captureEl, {
-      backgroundColor: '#0d0b1e',
-      scale: isMobile ? 2 : 2.5,
+    // 렌더링
+    const canvas = await html2canvas(container,{
+      backgroundColor:'#0d0b1e',
+      scale: 2,
       useCORS: true,
       allowTaint: true,
       logging: false,
+      scrollX: 0,
       scrollY: 0,
-      width: captureEl.offsetWidth,
-      height: captureEl.scrollHeight,
-      windowWidth: captureEl.offsetWidth,
+      width: 460,
+      height: container.scrollHeight,
+      windowWidth: 460,
+      onclone: (doc)=>{
+        // 클론된 문서에서 모든 CSS 변수 강제 해소
+        doc.querySelectorAll('*').forEach(el=>{
+          el.style.backdropFilter='none';
+          el.style.webkitBackdropFilter='none';
+        });
+      }
     });
 
-    // 워터마크 제거
-    wm.remove();
+    // 컨테이너 제거
+    document.body.removeChild(container);
 
     const dataUrl = canvas.toDataURL('image/png');
 
@@ -1775,12 +1824,14 @@ window.captureResult = async function(){
       link.click();
       toast('이미지가 저장됐어요! 📸');
     }
+
   } catch(e){
-    console.error(e);
-    // 워터마크 혹시 남아있으면 제거
-    const wm2 = document.getElementById('capture-wm');
-    if(wm2) wm2.remove();
-    fallbackCapture();
+    console.error('캡처 오류:', e);
+    // 컨테이너 혹시 남아있으면 제거
+    const c2 = document.querySelector('[style*="-9999px"]');
+    if(c2) c2.remove();
+    // 대안: 직접 Canvas로 카드 그리기
+    captureWithCanvas();
   }
 };
 
@@ -1801,9 +1852,196 @@ function showImgOverlay(dataUrl){
   document.body.appendChild(ov);
 }
 
+// ── Canvas API로 직접 결과 이미지 그리기 (완전한 폴백) ──
+async function captureWithCanvas(){
+  toast('이미지 직접 생성 중... 📸');
+  try{
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const W = 420, PAD = 20;
+    const recs = Array.from(document.querySelectorAll('.pc'));
+    const catName = document.getElementById('res-ttl')?.textContent || '추천 장난감';
+    const chips = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent);
+
+    // 카드 높이 계산
+    const cardH = 160;
+    const totalH = 80 + 40 + chips.length*0 + recs.length * (cardH+12) + 60;
+
+    const cv = document.createElement('canvas');
+    cv.width = W * 2; cv.height = totalH * 2;
+    const ctx = cv.getContext('2d');
+    ctx.scale(2, 2);
+
+    // 배경
+    ctx.fillStyle = '#0d0b1e';
+    ctx.fillRect(0, 0, W, totalH);
+
+    // 배경 그라디언트
+    const g1 = ctx.createRadialGradient(80, 80, 0, 80, 80, 200);
+    g1.addColorStop(0, 'rgba(100,60,200,0.2)');
+    g1.addColorStop(1, 'rgba(100,60,200,0)');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, W, totalH);
+
+    let y = PAD;
+
+    // 제목
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#FFD93D';
+    ctx.font = 'bold 20px sans-serif';
+    ctx.fillText('🐱 ' + catName, W/2, y+24);
+    y += 40;
+
+    // 칩들
+    if(chips.length){
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = 'rgba(255,217,61,0.8)';
+      ctx.fillText(chips.join('  ·  '), W/2, y+16);
+      y += 28;
+    }
+
+    // 구분선
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PAD, y); ctx.lineTo(W-PAD, y);
+    ctx.stroke();
+    y += 12;
+
+    // 상품 카드들
+    for(let i=0; i<recs.length; i++){
+      const card = recs[i];
+      const name = card.querySelector('.pn2')?.textContent || '';
+      const desc = card.querySelector('.pde')?.textContent || '';
+      const price = card.querySelector('.ppr')?.textContent || '';
+      const tags = Array.from(card.querySelectorAll('.ptg')).map(t=>t.textContent).join(' ');
+      const isBest = card.classList.contains('best');
+      const imgEl = card.querySelector('.pt img');
+
+      // 카드 배경
+      roundRect(ctx, PAD, y, W-PAD*2, cardH, 12);
+      ctx.fillStyle = isBest ? 'rgba(255,217,61,0.12)' : 'rgba(255,255,255,0.08)';
+      ctx.fill();
+      if(isBest){
+        ctx.strokeStyle = '#FFD93D';
+        ctx.lineWidth = 2;
+      } else {
+        ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+        ctx.lineWidth = 1;
+      }
+      ctx.stroke();
+
+      // BEST 뱃지
+      if(isBest){
+        ctx.fillStyle = '#FFD93D';
+        roundRect(ctx, W-PAD-80, y, 80, 22, [0,12,0,12]);
+        ctx.fill();
+        ctx.fillStyle = '#1a1a2e';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('👑 BEST', W-PAD-8, y+15);
+      }
+
+      // 이미지 영역
+      const imgX = PAD+10, imgY = y+10, imgS = 80;
+      roundRect(ctx, imgX, imgY, imgS, imgS, 10);
+      ctx.fillStyle = '#2a1a4e';
+      ctx.fill();
+
+      // 이미지 로드 시도
+      if(imgEl && imgEl.src && !imgEl.src.startsWith('data:') || (imgEl && imgEl.src && imgEl.src.startsWith('data:'))){
+        try{
+          await drawImg(ctx, imgEl.src, imgX, imgY, imgS, imgS, 10);
+        } catch(e){
+          ctx.fillStyle = '#fff';
+          ctx.font = '28px serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('🐱', imgX+imgS/2, imgY+imgS/2+10);
+        }
+      } else {
+        ctx.fillStyle = '#fff';
+        ctx.font = '28px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🐱', imgX+imgS/2, imgY+imgS/2+10);
+      }
+
+      // 텍스트
+      const tx = PAD+10+imgS+12;
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText(name.length>14 ? name.slice(0,14)+'…' : name, tx, y+26);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '11px sans-serif';
+      const descLine = desc.length>22 ? desc.slice(0,22)+'…' : desc;
+      ctx.fillText(descLine, tx, y+44);
+
+      ctx.fillStyle = '#FFD93D';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText(price, tx, y+64);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.font = '10px sans-serif';
+      ctx.fillText(tags.slice(0,30), tx, y+80);
+
+      y += cardH + 12;
+    }
+
+    // 워터마크
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,217,61,0.5)';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('🐱 아비비의고물상 | abibi-cat-choice.vercel.app', W/2, y+20);
+
+    const dataUrl = cv.toDataURL('image/png');
+
+    if(isMobile){
+      showImgOverlay(dataUrl);
+    } else {
+      const link = document.createElement('a');
+      link.download = '아비비고물상_추천결과.png';
+      link.href = dataUrl;
+      link.click();
+      toast('이미지가 저장됐어요! 📸');
+    }
+  } catch(err){
+    console.error(err);
+    showImgOverlay('');
+    toast('스크린샷으로 저장해주세요!');
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  if(typeof r === 'number') r = [r,r,r,r];
+  ctx.beginPath();
+  ctx.moveTo(x+r[0], y);
+  ctx.lineTo(x+w-r[1], y); ctx.arcTo(x+w,y,x+w,y+r[1],r[1]);
+  ctx.lineTo(x+w, y+h-r[2]); ctx.arcTo(x+w,y+h,x+w-r[2],y+h,r[2]);
+  ctx.lineTo(x+r[3], y+h); ctx.arcTo(x,y+h,x,y+h-r[3],r[3]);
+  ctx.lineTo(x, y+r[0]); ctx.arcTo(x,y,x+r[0],y,r[0]);
+  ctx.closePath();
+}
+
+function drawImg(ctx, src, x, y, w, h, r){
+  return new Promise((res,rej)=>{
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = ()=>{
+      ctx.save();
+      roundRect(ctx,x,y,w,h,r);
+      ctx.clip();
+      ctx.drawImage(img,x,y,w,h);
+      ctx.restore();
+      res();
+    };
+    img.onerror = rej;
+    img.src = src;
+    setTimeout(()=>rej(new Error('timeout')), 3000);
+  });
+}
+
 function fallbackCapture(){
-  showImgOverlay('');
-  toast('스크린샷으로 저장해주세요! (전원+볼륨 또는 홈+전원)');
+  captureWithCanvas();
 }
 
 // ── 방문자 통계 ──
