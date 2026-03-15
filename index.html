@@ -937,8 +937,7 @@ window.showResult = function(){
           <span>${r.icon||'🎣'} ${r.name}</span>
           <span style="color:var(--g1);font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
         </div>`).join('')}
-      <div style="border-top:1px solid rgba(255,107,107,.3);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:14px">
-        <span style="color:var(--mu)">낚시대 합계</span>
+    };
         <span style="color:#FF6B6B">${Number(rodSum).toLocaleString()}원</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px;margin-top:4px">
@@ -2096,7 +2095,7 @@ function trimText(ctx, text, maxW){
   return t + '…';
 }
 
-(ctx, x, y, w, h, r){
+function roundRect(ctx, x, y, w, h, r){
   if(typeof r === 'number') r = [r,r,r,r];
   ctx.beginPath();
   ctx.moveTo(x+r[0], y);
