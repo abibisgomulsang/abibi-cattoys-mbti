@@ -288,10 +288,13 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
   </div>
   <div id="res-rod-box" style="width:100%;max-width:440px"></div>
   <div id="res-cards" style="width:100%;max-width:440px"></div>
-  <div class="ra">
-    <button class="btn bp" onclick="restart()">🔄 다시 테스트</button>
-    <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank">🏪 전체 상품</a>
+  <div style="width:100%;max-width:440px;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px">
+    <button class="btn bp" onclick="restart()" style="margin-top:0">🔄 다시 테스트</button>
+    <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
+    <button class="btn" onclick="shareKakao()" style="margin-top:0;background:linear-gradient(135deg,#FEE500,#FFCD00);color:#3A1D1D;font-family:Jua,sans-serif;font-size:14px">💬 카카오 공유</button>
+    <button class="btn" onclick="captureResult()" style="margin-top:0;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-family:Jua,sans-serif;font-size:14px">📸 결과 저장</button>
   </div>
+  <div style="height:32px"></div>
 </div>
 
 <!-- ADMIN LOGIN -->
@@ -328,6 +331,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
     <button class="atb" onclick="swTab('t-pw',this)">🔑 비밀번호</button>
     <button class="atb" onclick="swTab('t-tags',this)">✏️ 태그편집</button>
     <button class="atb" onclick="swTab('t-rod',this)">🎣 낚시대</button>
+    <button class="atb" onclick="swTab('t-stats',this)">📊 통계</button>
   </div>
 
   <!-- PRODUCTS -->
@@ -512,6 +516,51 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         <button onclick="addRod()" style="background:linear-gradient(135deg,#FF6B6B,#e94560);border:none;border-radius:9px;color:#fff;padding:9px 18px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;margin-top:10px;width:100%">+ 낚시대 추가</button>
       </div>
       <button class="asb" style="background:linear-gradient(135deg,#FF6B6B,#e94560);color:#fff;margin-top:10px" onclick="saveRods()">저장 → Firebase ✓</button>
+    </div>
+  </div>
+
+  <!-- STATS TAB -->
+  <div class="atc" id="t-stats">
+    <div class="asec">
+      <div class="ast">📊 방문자 통계</div>
+      <div id="stats-loading" style="text-align:center;padding:20px;color:#9ca3af;font-size:13px">⏳ 통계 불러오는 중...</div>
+      <div id="stats-content" style="display:none">
+        <!-- 요약 카드 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+          <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
+            <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">총 방문자</div>
+            <div style="font-family:Jua,sans-serif;font-size:26px;color:var(--g1)" id="stat-total">0</div>
+          </div>
+          <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
+            <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">오늘 방문자</div>
+            <div style="font-family:Jua,sans-serif;font-size:26px;color:#4ECDC4" id="stat-today">0</div>
+          </div>
+          <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
+            <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">테스트 완료</div>
+            <div style="font-family:Jua,sans-serif;font-size:26px;color:#C77DFF" id="stat-tests">0</div>
+          </div>
+          <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
+            <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">스토어 클릭</div>
+            <div style="font-family:Jua,sans-serif;font-size:26px;color:#03C75A" id="stat-clicks">0</div>
+          </div>
+        </div>
+        <!-- 인기 성격 -->
+        <div style="background:#111827;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #374151">
+          <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:Jua,sans-serif">🏆 인기 성격 TOP 3</div>
+          <div id="stat-pers-rank"></div>
+        </div>
+        <!-- 인기 재질 -->
+        <div style="background:#111827;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #374151">
+          <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:Jua,sans-serif">🪶 인기 재질 TOP 3</div>
+          <div id="stat-mat-rank"></div>
+        </div>
+        <!-- 평균 예산 -->
+        <div style="background:#111827;border-radius:10px;padding:14px;border:1px solid #374151">
+          <div style="font-size:12px;color:#9ca3af;margin-bottom:6px;font-family:Jua,sans-serif">💰 평균 예산</div>
+          <div style="font-family:Jua,sans-serif;font-size:22px;color:var(--g1)" id="stat-avg-budget">-</div>
+        </div>
+      </div>
+      <button onclick="loadStats()" style="background:#374151;border:none;border-radius:8px;color:#fff;padding:8px 14px;cursor:pointer;font-size:12px;margin-top:12px;width:100%">🔄 새로고침</button>
     </div>
   </div>
 </div>
@@ -879,10 +928,11 @@ window.showResult = function(){
           </div>
         </div>
         <div class="ptgs">${(p.tags||[]).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px">🛒 스마트스토어에서 보기</a>
+        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px" onclick="recordStoreClick()">🛒 스마트스토어에서 보기</a>
       </div>`).join('');
   }
   go('res');
+  recordTest(CAT);
 };
 window.restart = function(){
   CAT={name:"",gender:"",age:1,mats:[],pers:"",budget:14000,rods:[],rodSkip:false};
@@ -921,6 +971,7 @@ window.swTab = function(tid,btn){
   document.getElementById(tid).classList.add('on');
   if(tid==='t-tags'){ renderMatsList(); renderPersList(); }
   if(tid==='t-rod'){ renderRodAdmin(); }
+  if(tid==='t-stats'){ loadStats(); }
 };
 
 // ── 상품 관리 (Firebase CRUD) ──
@@ -1442,6 +1493,193 @@ function showCsvError(msg){
   el.style.display='block'; el.textContent=msg;
 }
 
+// ── 카카오 공유 ──
+function loadKakaoSDK(cb){
+  if(window.Kakao){ cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://developers.kakao.com/sdk/js/kakao.min.js';
+  s.onload = ()=>{
+    // 카카오 앱 키 (무료 발급: developers.kakao.com)
+    // 아직 앱 키가 없으면 URL 공유 방식으로 대체
+    cb();
+  };
+  document.head.appendChild(s);
+}
+
+window.shareKakao = function(){
+  const name = document.getElementById('res-ttl')?.textContent || '추천 결과';
+  const recs = document.querySelectorAll('.pn2');
+  const first = recs[0]?.textContent || '장난감';
+  const url = window.location.href;
+  const text = `🐱 ${name}\n\n추천 장난감: ${first}\n\n아비비의고물상에서 우리 아이 맞춤 장난감을 찾아보세요!`;
+
+  // 카카오 SDK 없으면 URL 복사로 대체
+  if(navigator.share){
+    navigator.share({
+      title: '아비비의고물상 🐱 추천 결과',
+      text: text,
+      url: url,
+    }).then(()=>toast('공유됐어요! 💬'))
+    .catch(()=>copyLink());
+  } else {
+    copyLink();
+  }
+};
+
+function copyLink(){
+  const url = window.location.href;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>toast('링크가 복사됐어요! 📋'));
+  } else {
+    const el = document.createElement('textarea');
+    el.value = url; document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('링크가 복사됐어요! 📋');
+  }
+}
+
+// ── 결과 캡처/저장 ──
+window.captureResult = async function(){
+  toast('이미지 저장 준비 중... 📸');
+  // html2canvas CDN 동적 로드
+  if(!window.html2canvas){
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    document.head.appendChild(s);
+    await new Promise(res=>{ s.onload=res; s.onerror=()=>{ fallbackCapture(); res(); }; });
+  }
+  if(!window.html2canvas){ fallbackCapture(); return; }
+
+  try{
+    const target = document.getElementById('s-res');
+    const canvas = await html2canvas(target, {
+      backgroundColor: '#0d0b1e',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      scrollY: -window.scrollY,
+    });
+    const link = document.createElement('a');
+    link.download = '아비비고물상_추천결과.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    toast('이미지가 저장됐어요! 📸');
+  } catch(e){
+    fallbackCapture();
+  }
+};
+
+function fallbackCapture(){
+  toast('스크린샷으로 저장해주세요! (길게 누르기)');
+}
+
+// ── 방문자 통계 ──
+// 앱 시작 시 방문 기록
+async function recordVisit(){
+  try{
+    const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const visitRef = doc(db,'stats','visits');
+    const snap = await getDoc(visitRef);
+    if(snap.exists()){
+      const data = snap.data();
+      const newTotal = (data.total||0) + 1;
+      const days = data.days||{};
+      days[today] = (days[today]||0) + 1;
+      await setDoc(visitRef,{total:newTotal, days, lastVisit:Date.now()});
+    } else {
+      await setDoc(visitRef,{total:1, days:{[today]:1}, lastVisit:Date.now()});
+    }
+  } catch(e){ /* 통계 실패해도 앱 동작에 영향 없음 */ }
+}
+
+// 테스트 완료 기록
+async function recordTest(cat){
+  try{
+    const testRef = doc(db,'stats','tests');
+    const snap = await getDoc(testRef);
+    const base = snap.exists() ? snap.data() : {total:0,pers:{},mats:{},budgets:[],clicks:0};
+    base.total = (base.total||0) + 1;
+    // 성격 집계
+    if(cat.pers){ base.pers = base.pers||{}; base.pers[cat.pers]=(base.pers[cat.pers]||0)+1; }
+    // 재질 집계
+    base.mats = base.mats||{};
+    (cat.mats||[]).forEach(m=>{ base.mats[m]=(base.mats[m]||0)+1; });
+    // 예산 기록 (최근 100개만)
+    base.budgets = base.budgets||[];
+    base.budgets.push(cat.budget||14000);
+    if(base.budgets.length>100) base.budgets = base.budgets.slice(-100);
+    await setDoc(testRef, base);
+  } catch(e){}
+}
+
+// 스토어 클릭 기록
+async function recordStoreClick(){
+  try{
+    const testRef = doc(db,'stats','tests');
+    const snap = await getDoc(testRef);
+    if(snap.exists()){
+      await updateDoc(testRef,{clicks:(snap.data().clicks||0)+1});
+    }
+  } catch(e){}
+}
+
+window.loadStats = async function(){
+  document.getElementById('stats-loading').style.display='block';
+  document.getElementById('stats-content').style.display='none';
+  try{
+    const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const [visitSnap, testSnap] = await Promise.all([
+      getDoc(doc(db,'stats','visits')),
+      getDoc(doc(db,'stats','tests')),
+    ]);
+
+    const vd = visitSnap.exists() ? visitSnap.data() : {total:0,days:{}};
+    const td = testSnap.exists() ? testSnap.data() : {total:0,pers:{},mats:{},budgets:[],clicks:0};
+
+    document.getElementById('stat-total').textContent = (vd.total||0).toLocaleString();
+    document.getElementById('stat-today').textContent = ((vd.days||{})[today]||0).toLocaleString();
+    document.getElementById('stat-tests').textContent = (td.total||0).toLocaleString();
+    document.getElementById('stat-clicks').textContent = (td.clicks||0).toLocaleString();
+
+    // 인기 성격 TOP3
+    const persRank = Object.entries(td.pers||{}).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    const persEmoji = {"활발한":"⚡","진지한":"🧐","호기심많은":"👀","겁쟁이":"🙈","식탐이많은":"🍗","게으른":"💤"};
+    document.getElementById('stat-pers-rank').innerHTML = persRank.length
+      ? persRank.map(([k,v],i)=>`
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <span style="font-family:Jua,sans-serif;font-size:16px;color:var(--g1);width:20px">${i+1}</span>
+            <span style="font-size:18px">${persEmoji[k]||'😺'}</span>
+            <span style="flex:1;font-size:13px">${k}</span>
+            <div style="background:rgba(255,217,61,.15);border-radius:20px;padding:3px 10px;font-size:12px;color:var(--g1);font-family:Jua,sans-serif">${v}회</div>
+          </div>`).join('')
+      : '<div style="font-size:12px;color:#6b7280">아직 데이터가 없어요</div>';
+
+    // 인기 재질 TOP3
+    const matRank = Object.entries(td.mats||{}).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    const matEmoji = {"깃털":"🪶","비닐":"🛍️","폼폼이":"🎾","실리콘":"🔵","끈":"🧵","천":"🧶","종이":"📄","나무":"🪵"};
+    document.getElementById('stat-mat-rank').innerHTML = matRank.length
+      ? matRank.map(([k,v],i)=>`
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <span style="font-family:Jua,sans-serif;font-size:16px;color:#4ECDC4;width:20px">${i+1}</span>
+            <span style="font-size:18px">${matEmoji[k]||'🏷️'}</span>
+            <span style="flex:1;font-size:13px">${k}</span>
+            <div style="background:rgba(78,205,196,.15);border-radius:20px;padding:3px 10px;font-size:12px;color:#4ECDC4;font-family:Jua,sans-serif">${v}회</div>
+          </div>`).join('')
+      : '<div style="font-size:12px;color:#6b7280">아직 데이터가 없어요</div>';
+
+    // 평균 예산
+    const budgets = td.budgets||[];
+    const avg = budgets.length ? Math.round(budgets.reduce((a,b)=>a+b,0)/budgets.length) : 0;
+    document.getElementById('stat-avg-budget').textContent = avg ? avg.toLocaleString()+'원' : '-';
+
+    document.getElementById('stats-loading').style.display='none';
+    document.getElementById('stats-content').style.display='block';
+  } catch(e){
+    document.getElementById('stats-loading').textContent='통계를 불러오지 못했어요. Firebase 연결을 확인해주세요.';
+  }
+};
+
 // ── 토스트 ──
 let toastT=null;
 window.toast = function(msg){
@@ -1453,6 +1691,8 @@ window.toast = function(msg){
 
 // ── 시작 ──
 initFirebase();
+// 방문 기록 (Firebase 초기화 후)
+setTimeout(()=>recordVisit(), 2000);
 </script>
 </body>
 </html>
