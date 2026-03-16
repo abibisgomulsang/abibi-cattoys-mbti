@@ -301,8 +301,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
   <div style="width:100%;max-width:440px;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px">
     <button class="btn bp" onclick="restart()" style="margin-top:0">🔄 다시 테스트</button>
     <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
-    <button class="btn" onclick="shareKakao()" style="margin-top:0;background:linear-gradient(135deg,#FEE500,#FFCD00);color:#3A1D1D;font-family:Jua,sans-serif;font-size:14px">💬 공유하기</button>
-    <button class="btn" onclick="captureResult()" style="margin-top:0;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-family:Jua,sans-serif;font-size:14px">📸 결과 저장</button>
+    <button class="btn" onclick="shareWithImage()" style="margin-top:0;background:linear-gradient(135deg,#FEE500,#FFCD00);color:#3A1D1D;font-family:Jua,sans-serif;font-size:14px">💬 카카오 공유</button>
+    <button class="btn" onclick="captureWithCanvas()" style="margin-top:0;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-family:Jua,sans-serif;font-size:14px">📸 결과 저장</button>
   </div>
   <div style="height:32px"></div>
 </div>
@@ -578,6 +578,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 
 <!-- Firebase SDK (CDN) -->
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -1648,31 +1649,175 @@ window.cartUrl = function(p){
 // ── 카카오톡 공유 (SDK 정식 연동) ──
 
 
-window.shareKakao = function(){
-  const catName = document.getElementById('res-ttl')?.textContent || '추천 결과';
-  const chips   = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent);
-  const recs    = Array.from(document.querySelectorAll('#res-cards .pc'));
-  const appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
+// ── 이미지로 공유하기 ──
+window.shareWithImage = async function(){
+  toast('공유 이미지 생성 중... 📸');
+  try{
+    // 1. Canvas로 이미지 생성
+    const dataUrl = await buildResultImage();
+    if(!dataUrl){ copyLink(); return; }
 
-  const recLines = recs.slice(0,3).map((card,i)=>{
-    const name  = card.querySelector('.pn2')?.textContent?.trim() || '';
-    const price = card.querySelector('.ppr')?.textContent?.trim() || '';
-    return (i===0?'👑':'🎁') + ' ' + name + ' — ' + price;
-  }).join('\n');
+    // 2. dataURL → Blob → File
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    const file = new File([blob], '아비비고물상_추천결과.png', {type:'image/png'});
 
-  const shareText = '🐱 ' + catName + '\n' + chips.join(' · ') + '\n\n' + recLines + '\n\n아비비의고물상에서 우리 아이 맞춤 장난감을 찾아보세요!\n' + appUrl;
-
-  if(navigator.share){
-    navigator.share({
-      title: '🐱 ' + catName + ' — 아비비의고물상',
-      text: shareText,
-      url: appUrl,
-    }).then(()=>toast('공유됐어요! 💬'))
-    .catch((e)=>{ if(e.name !== 'AbortError') copyLink(); });
-  } else {
-    copyLink();
+    // 3. Web Share API로 이미지 공유
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        files: [file],
+        title: '아비비의고물상 🐱 추천 장난감',
+        text: '우리 아이 맞춤 장난감 추천 결과예요!',
+      });
+      toast('공유됐어요! 💬');
+    } else if(navigator.share){
+      // 파일 공유 불가 → 텍스트+링크 공유
+      const catName = document.getElementById('res-ttl')?.textContent || '추천 결과';
+      const recs = Array.from(document.querySelectorAll('#res-cards .pc'));
+      const recLines = recs.slice(0,3).map((card,i)=>{
+        const name = card.querySelector('.pn2')?.textContent?.trim()||'';
+        const price = card.querySelector('.ppr')?.textContent?.trim()||'';
+        return (i===0?'👑':'🎁')+' '+name+' — '+price;
+      }).join('\n');
+      await navigator.share({
+        title: '🐱 '+catName+' — 아비비의고물상',
+        text: '🐱 '+catName+'\n\n'+recLines+'\n\n아비비의고물상에서 맞춤 장난감을 찾아보세요!',
+        url: 'https://abibi-cattoys-mbti.vercel.app',
+      });
+      toast('공유됐어요! 💬');
+    } else {
+      // PC → 이미지 다운로드 + 링크 복사
+      const link = document.createElement('a');
+      link.download = '아비비고물상_추천결과.png';
+      link.href = dataUrl; link.click();
+      copyLink();
+      toast('이미지 저장 + 링크 복사됐어요! 📸📋');
+    }
+  } catch(e){
+    if(e.name !== 'AbortError'){
+      copyLink();
+    }
   }
 };
+
+// ── 결과 이미지 빌드 (공유/저장 공통) ──
+async function buildResultImage(){
+  const W = 400, PAD = 16, SCALE = 2;
+  const IMG_S = 80, CARD_H = 130, CARD_GAP = 10;
+
+  const cards = Array.from(document.querySelectorAll('#res-cards .pc'));
+  const catName = document.getElementById('res-ttl')?.textContent || '추천 장난감';
+  const chips = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent);
+
+  const headerH = 80;
+  const chipsH = chips.length ? 30 : 0;
+  const cardsH = cards.length * (CARD_H + CARD_GAP);
+  const wmH = 36;
+  const totalH = headerH + chipsH + 10 + cardsH + wmH + PAD*2;
+
+  const cv = document.createElement('canvas');
+  cv.width = W * SCALE;
+  cv.height = totalH * SCALE;
+  const ctx = cv.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+
+  // 배경
+  ctx.fillStyle = '#0d0b1e';
+  ctx.fillRect(0, 0, W, totalH);
+  const grd = ctx.createRadialGradient(0, 0, 0, 0, 0, 300);
+  grd.addColorStop(0, 'rgba(100,60,200,0.25)');
+  grd.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, totalH);
+
+  let y = PAD;
+
+  // 헤더
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#FFD93D';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillText('🐱 ' + catName, W/2, y + 28);
+  y += 40;
+
+  if(chips.length){
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = 'rgba(255,217,61,0.75)';
+    ctx.fillText(chips.join(' · '), W/2, y + 14);
+    y += 26;
+  }
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W-PAD, y); ctx.stroke();
+  y += 12;
+
+  // 상품 카드
+  for(let i=0; i<cards.length; i++){
+    const card = cards[i];
+    const name  = card.querySelector('.pn2')?.textContent?.trim() || '';
+    const desc  = card.querySelector('.pde')?.textContent?.trim() || '';
+    const price = card.querySelector('.ppr')?.textContent?.trim() || '';
+    const tags  = Array.from(card.querySelectorAll('.ptg')).map(t=>t.textContent).join(' ');
+    const isBest = card.classList.contains('best');
+    const imgEl = card.querySelector('.pt img');
+
+    roundRect(ctx, PAD, y, W-PAD*2, CARD_H, 12);
+    ctx.fillStyle = isBest ? 'rgba(255,217,61,0.1)' : 'rgba(255,255,255,0.07)';
+    ctx.fill();
+    ctx.strokeStyle = isBest ? '#FFD93D' : 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = isBest ? 2 : 1;
+    ctx.stroke();
+
+    if(isBest){
+      roundRect(ctx, W-PAD-76, y, 76, 22, [0,12,0,12]);
+      ctx.fillStyle = '#FFD93D';
+      ctx.fill();
+      ctx.fillStyle = '#1a1a2e';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('👑 BEST 추천', W-PAD-6, y+15);
+    }
+
+    const ix = PAD+10, iy = y+10;
+    roundRect(ctx, ix, iy, IMG_S, IMG_S, 8);
+    ctx.fillStyle = '#2a1a4e';
+    ctx.fill();
+
+    if(imgEl && imgEl.naturalWidth > 0){
+      try{ await drawImg(ctx, imgEl.src, ix, iy, IMG_S, IMG_S, 8); }
+      catch(e){ ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='30px serif'; ctx.textAlign='center'; ctx.fillText('🐱', ix+IMG_S/2, iy+IMG_S/2+10); }
+    } else {
+      ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='30px serif'; ctx.textAlign='center'; ctx.fillText('🐱', ix+IMG_S/2, iy+IMG_S/2+10);
+    }
+
+    const tx = PAD+10+IMG_S+12;
+    const maxTW = W-PAD-tx-8;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(trimText(ctx, name, maxTW), tx, y+24);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(trimText(ctx, desc, maxTW), tx, y+42);
+    ctx.fillStyle = '#FFD93D';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText(price, tx, y+64);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(trimText(ctx, tags, maxTW), tx, y+82);
+
+    y += CARD_H + CARD_GAP;
+  }
+
+  // 워터마크
+  y += 8;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,217,61,0.5)';
+  ctx.font = '10px sans-serif';
+  ctx.fillText('🐱 아비비의고물상 · abibi-cattoys-mbti.vercel.app', W/2, y+16);
+
+  return cv.toDataURL('image/png');
+}
 
 function copyLink(){
   const url = 'https://abibi-cattoys-mbti.vercel.app';
@@ -1832,192 +1977,18 @@ function showImgOverlay(dataUrl){
   document.body.appendChild(ov);
 }
 
-// ── Canvas API로 직접 결과 이미지 그리기 (완전한 폴백) ──
+// ── Canvas API로 직접 결과 이미지 그리기 ──
 async function captureWithCanvas(){
   toast('이미지 생성 중... 📸');
   try{
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const W = 400, PAD = 16, SCALE = 2;
-    const IMG_S = 80, CARD_H = 130, CARD_GAP = 10;
-
-    // 현재 표시된 상품 카드에서 데이터 추출
-    const cards = Array.from(document.querySelectorAll('#res-cards .pc'));
-    const catName = document.getElementById('res-ttl')?.textContent || '추천 장난감';
-    const chips = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent);
-
-    // 낚시대 박스 데이터
-    const rodLines = Array.from(document.querySelectorAll('#res-rod-box [style*="justify-content:space-between"]'))
-      .map(el=>({ label: el.children[0]?.textContent||'', val: el.children[1]?.textContent||'' }));
-
-    // 전체 높이 계산
-    const headerH = 80;
-    const chipsH = chips.length ? 30 : 0;
-    const rodH = rodLines.length ? (rodLines.length * 22 + 40) : 0;
-    const cardsH = cards.length * (CARD_H + CARD_GAP);
-    const wmH = 36;
-    const totalH = headerH + chipsH + rodH + 10 + cardsH + wmH + PAD*2;
-
-    // Canvas 생성
-    const cv = document.createElement('canvas');
-    cv.width = W * SCALE;
-    cv.height = totalH * SCALE;
-    const ctx = cv.getContext('2d');
-    ctx.scale(SCALE, SCALE);
-
-    // ── 배경 ──
-    ctx.fillStyle = '#0d0b1e';
-    ctx.fillRect(0, 0, W, totalH);
-    const grd = ctx.createRadialGradient(0, 0, 0, 0, 0, 300);
-    grd.addColorStop(0, 'rgba(100,60,200,0.25)');
-    grd.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, W, totalH);
-
-    let y = PAD;
-
-    // ── 헤더 ──
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#FFD93D';
-    ctx.font = `bold 22px sans-serif`;
-    ctx.fillText('🐱 ' + catName, W/2, y + 28);
-    y += 40;
-
-    if(chips.length){
-      ctx.font = '11px sans-serif';
-      ctx.fillStyle = 'rgba(255,217,61,0.75)';
-      ctx.fillText(chips.join(' · '), W/2, y + 14);
-      y += 26;
-    }
-
-    // 구분선
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W-PAD, y); ctx.stroke();
-    y += 12;
-
-    // ── 낚시대 박스 ──
-    if(rodLines.length){
-      roundRect(ctx, PAD, y, W-PAD*2, rodLines.length*22+28, 10);
-      ctx.fillStyle = 'rgba(255,107,107,0.1)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,107,107,0.35)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      ctx.fillStyle = '#FF6B6B';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('🎣 선택한 낚시대', PAD+12, y+18);
-
-      rodLines.forEach((r,i)=>{
-        ctx.fillStyle = 'rgba(255,255,255,0.75)';
-        ctx.font = '12px sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText(r.label, PAD+12, y+36+i*22);
-        ctx.fillStyle = '#FFD93D';
-        ctx.textAlign = 'right';
-        ctx.fillText(r.val, W-PAD-12, y+36+i*22);
-      });
-      y += rodLines.length*22 + 38;
-    }
-
-    // ── 상품 카드 ──
-    for(let i=0; i<cards.length; i++){
-      const card = cards[i];
-      const name  = card.querySelector('.pn2')?.textContent?.trim() || '';
-      const desc  = card.querySelector('.pde')?.textContent?.trim() || '';
-      const price = card.querySelector('.ppr')?.textContent?.trim() || '';
-      const tags  = Array.from(card.querySelectorAll('.ptg')).map(t=>t.textContent).join(' ');
-      const isBest = card.classList.contains('best');
-      const imgEl = card.querySelector('.pt img');
-
-      // 카드 배경
-      roundRect(ctx, PAD, y, W-PAD*2, CARD_H, 12);
-      ctx.fillStyle = isBest ? 'rgba(255,217,61,0.1)' : 'rgba(255,255,255,0.07)';
-      ctx.fill();
-      ctx.strokeStyle = isBest ? '#FFD93D' : 'rgba(255,255,255,0.15)';
-      ctx.lineWidth = isBest ? 2 : 1;
-      ctx.stroke();
-
-      // BEST 뱃지
-      if(isBest){
-        roundRect(ctx, W-PAD-76, y, 76, 22, [0,12,0,12]);
-        ctx.fillStyle = '#FFD93D';
-        ctx.fill();
-        ctx.fillStyle = '#1a1a2e';
-        ctx.font = 'bold 10px sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText('👑 BEST 추천', W-PAD-6, y+15);
-      }
-
-      // 이미지 박스
-      const ix = PAD+10, iy = y+10;
-      roundRect(ctx, ix, iy, IMG_S, IMG_S, 8);
-      ctx.fillStyle = '#2a1a4e';
-      ctx.fill();
-
-      if(imgEl && imgEl.naturalWidth > 0){
-        try{
-          await drawImg(ctx, imgEl.src, ix, iy, IMG_S, IMG_S, 8);
-        } catch(e){
-          ctx.fillStyle = 'rgba(255,255,255,0.3)';
-          ctx.font = '30px serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('🐱', ix+IMG_S/2, iy+IMG_S/2+10);
-        }
-      } else {
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-        ctx.font = '30px serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('🐱', ix+IMG_S/2, iy+IMG_S/2+10);
-      }
-
-      // 텍스트 영역
-      const tx = PAD+10+IMG_S+12;
-      const maxTW = W-PAD-tx-8;
-
-      ctx.textAlign = 'left';
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 14px sans-serif';
-      ctx.fillText(trimText(ctx, name, maxTW), tx, y+24);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.55)';
-      ctx.font = '11px sans-serif';
-      ctx.fillText(trimText(ctx, desc, maxTW), tx, y+42);
-      // 두 번째 줄
-      if(desc.length > 18){
-        const rest = desc.slice(14);
-        ctx.fillText(trimText(ctx, rest, maxTW), tx, y+56);
-      }
-
-      ctx.fillStyle = '#FFD93D';
-      ctx.font = 'bold 15px sans-serif';
-      ctx.fillText(price, tx, y+76);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.font = '10px sans-serif';
-      ctx.fillText(trimText(ctx, tags, maxTW), tx, y+94);
-
-      y += CARD_H + CARD_GAP;
-    }
-
-    // ── 워터마크 ──
-    y += 8;
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,217,61,0.5)';
-    ctx.font = '10px sans-serif';
-    ctx.fillText('🐱 아비비의고물상 · abibi-cattoys-mbti.vercel.app', W/2, y+16);
-
-    const dataUrl = cv.toDataURL('image/png');
+    const dataUrl = await buildResultImage();
+    if(!dataUrl){ toast('이미지 생성 실패 — 스크린샷을 이용해주세요!'); return; }
 
     if(isMobile){
       const win = window.open('');
       if(win){
-        win.document.write(`<!DOCTYPE html><html><head>
-          <meta name="viewport" content="width=device-width,initial-scale=1"/>
-          <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0d0b1e;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px;gap:12px}.tip{color:#FFD93D;font-family:sans-serif;font-size:14px;text-align:center;background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);border-radius:10px;padding:12px 16px;line-height:1.6;width:100%;max-width:440px}img{max-width:100%;border-radius:10px}</style></head>
-          <body><div class="tip">📸 이미지를 <strong>길게 눌러</strong> 저장하세요!</div>
-          <img src="${dataUrl}"/></body></html>`);
+        win.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"/><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0d0b1e;display:flex;flex-direction:column;align-items:center;padding:16px;gap:12px}.tip{color:#FFD93D;font-family:sans-serif;font-size:14px;text-align:center;background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);border-radius:10px;padding:12px 16px;line-height:1.6;width:100%;max-width:440px}img{max-width:100%;border-radius:10px}</style></head><body><div class="tip">📸 이미지를 <strong>길게 눌러</strong> 저장하세요!</div><img src="'+dataUrl+'"/></body></html>');
         win.document.close();
         toast('새 탭에서 길게 눌러 저장하세요! 📸');
       } else {
@@ -2196,6 +2167,7 @@ window.toast = function(msg){
 initFirebase();
 // 방문 기록 (Firebase 초기화 후)
 setTimeout(()=>recordVisit(), 2000);
+
 </script>
 </body>
 </html>
