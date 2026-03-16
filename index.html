@@ -301,7 +301,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
   <div style="width:100%;max-width:440px;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px">
     <button class="btn bp" onclick="restart()" style="margin-top:0">🔄 다시 테스트</button>
     <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
-    <button class="btn" onclick="shareKakao()" style="margin-top:0;background:linear-gradient(135deg,#FEE500,#FFCD00);color:#3A1D1D;font-family:Jua,sans-serif;font-size:14px">💬 카카오 공유</button>
+    <button class="btn" onclick="shareKakao()" style="margin-top:0;background:linear-gradient(135deg,#FEE500,#FFCD00);color:#3A1D1D;font-family:Jua,sans-serif;font-size:14px">💬 공유하기</button>
     <button class="btn" onclick="captureResult()" style="margin-top:0;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-family:Jua,sans-serif;font-size:14px">📸 결과 저장</button>
   </div>
   <div style="height:32px"></div>
@@ -1646,87 +1646,36 @@ window.cartUrl = function(p){
 };
 
 // ── 카카오톡 공유 (SDK 정식 연동) ──
-const KAKAO_APP_KEY = 'e8cf50ea3a2086ca8cdfab884d1e1d14';
 
-function loadKakaoSDK(cb){
-  if(window.Kakao && window.Kakao.isInitialized()){ cb(); return; }
-  if(window.Kakao && !window.Kakao.isInitialized()){
-    window.Kakao.init(KAKAO_APP_KEY); cb(); return;
-  }
-  const s = document.createElement('script');
-  s.src = 'https://developers.kakao.com/sdk/js/kakao.min.js';
-  s.onload = ()=>{
-    window.Kakao.init(KAKAO_APP_KEY);
-    cb();
-  };
-  s.onerror = ()=>{ toast('카카오 SDK 로드 실패'); };
-  document.head.appendChild(s);
-}
 
 window.shareKakao = function(){
   const catName = document.getElementById('res-ttl')?.textContent || '추천 결과';
   const chips   = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent);
   const recs    = Array.from(document.querySelectorAll('#res-cards .pc'));
-  const appUrl  = 'https://abibi-cat-choice.vercel.app';
+  const appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
 
-  // 추천 상품 목록 텍스트 (최대 3개)
   const recLines = recs.slice(0,3).map((card,i)=>{
     const name  = card.querySelector('.pn2')?.textContent?.trim() || '';
     const price = card.querySelector('.ppr')?.textContent?.trim() || '';
-    return `${i===0?'👑':'🎁'} ${name} — ${price}`;
+    return (i===0?'👑':'🎁') + ' ' + name + ' — ' + price;
   }).join('\n');
 
-  const chipTxt = chips.join(' · ');
-  const descTxt = chipTxt + '\n\n' + recLines + '\n\n아비비의고물상에서 우리 아이 맞춤 장난감을 찾아보세요!';
+  const shareText = '🐱 ' + catName + '\n' + chips.join(' · ') + '\n\n' + recLines + '\n\n아비비의고물상에서 우리 아이 맞춤 장난감을 찾아보세요!\n' + appUrl;
 
-  loadKakaoSDK(()=>{
-    try{
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: `🐱 ${catName}`,
-          description: descTxt,
-          imageUrl: 'https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f431.png',
-          link: {
-            mobileWebUrl: appUrl,
-            webUrl: appUrl,
-          },
-        },
-        buttons: [
-          {
-            title: '🐾 테스트 해보기',
-            link: { mobileWebUrl: appUrl, webUrl: appUrl },
-          },
-          {
-            title: '🏪 스마트스토어',
-            link: {
-              mobileWebUrl: CFG.url || appUrl,
-              webUrl: CFG.url || appUrl,
-            },
-          },
-        ],
-        installTalk: true,
-      });
-      toast('카카오톡 공유 창이 열렸어요! 💬');
-    } catch(e){
-      console.error('Kakao share error:', e);
-      // SDK 실패시 Web Share API 또는 링크 복사로 대체
-      if(navigator.share){
-        navigator.share({
-          title: `🐱 ${catName}`,
-          text: chipTxt + '\n' + recLines,
-          url: appUrl,
-        }).then(()=>toast('공유됐어요! 💬'))
-        .catch(()=>copyLink());
-      } else {
-        copyLink();
-      }
-    }
-  });
+  if(navigator.share){
+    navigator.share({
+      title: '🐱 ' + catName + ' — 아비비의고물상',
+      text: shareText,
+      url: appUrl,
+    }).then(()=>toast('공유됐어요! 💬'))
+    .catch((e)=>{ if(e.name !== 'AbortError') copyLink(); });
+  } else {
+    copyLink();
+  }
 };
 
 function copyLink(){
-  const url = 'https://abibi-cat-choice.vercel.app';
+  const url = 'https://abibi-cattoys-mbti.vercel.app';
   if(navigator.clipboard){
     navigator.clipboard.writeText(url).then(()=>toast('링크가 복사됐어요! 📋'));
   } else {
@@ -1789,7 +1738,7 @@ window.captureResult = async function(){
     // 워터마크
     const wm = document.createElement('div');
     wm.style.cssText = 'text-align:center;padding:14px 0 4px;font-size:12px;color:rgba(255,217,61,0.7);letter-spacing:1px';
-    wm.textContent = '🐱 아비비의고물상 | abibi-cat-choice.vercel.app';
+    wm.textContent = '🐱 아비비의고물상 | abibi-cattoys-mbti.vercel.app';
     clone.appendChild(wm);
     container.appendChild(clone);
 
@@ -2057,7 +2006,7 @@ async function captureWithCanvas(){
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(255,217,61,0.5)';
     ctx.font = '10px sans-serif';
-    ctx.fillText('🐱 아비비의고물상 · abibi-cat-choice.vercel.app', W/2, y+16);
+    ctx.fillText('🐱 아비비의고물상 · abibi-cattoys-mbti.vercel.app', W/2, y+16);
 
     const dataUrl = cv.toDataURL('image/png');
 
