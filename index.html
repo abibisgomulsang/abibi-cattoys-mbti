@@ -1004,6 +1004,8 @@ window.showResult = function(){
           <div style="font-family:Jua,sans-serif;font-size:12px;line-height:1.3;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
           <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
+          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()"
+            style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:Jua,sans-serif;text-decoration:none">🛒 스토어 보기</a>
         </div>`;
       }).join('') + `</div>`;
   } else {
@@ -2029,18 +2031,23 @@ async function buildResultImage(selPids){
     y += CARD_H + CARD_GAP;
   }
 
-  // ── 가격 요약 ──
+  // ── 가격 요약 (선택된 상품 합계 + 낚시대) ──
   if(recs.length){
-    const bestPrice = parsePrice(recs[0].price)||0;
-    if(bestPrice > 0 || rodSum > 0){
+    // 선택된 상품 합계 (selPids가 있으면 그 상품들, 없으면 전체)
+    const toyTotal = recs.reduce((s,p)=>(s+(parsePrice(p.price)||0)),0);
+    const grandTotal = toyTotal + rodSum;
+    if(grandTotal > 0){
       y += 6;
+      const label = selPids
+        ? '🛒 선택한 상품'+(rodSum>0?' + 낚시대':'')+' 합계 ('+recs.length+'개)'
+        : '🛒 추천 상품'+(rodSum>0?' + 낚시대':'')+' 합계 ('+recs.length+'개)';
       roundRect(ctx, PAD, y, W-PAD*2, 44, 9);
       ctx.fillStyle = 'rgba(255,217,61,0.1)'; ctx.fill();
       ctx.strokeStyle = 'rgba(255,217,61,0.3)'; ctx.lineWidth=1; ctx.stroke();
       ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font='10px sans-serif'; ctx.textAlign='left';
-      ctx.fillText('🛒 BEST 장난감'+(rodSum>0?' + 낚시대':'')+' 총 예상 금액', PAD+10, y+14);
+      ctx.fillText(label, PAD+10, y+14);
       ctx.fillStyle = '#FFD93D'; ctx.font='bold 17px sans-serif'; ctx.textAlign='right';
-      ctx.fillText(Number(bestPrice+rodSum).toLocaleString()+'원', W-PAD-10, y+36);
+      ctx.fillText(grandTotal.toLocaleString()+'원', W-PAD-10, y+36);
       y += 52;
     }
   }
