@@ -1782,172 +1782,176 @@ window.shareWithImage = async function(){
 // ── 결과 이미지 빌드 (공유/저장 공통) ──
 async function buildResultImage(){
   const W = 400, PAD = 16, SCALE = 2;
-  const IMG_S = 80, CARD_H = 130, CARD_GAP = 10;
+  const IMG_S = 76, CARD_H = 110, CARD_GAP = 8;
 
-  // DOM에서 카드 데이터 추출 (1열/2열 모두 대응)
-  const cards = Array.from(document.querySelectorAll('#res-cards .pc'));
-  const catName = document.getElementById('res-ttl')?.textContent || '추천 장난감';
-  const chips = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent);
-
-  // 낚시대 선택 정보
+  // DOM이 아닌 실제 데이터에서 직접 읽기 (1열/2열 모두 정확하게)
+  const recs   = getRecs();
+  const catName = (document.getElementById('res-ttl')?.textContent || '추천 장난감').trim();
+  const chips  = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent.trim());
   const selRods = RODS.filter(r=>CAT.rods&&CAT.rods.includes(r.id));
   const rodSum  = selRods.reduce((s,r)=>s+(Number(r.price)||0),0);
 
-  const headerH = 90;
-  const chipsH  = chips.length ? 32 : 0;
-  const rodH    = selRods.length ? (selRods.length * 22 + 52) : 0;
-  const cardsH  = cards.length * (CARD_H + CARD_GAP);
-  const priceH  = 60; // 가격 요약
-  const wmH     = 36;
-  const totalH  = headerH + chipsH + rodH + 10 + cardsH + priceH + wmH + PAD*2;
+  const headerH = 86;
+  const chipsH  = chips.length ? 30 : 0;
+  const rodH    = selRods.length ? (selRods.length * 22 + 48) : 0;
+  const cardsH  = recs.length * (CARD_H + CARD_GAP);
+  const priceH  = recs.length ? 56 : 0;
+  const wmH     = 32;
+  const totalH  = headerH + chipsH + rodH + 12 + cardsH + priceH + wmH + PAD*2;
 
   const cv = document.createElement('canvas');
-  cv.width = W * SCALE;
+  cv.width  = W * SCALE;
   cv.height = totalH * SCALE;
   const ctx = cv.getContext('2d');
   ctx.scale(SCALE, SCALE);
 
-  // 배경
+  // ── 배경 ──
   ctx.fillStyle = '#0d0b1e';
   ctx.fillRect(0, 0, W, totalH);
-  const grd = ctx.createRadialGradient(0, 0, 0, 0, 0, 300);
-  grd.addColorStop(0, 'rgba(100,60,200,0.25)');
+  const grd = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 350);
+  grd.addColorStop(0, 'rgba(80,40,180,0.3)');
   grd.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, W, totalH);
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, totalH);
 
   let y = PAD;
 
-  // 헤더
+  // ── 헤더 ──
   ctx.textAlign = 'center';
   ctx.fillStyle = '#FFD93D';
-  ctx.font = 'bold 22px sans-serif';
-  ctx.fillText('🐱 ' + catName, W/2, y + 28);
-  y += 40;
+  ctx.font = 'bold 20px sans-serif';
+  ctx.fillText('🐱 ' + catName, W/2, y+26);
+  y += 38;
 
   if(chips.length){
-    ctx.font = '11px sans-serif';
-    ctx.fillStyle = 'rgba(255,217,61,0.75)';
-    ctx.fillText(chips.join(' · '), W/2, y + 14);
-    y += 26;
+    ctx.font = '10px sans-serif';
+    ctx.fillStyle = 'rgba(255,217,61,0.7)';
+    // 너무 길면 두 줄로
+    const chipStr = chips.join(' · ');
+    if(ctx.measureText(chipStr).width > W-PAD*2){
+      const half = Math.ceil(chips.length/2);
+      ctx.fillText(chips.slice(0,half).join(' · '), W/2, y+12);
+      ctx.fillText(chips.slice(half).join(' · '), W/2, y+24);
+      y += 36;
+    } else {
+      ctx.fillText(chipStr, W/2, y+14);
+      y += 24;
+    }
   }
 
+  // 구분선
   ctx.strokeStyle = 'rgba(255,255,255,0.12)';
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W-PAD, y); ctx.stroke();
   y += 12;
 
-  // ── 낚시대 선택 정보 ──
+  // ── 낚시대 박스 ──
   if(selRods.length){
-    roundRect(ctx, PAD, y, W-PAD*2, selRods.length*22+40, 10);
-    ctx.fillStyle = 'rgba(255,107,107,0.12)';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255,107,107,0.4)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.fillStyle = '#FF6B6B';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('🎣 선택한 낚시대', PAD+10, y+16);
-    selRods.forEach((r,i)=>{
-      ctx.fillStyle = 'rgba(255,255,255,0.75)';
-      ctx.font = '11px sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText((r.icon||'🎣')+' '+r.name, PAD+10, y+32+i*20);
-      ctx.fillStyle = '#FF6B6B';
-      ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(Number(r.price||0).toLocaleString()+'원', W-PAD-10, y+32+i*20);
+    const rh = selRods.length*20 + 38;
+    roundRect(ctx, PAD, y, W-PAD*2, rh, 9);
+    ctx.fillStyle = 'rgba(255,107,107,0.12)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,107,107,0.4)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='#FF6B6B'; ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('🎣 선택한 낚시대', PAD+10, y+14);
+    selRods.forEach((r,ri)=>{
+      ctx.fillStyle='rgba(255,255,255,0.8)'; ctx.font='11px sans-serif'; ctx.textAlign='left';
+      ctx.fillText((r.icon||'🎣')+' '+r.name, PAD+10, y+28+ri*20);
+      ctx.fillStyle='#FF6B6B'; ctx.font='bold 11px sans-serif'; ctx.textAlign='right';
+      ctx.fillText(Number(r.price||0).toLocaleString()+'원', W-PAD-10, y+28+ri*20);
     });
-    y += selRods.length*20 + 50;
+    y += rh + 10;
   }
 
-  // ── 상품 카드
-  for(let i=0; i<cards.length; i++){
-    const card = cards[i];
-    const name  = card.querySelector('.pn2')?.textContent?.trim() || '';
-    const desc  = card.querySelector('.pde')?.textContent?.trim() || '';
-    const price = card.querySelector('.ppr')?.textContent?.trim() || '';
-    const tags  = Array.from(card.querySelectorAll('.ptg')).map(t=>t.textContent).join(' ');
-    const isBest = card.classList.contains('best');
-    const imgEl = card.querySelector('.pt img');
+  // ── 상품 카드 (PRODS 데이터에서 직접) ──
+  for(let i=0; i<recs.length; i++){
+    const p      = recs[i];
+    const isBest = i === 0;
+    const name   = (p.name||'').trim();
+    const desc   = (p.description||'').trim();
+    const price  = formatPrice(p.price);
+    const tags   = (p.tags||[]).slice(0,3).map(t=>'#'+t).join(' ');
+    const imgSrc = p.image ? proxyImg(p.image) : '';
 
-    roundRect(ctx, PAD, y, W-PAD*2, CARD_H, 12);
-    ctx.fillStyle = isBest ? 'rgba(255,217,61,0.1)' : 'rgba(255,255,255,0.07)';
+    // 카드 배경
+    roundRect(ctx, PAD, y, W-PAD*2, CARD_H, 10);
+    ctx.fillStyle = isBest ? 'rgba(255,217,61,0.1)' : 'rgba(255,255,255,0.06)';
     ctx.fill();
-    ctx.strokeStyle = isBest ? '#FFD93D' : 'rgba(255,255,255,0.15)';
-    ctx.lineWidth = isBest ? 2 : 1;
+    ctx.strokeStyle = isBest ? '#FFD93D' : 'rgba(255,255,255,0.13)';
+    ctx.lineWidth   = isBest ? 2 : 1;
     ctx.stroke();
 
+    // BEST 뱃지
     if(isBest){
-      roundRect(ctx, W-PAD-76, y, 76, 22, [0,12,0,12]);
-      ctx.fillStyle = '#FFD93D';
-      ctx.fill();
-      ctx.fillStyle = '#1a1a2e';
-      ctx.font = 'bold 10px sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText('👑 BEST 추천', W-PAD-6, y+15);
+      roundRect(ctx, W-PAD-68, y, 68, 20, [0,10,0,10]);
+      ctx.fillStyle = '#FFD93D'; ctx.fill();
+      ctx.fillStyle = '#1a1a2e'; ctx.font='bold 9px sans-serif'; ctx.textAlign='right';
+      ctx.fillText('👑 BEST 추천', W-PAD-5, y+13);
     }
 
-    const ix = PAD+10, iy = y+10;
-    roundRect(ctx, ix, iy, IMG_S, IMG_S, 8);
-    ctx.fillStyle = '#2a1a4e';
-    ctx.fill();
+    // 번호
+    ctx.fillStyle = isBest ? '#FFD93D' : 'rgba(255,255,255,0.3)';
+    ctx.font = 'bold 11px sans-serif'; ctx.textAlign='left';
+    ctx.fillText(i===0?'':String(i+1)+'.', PAD+10, y+16);
 
-    if(imgEl && imgEl.naturalWidth > 0){
-      try{ await drawImg(ctx, imgEl.src, ix, iy, IMG_S, IMG_S, 8); }
-      catch(e){ ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='30px serif'; ctx.textAlign='center'; ctx.fillText('🐱', ix+IMG_S/2, iy+IMG_S/2+10); }
+    // 이미지 영역
+    const ix = PAD+10, iy = y+10, is2 = CARD_H-20;
+    roundRect(ctx, ix, iy, is2, is2, 8);
+    ctx.fillStyle = '#1e1040'; ctx.fill();
+
+    if(imgSrc){
+      try{ await drawImg(ctx, imgSrc, ix, iy, is2, is2, 8); }
+      catch(e){
+        ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='24px serif';
+        ctx.textAlign='center'; ctx.fillText('🐱', ix+is2/2, iy+is2/2+8);
+      }
     } else {
-      ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='30px serif'; ctx.textAlign='center'; ctx.fillText('🐱', ix+IMG_S/2, iy+IMG_S/2+10);
+      ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='24px serif';
+      ctx.textAlign='center'; ctx.fillText('🐱', ix+is2/2, iy+is2/2+8);
     }
 
-    const tx = PAD+10+IMG_S+12;
-    const maxTW = W-PAD-tx-8;
-    ctx.textAlign = 'left';
+    // 텍스트
+    const tx = PAD+10+is2+10;
+    const maxTW = W-PAD-tx-6;
+    ctx.textAlign='left';
+
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.fillText(trimText(ctx, name, maxTW), tx, y+24);
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    ctx.font = '11px sans-serif';
-    ctx.fillText(trimText(ctx, desc, maxTW), tx, y+42);
-    ctx.fillStyle = '#FFD93D';
-    ctx.font = 'bold 15px sans-serif';
-    ctx.fillText(price, tx, y+64);
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(trimText(ctx, name, maxTW), tx, y+20);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '10px sans-serif';
-    ctx.fillText(trimText(ctx, tags, maxTW), tx, y+82);
+    ctx.fillText(trimText(ctx, desc, maxTW), tx, y+36);
+
+    ctx.fillStyle = '#FFD93D';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(price||'가격 미정', tx, y+56);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '9px sans-serif';
+    ctx.fillText(trimText(ctx, tags, maxTW), tx, y+72);
 
     y += CARD_H + CARD_GAP;
   }
 
   // ── 가격 요약 ──
-  const bestCard = cards[0];
-  const bestPrice = bestCard ? (parsePrice(bestCard.querySelector('.ppr')?.textContent||'0')||0) : 0;
-  if(bestPrice > 0 || rodSum > 0){
-    y += 8;
-    roundRect(ctx, PAD, y, W-PAD*2, 48, 10);
-    ctx.fillStyle = 'rgba(255,217,61,0.1)';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255,217,61,0.35)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.textAlign = 'left';
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = '11px sans-serif';
-    ctx.fillText('🛒 BEST 장난감 + 낚시대 총 예상 금액', PAD+12, y+16);
-    ctx.fillStyle = '#FFD93D';
-    ctx.font = 'bold 18px sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(Number(bestPrice+rodSum).toLocaleString()+'원', W-PAD-12, y+38);
-    y += 56;
+  if(recs.length){
+    const bestPrice = parsePrice(recs[0].price)||0;
+    if(bestPrice > 0 || rodSum > 0){
+      y += 6;
+      roundRect(ctx, PAD, y, W-PAD*2, 44, 9);
+      ctx.fillStyle = 'rgba(255,217,61,0.1)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,217,61,0.3)'; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font='10px sans-serif'; ctx.textAlign='left';
+      ctx.fillText('🛒 BEST 장난감'+(rodSum>0?' + 낚시대':'')+' 총 예상 금액', PAD+10, y+14);
+      ctx.fillStyle = '#FFD93D'; ctx.font='bold 17px sans-serif'; ctx.textAlign='right';
+      ctx.fillText(Number(bestPrice+rodSum).toLocaleString()+'원', W-PAD-10, y+36);
+      y += 52;
+    }
   }
 
   // ── 워터마크 ──
-  y += 8;
-  ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(255,217,61,0.5)';
-  ctx.font = '10px sans-serif';
-  ctx.fillText('🐱 아비비의고물상 · abibi-cattoys-mbti.vercel.app', W/2, y+16);
+  y += 6;
+  ctx.textAlign='center'; ctx.fillStyle='rgba(255,217,61,0.45)'; ctx.font='9px sans-serif';
+  ctx.fillText('🐱 아비비의고물상 · abibi-cattoys-mbti.vercel.app', W/2, y+14);
 
   return cv.toDataURL('image/png');
 }
