@@ -306,22 +306,35 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <button class="rcnt-btn" data-cnt="16" onclick="setRecCount(16)" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--mu);padding:6px 16px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">16개 보기</button>
     </div>
     <div id="res-rod-box" style="width:100%"></div>
-    <!-- 가격 요약 박스 -->
-    <div id="res-price-summary" style="display:none;width:100%;margin-bottom:14px;background:rgba(255,217,61,.08);border:1.5px solid rgba(255,217,61,.35);border-radius:16px;padding:14px 16px">
-      <div style="font-family:Jua,sans-serif;font-size:13px;color:rgba(255,217,61,.7);margin-bottom:10px">💰 예상 구매 금액</div>
-      <div id="res-price-rows"></div>
-      <div style="border-top:1px solid rgba(255,217,61,.2);margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">🛒 총 예상 금액</span>
-        <span style="font-family:Jua,sans-serif;font-size:22px;color:var(--g1)" id="res-total-price">0원</span>
+
+    <!-- 선택 상품 합산 금액 (실시간) -->
+    <div id="res-sel-summary" style="display:none;width:100%;margin-bottom:12px;background:rgba(255,217,61,.1);border:1.5px solid rgba(255,217,61,.4);border-radius:16px;padding:13px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">🛒 선택한 상품</span>
+        <span style="font-size:11px;color:var(--mu)" id="res-sel-count">0개 선택</span>
+      </div>
+      <div id="res-sel-rows"></div>
+      <div style="border-top:1px solid rgba(255,217,61,.25);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:Jua,sans-serif;font-size:14px;color:var(--tx)">💰 총 예상 금액</span>
+        <span style="font-family:Jua,sans-serif;font-size:22px;color:var(--g1)" id="res-sel-total">0원</span>
       </div>
     </div>
+
     <div id="res-cards" style="width:100%"></div>
   </div>
-  <!-- 버튼 영역 (캡처 제외) -->
-  <div style="width:100%;max-width:440px;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px">
-    <button class="btn bp" onclick="restart()" style="margin-top:0">🔄 다시 테스트</button>
-    <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
-    <button class="btn" onclick="shareWithImage()" style="margin-top:0;grid-column:1/-1;background:linear-gradient(135deg,#FEE500,#FFCD00);color:#3A1D1D;font-family:Jua,sans-serif;font-size:14px">💬 공유하기</button>
+
+  <!-- 버튼 영역 -->
+  <div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+    <!-- 전체선택 + 선택공유 -->
+    <div style="display:flex;gap:8px">
+      <button onclick="toggleSelectAll()" id="btn-sel-all" style="flex:1;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:12px;color:var(--tx);padding:10px 0;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;transition:all .2s">☑️ 전체 선택</button>
+      <button onclick="shareSelected()" style="flex:2;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:12px;color:#1a1a2e;padding:10px 0;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">💬 선택 상품 공유</button>
+    </div>
+    <!-- 다시테스트 + 전체상품 -->
+    <div style="display:flex;gap:8px">
+      <button class="btn bp" onclick="restart()" style="flex:1;margin-top:0">🔄 다시 테스트</button>
+      <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="flex:1;margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
+    </div>
   </div>
   <div style="height:32px"></div>
 </div>
@@ -938,69 +951,67 @@ function getRecs(){
   }).filter(p=>p.score>0).sort((a,b)=>b.score-a.score);
   return scored.slice(0, window._recCount||4);
 }
-window.showResult = function(){
-  const recs = getRecs();
-  const recCount = window._recCount || 4;
-  document.getElementById('res-ttl').textContent = `${CAT.name}(이)의 추천 장난감`;
-  const rodSum = getRodSum();
-  const selRods = RODS.filter(r=>CAT.rods&&CAT.rods.includes(r.id));
-  const selRodNames = selRods.map(r=>r.name);
-  const chips = [CAT.gender, CAT.age+'살', CAT.pers, ...CAT.mats, '예산 '+Number(CAT.budget||14000).toLocaleString()+'원'];
-  if(selRodNames.length) chips.push('🎣 낚시대 '+selRodNames.length+'개');
-  document.getElementById('res-cp').innerHTML = chips.map(c=>`<span class="cp">${c}</span>`).join('');
-  document.getElementById('store-all').href = CFG.url||"https://smartstore.naver.com/avivi";
+// 선택된 상품 ID 집합
+let selectedProds = new Set();
 
-  // ── 낚시대 요약 박스 ──
+window.showResult = function(){
+  selectedProds = new Set();
+  const recs    = getRecs();
+  const recCount = window._recCount || 4;
+  const rodSum  = getRodSum();
+  const selRods = RODS.filter(r=>CAT.rods&&CAT.rods.includes(r.id));
+  document.getElementById('res-ttl').textContent = `${CAT.name}(이)의 추천 장난감`;
+  const chips = [CAT.gender, CAT.age+'살', CAT.pers, ...CAT.mats, '예산 '+Number(CAT.budget||14000).toLocaleString()+'원'];
+  if(selRods.length) chips.push('🎣 낚시대 '+selRods.length+'개');
+  document.getElementById('res-cp').innerHTML = chips.map(c=>`<span class="cp">${c}</span>`).join('');
+  document.getElementById('store-all').href = CFG.url||'https://smartstore.naver.com/avivi';
+
+  // 낚시대 요약
   let rodBox = '';
-  if(selRodNames.length){
-    rodBox = `<div style="width:100%;margin-bottom:14px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.35);border-radius:14px;padding:12px 16px">
-      <div style="font-family:Jua,sans-serif;font-size:14px;color:#FF6B6B;margin-bottom:8px">🎣 선택한 낚시대</div>
-      ${selRods.map(r=>`
-        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-          <span>${r.icon||'🎣'} ${r.name}</span>
-          <span style="color:var(--g1);font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
-        </div>`).join('')}
-      <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px">
+  if(selRods.length){
+    rodBox = `<div style="width:100%;margin-bottom:12px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.35);border-radius:14px;padding:12px 16px">
+      <div style="font-family:Jua,sans-serif;font-size:13px;color:#FF6B6B;margin-bottom:6px">🎣 선택한 낚시대</div>
+      ${selRods.map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span>${r.icon||'🎣'} ${r.name}</span>
+        <span style="color:#FF6B6B;font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
+      </div>`).join('')}
+      <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px">
         <span style="color:var(--mu)">낚시대 합계</span>
         <span style="color:#FF6B6B">${Number(rodSum).toLocaleString()}원</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px;margin-top:4px">
-        <span style="color:var(--mu)">남은 장난감 예산</span>
-        <span style="color:var(--g1)">${Number(Math.max((CAT.budget||14000)-rodSum,0)).toLocaleString()}원</span>
       </div>
     </div>`;
   }
   document.getElementById('res-rod-box').innerHTML = rodBox;
 
-  // ── 상품 카드 렌더링 ──
   const use2col = recCount >= 10;
 
   if(!recs.length){
-    document.getElementById('res-cards').innerHTML = `<div class="pc" style="text-align:center;padding:30px"><div style="font-size:46px">😿</div><p style="margin-top:10px;color:var(--mu)">조건에 맞는 상품이 없어요.<br>다시 테스트해보세요!</p></div>`;
-    document.getElementById('res-price-summary').style.display = 'none';
-    go('res'); recordTest(CAT); return;
+    document.getElementById('res-cards').innerHTML = `<div class="pc" style="text-align:center;padding:30px"><div style="font-size:46px">😿</div><p style="margin-top:10px;color:var(--mu)">조건에 맞는 상품이 없어요.</p></div>`;
+    updateSelSummary(); go('res'); recordTest(CAT); return;
   }
 
   if(use2col){
-    // ── 2열 그리드 카드 ──
     document.getElementById('res-cards').innerHTML =
       `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">` +
-      recs.map((p,i)=>`
-        <div class="pc ${i===0?'best':''}" style="margin-bottom:0;padding:12px;animation-delay:${i*0.05}s;cursor:pointer" onclick="window.open('${p.storeUrl||CFG.url}','_blank');recordStoreClick()">
-          ${i===0?'<div class="bb" style="font-size:10px;padding:3px 8px">👑 BEST</div>':''}
+      recs.map((p,i)=>{
+        const pid = p.id||('rec_'+i);
+        return `<div class="pc sel-card" data-pid="${pid}" data-price="${parsePrice(p.price)||0}" onclick="toggleProd('${pid}')"
+          style="margin-bottom:0;padding:12px;animation-delay:${i*0.05}s;cursor:pointer;position:relative;user-select:none">
+          <div id="ck_${pid}" style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;z-index:1">○</div>
           <div style="width:100%;aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:28px">
-            ${p.image ? `<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='${pe(p)}'"/>` : pe(p)}
+            ${p.image?`<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='${pe(p)}'"/>`:pe(p)}
           </div>
           <div style="font-family:Jua,sans-serif;font-size:12px;line-height:1.3;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
           <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-        </div>`).join('') +
-      `</div>`;
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
+        </div>`;
+      }).join('') + `</div>`;
   } else {
-    // ── 1열 상세 카드 ──
-    document.getElementById('res-cards').innerHTML = recs.map((p,i)=>`
-      <div class="pc ${i===0?'best':''}" style="animation-delay:${i*0.1}s">
-        ${i===0?'<div class="bb">👑 BEST 추천</div>':''}
+    document.getElementById('res-cards').innerHTML = recs.map((p,i)=>{
+      const pid = p.id||('rec_'+i);
+      return `<div class="pc sel-card" data-pid="${pid}" data-price="${parsePrice(p.price)||0}"
+        style="animation-delay:${i*0.1}s;cursor:pointer;user-select:none;position:relative" onclick="toggleProd('${pid}')">
+        <div id="ck_${pid}" style="position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;z-index:1">○</div>
         <div class="pi2">
           <div class="pt">${th(p)}</div>
           <div class="pif">
@@ -1010,48 +1021,131 @@ window.showResult = function(){
           </div>
         </div>
         <div class="ptgs">${(p.tags||[]).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="recordStoreClick()">🛒 스마트스토어에서 보기</a>
-      </div>`).join('');
+        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 스마트스토어에서 보기</a>
+      </div>`;
+    }).join('');
   }
 
-  // ── 가격 요약 박스 업데이트 ──
-  updatePriceSummary(recs, selRods, rodSum);
-
+  updateSelSummary();
   go('res');
   recordTest(CAT);
 };
 
-// ── 가격 요약 박스 ──
-function updatePriceSummary(recs, selRods, rodSum){
-  const summary = document.getElementById('res-price-summary');
-  const rowsEl  = document.getElementById('res-price-rows');
-  const totalEl = document.getElementById('res-total-price');
+// ── 상품 선택 토글 ──
+window.toggleProd = function(pid){
+  const card = document.querySelector('[data-pid="'+pid+'"]');
+  const ck   = document.getElementById('ck_'+pid);
+  if(!card) return;
+  if(selectedProds.has(pid)){
+    selectedProds.delete(pid);
+    if(ck){ck.textContent='○';ck.style.background='rgba(255,255,255,.12)';ck.style.borderColor='rgba(255,255,255,.3)';}
+    card.style.outline='';
+  } else {
+    selectedProds.add(pid);
+    if(ck){ck.textContent='✓';ck.style.background='rgba(255,217,61,.35)';ck.style.borderColor='#FFD93D';ck.style.color='#1a1a2e';}
+    card.style.outline='2px solid #FFD93D';
+  }
+  updateSelSummary();
+};
+
+// ── 전체 선택/해제 ──
+window.toggleSelectAll = function(){
+  const cards = Array.from(document.querySelectorAll('.sel-card'));
+  const allSelected = cards.length > 0 && cards.every(c=>selectedProds.has(c.dataset.pid));
+  const btn = document.getElementById('btn-sel-all');
+  cards.forEach(c=>{
+    const pid = c.dataset.pid;
+    if(allSelected){
+      selectedProds.delete(pid);
+      const ck=document.getElementById('ck_'+pid);
+      if(ck){ck.textContent='○';ck.style.background='rgba(255,255,255,.12)';ck.style.borderColor='rgba(255,255,255,.3)';ck.style.color='';}
+      c.style.outline='';
+    } else {
+      selectedProds.add(pid);
+      const ck=document.getElementById('ck_'+pid);
+      if(ck){ck.textContent='✓';ck.style.background='rgba(255,217,61,.35)';ck.style.borderColor='#FFD93D';ck.style.color='#1a1a2e';}
+      c.style.outline='2px solid #FFD93D';
+    }
+  });
+  if(btn) btn.textContent = allSelected ? '☑️ 전체 선택' : '☒ 전체 해제';
+  updateSelSummary();
+};
+
+// ── 선택 합산 금액 실시간 업데이트 ──
+function updateSelSummary(){
+  const summary = document.getElementById('res-sel-summary');
+  const rowsEl  = document.getElementById('res-sel-rows');
+  const totalEl = document.getElementById('res-sel-total');
+  const cntEl   = document.getElementById('res-sel-count');
   if(!summary) return;
 
-  // BEST 상품 가격
-  const bestPrice = recs.length ? (parsePrice(recs[0].price)||0) : 0;
-  const rows = [];
+  const rodSum  = getRodSum();
+  const selRods = RODS.filter(r=>CAT.rods&&CAT.rods.includes(r.id));
 
-  // BEST 추천 상품
-  if(recs.length){
-    rows.push({label:'👑 BEST: '+recs[0].name, price:bestPrice, color:'var(--g1)'});
-  }
-  // 낚시대
-  selRods.forEach(r=>{
-    rows.push({label:r.icon+' '+r.name, price:Number(r.price||0), color:'#FF6B6B'});
+  // 선택된 상품 카드에서 이름/가격 추출
+  const selItems = [];
+  selectedProds.forEach(pid=>{
+    const card = document.querySelector('[data-pid="'+pid+'"]');
+    if(!card) return;
+    const name  = card.querySelector('.pn2')?.textContent?.trim()
+                || card.querySelectorAll('div')[4]?.textContent?.trim() || pid;
+    const price = parseInt(card.dataset.price)||0;
+    selItems.push({name, price});
   });
 
-  const total = bestPrice + rodSum;
+  const toyTotal   = selItems.reduce((s,p)=>s+p.price, 0);
+  const grandTotal = toyTotal + rodSum;
 
-  rowsEl.innerHTML = rows.map(r=>`
-    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;align-items:center">
-      <span style="color:var(--mu);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px">${r.label}</span>
-      <span style="font-family:Jua,sans-serif;font-size:13px;color:${r.color};flex-shrink:0">${Number(r.price).toLocaleString()}원</span>
+  if(selItems.length === 0 && rodSum === 0){ summary.style.display='none'; return; }
+
+  summary.style.display = 'block';
+  cntEl.textContent = selItems.length+'개 선택';
+
+  let rows = selItems.map(p=>`
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+      <span style="color:var(--mu);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px">🎁 ${p.name}</span>
+      <span style="font-family:Jua,sans-serif;font-size:12px;color:var(--g1);flex-shrink:0">${p.price.toLocaleString()}원</span>
     </div>`).join('');
-
-  totalEl.textContent = total.toLocaleString()+'원';
-  summary.style.display = rows.length ? 'block' : 'none';
+  selRods.forEach(r=>{
+    rows += `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+      <span style="color:var(--mu)">${r.icon||'🎣'} ${r.name}</span>
+      <span style="font-family:Jua,sans-serif;font-size:12px;color:#FF6B6B;flex-shrink:0">${Number(r.price||0).toLocaleString()}원</span>
+    </div>`;
+  });
+  rowsEl.innerHTML = rows;
+  totalEl.textContent = grandTotal.toLocaleString()+'원';
 }
+
+// ── 선택 상품 공유 ──
+window.shareSelected = async function(){
+  const cards = Array.from(document.querySelectorAll('.sel-card'));
+  if(selectedProds.size === 0){
+    toast('먼저 공유할 상품을 선택해주세요! 📌'); return;
+  }
+  toast('공유 이미지 생성 중... 📸');
+  try{
+    const selPids = new Set(selectedProds);
+    const dataUrl = await buildResultImage(selPids);
+    if(!dataUrl){ copyLink(); return; }
+    const catName = document.getElementById('res-ttl')?.textContent||'추천 결과';
+    const appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
+    const res  = await fetch(dataUrl);
+    const blob = await res.blob();
+    const file = new File([blob],'아비비고물상_추천결과.png',{type:'image/png'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'🐱 '+catName+' — 아비비의고물상',text:'우리 아이 맞춤 장난감 추천!'+appUrl});
+      toast('공유됐어요! 💬');
+    } else if(navigator.share){
+      const link=document.createElement('a'); link.download='아비비고물상_추천결과.png'; link.href=dataUrl; link.click();
+      setTimeout(()=>navigator.share({title:'🐱 '+catName,text:'우리 아이 맞춤 장난감!',url:appUrl}).catch(()=>{}),500);
+      toast('이미지 저장 후 공유 창이 열려요! 📸');
+    } else {
+      const link=document.createElement('a'); link.download='아비비고물상_추천결과.png'; link.href=dataUrl; link.click();
+      copyLink(); toast('이미지 저장 + 링크 복사 완료! 📸📋');
+    }
+  } catch(e){ if(e.name!=='AbortError') copyLink(); }
+};
+
 window.restart = function(){
   CAT={name:"",gender:"",age:1,mats:[],pers:"",budget:14000,rods:[],rodSkip:false};
   document.getElementById('cat-name').value='';
@@ -1779,13 +1873,16 @@ window.shareWithImage = async function(){
   }
 };
 
-// ── 결과 이미지 빌드 (공유/저장 공통) ──
-async function buildResultImage(){
+// ── 결과 이미지 빌드 (공유/저장 공통, selPids=선택상품만, 없으면 전체) ──
+async function buildResultImage(selPids){
   const W = 400, PAD = 16, SCALE = 2;
   const IMG_S = 76, CARD_H = 110, CARD_GAP = 8;
 
-  // DOM이 아닌 실제 데이터에서 직접 읽기 (1열/2열 모두 정확하게)
-  const recs   = getRecs();
+  // 전체 또는 선택된 상품만
+  const allRecs = getRecs();
+  const recs = selPids
+    ? allRecs.filter(p => selPids.has(p.id) || selPids.has('rec_'+allRecs.indexOf(p)))
+    : allRecs;
   const catName = (document.getElementById('res-ttl')?.textContent || '추천 장난감').trim();
   const chips  = Array.from(document.querySelectorAll('#res-cp .cp')).map(c=>c.textContent.trim());
   const selRods = RODS.filter(r=>CAT.rods&&CAT.rods.includes(r.id));
