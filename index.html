@@ -635,7 +635,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ── Firebase 설정 ──
 const firebaseConfig = {
@@ -1227,7 +1227,6 @@ window.saveResult = async function(){
   };
 
   try{
-    const {addDoc, collection} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
     await addDoc(collection(db,'saves'), saveData);
     toast('저장됐어요! 📋 홈 > 저장된 추천 보기에서 확인하세요');
     if(btn){ btn.textContent='✅ 저장됨!'; btn.style.background='linear-gradient(135deg,#03C75A,#029944)'; }
@@ -1247,14 +1246,12 @@ async function loadSaves(){
   el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--mu)"><div style="font-size:32px">⏳</div><div style="font-family:Jua,sans-serif;margin-top:8px">불러오는 중...</div></div>';
 
   try{
-    const {collection, query, where, getDocs, deleteDoc, doc} =
-      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    // orderBy 제거 → 인덱스 불필요, JS에서 정렬
+    // 최상단에서 import된 query, where, getDocs 직접 사용
     const q = query(collection(db,'saves'), where('uid','==',uid));
     const snap = await getDocs(q);
     const saves = snap.docs
       .map(d=>({docId:d.id,...d.data()}))
-      .sort((a,b)=>(b.savedAt||0)-(a.savedAt||0)); // 최신순 정렬
+      .sort((a,b)=>(b.savedAt||0)-(a.savedAt||0));
 
     if(!saves.length){
       el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--mu)">
@@ -1323,7 +1320,6 @@ async function loadSaves(){
 window.deleteSave = async function(docId){
   if(!confirm('이 저장 기록을 삭제할까요?')) return;
   try{
-    const {deleteDoc, doc} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
     await deleteDoc(doc(db,'saves',docId));
     toast('삭제됐어요!');
     loadSaves();
