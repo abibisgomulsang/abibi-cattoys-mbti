@@ -938,15 +938,52 @@ function formatPrice(priceStr){
   return n.toLocaleString() + '원';
 }
 
+// ── 선택한 낚시대 종류 분류 ──
+function getRodType(){
+  if(!CAT.rods || !CAT.rods.length) return null;
+  const selRods = RODS.filter(r => CAT.rods.includes(r.id));
+  const hasGostick = selRods.some(r =>
+    r.type === 'gostick' || /고스틱/i.test(r.name)
+  );
+  const hasNormal = selRods.some(r =>
+    r.type === 'normal' ||
+    /2단|3단|4단|아크릴|플라스틱|와이어|막대/.test(r.name) ||
+    /낚시대/.test(r.name)
+  );
+  if(hasGostick && hasNormal) return 'both';
+  if(hasGostick) return 'gostick';
+  if(hasNormal)  return 'normal';
+  return 'any';
+}
+
+// ── 낚시대 타입에 따른 상품 필터 ──
+function filterByRodType(prods){
+  const rodType = getRodType();
+  if(!rodType) return prods; // 낚시대 미선택 → 전체
+  return prods.filter(p => {
+    const tags = p.tags || [];
+    const hasGostickTag = tags.includes('고스틱전용') || tags.includes('고스틱');
+    const hasNormalTag  = tags.includes('일반리필') || tags.includes('일반');
+    const hasRodTag = hasGostickTag || hasNormalTag;
+    if(!hasRodTag) return true; // 태그 없는 상품(기본 장난감)은 항상 포함
+    if(rodType === 'both')    return true;
+    if(rodType === 'gostick') return hasGostickTag;
+    if(rodType === 'normal')  return hasNormalTag;
+    return true;
+  });
+}
+
 function getRecs(){
   const at=atag(CAT.age);
   const pt=CAT.pers==="활발한"?["활발한","호기심많은"]:CAT.pers==="호기심많은"?["호기심많은","활발한"]:CAT.pers==="게으른"?["진지한"]:["진지한",CAT.pers];
-  // 낚시대 가격 차감 후 남은 장난감 예산
   const rodSum = getRodSum();
   const budget = Math.max((CAT.budget || 14000) - rodSum, 1000);
   const margin = 0.5;
 
-  let scored = PRODS.map(p=>{
+  // 낚시대 타입에 맞는 상품만 필터링
+  const filteredProds = filterByRodType(PRODS);
+
+  let scored = filteredProds.map(p=>{
     let s=0;
     if(p.tags&&p.tags.includes(at)) s+=3;
     CAT.mats.forEach(m=>{if(p.tags&&p.tags.includes(m)) s+=2;});
@@ -980,16 +1017,25 @@ window.showResult = function(){
   // 낚시대 요약
   let rodBox = '';
   if(selRods.length){
+    const rodType = getRodType();
+    const refillNote = rodType==='gostick' ? '💜 고스틱 전용 리필 상품이 추천됩니다'
+                     : rodType==='normal'  ? '🩵 일반 리필 상품이 추천됩니다'
+                     : rodType==='both'    ? '💜 고스틱 전용 + 🩵 일반 리필 상품이 모두 추천됩니다'
+                     : '';
     rodBox = `<div style="width:100%;margin-bottom:12px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.35);border-radius:14px;padding:12px 16px">
       <div style="font-family:Jua,sans-serif;font-size:13px;color:#FF6B6B;margin-bottom:6px">🎣 선택한 낚시대</div>
-      ${selRods.map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
-        <span>${r.icon||'🎣'} ${r.name}</span>
-        <span style="color:#FF6B6B;font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
-      </div>`).join('')}
+      ${selRods.map(r=>{
+        const isGostick = r.type==='gostick'||/고스틱/i.test(r.name);
+        return `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;align-items:center">
+          <span>${r.icon||'🎣'} ${r.name} <span style="font-size:10px;color:${isGostick?'#c084fc':'#4ECDC4'}">(${isGostick?'고스틱전용':'일반리필'})</span></span>
+          <span style="color:#FF6B6B;font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
+        </div>`;
+      }).join('')}
       <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px">
         <span style="color:var(--mu)">낚시대 합계</span>
         <span style="color:#FF6B6B">${Number(rodSum).toLocaleString()}원</span>
       </div>
+      ${refillNote ? `<div style="margin-top:7px;font-size:11px;color:var(--mu);background:rgba(255,255,255,.05);border-radius:8px;padding:6px 10px">${refillNote}</div>` : ''}
     </div>`;
   }
   document.getElementById('res-rod-box').innerHTML = rodBox;
@@ -1841,12 +1887,14 @@ window.savePers = async function(){
 
 // ── 낚시대/막대 선택 ──
 let RODS = [
-  {id:'r1', name:'30cm 깃털 낚싯대', price:4000, desc:'가볍고 짧아서 좁은 공간에서도 OK', icon:'🪶'},
-  {id:'r2', name:'50cm 깃털 낚싯대', price:5500, desc:'가장 인기 있는 기본 낚싯대', icon:'🎣'},
-  {id:'r3', name:'70cm 깃털 낚싯대', price:7000, desc:'길어서 고양이가 더 신나게 뛰어요', icon:'🎣'},
-  {id:'r4', name:'끈 낚싯대 30cm', price:3500, desc:'끈 소재를 좋아하는 아이에게 추천', icon:'🧵'},
-  {id:'r5', name:'비닐 바스락 낚싯대', price:5000, desc:'바스락 소리로 사냥 본능 자극', icon:'🛍️'},
-  {id:'r6', name:'LED 빛 낚싯대', price:9000, desc:'어둠 속에서도 신나는 빛 장난감', icon:'✨'},
+  {id:'r1', name:'고스틱 막대',        price:12000, desc:'고스틱 전용 리필만 사용 가능',      icon:'🪄', type:'gostick'},
+  {id:'r2', name:'2단 낚시대',          price:4000,  desc:'일반 리필 사용 가능',               icon:'🎣', type:'normal'},
+  {id:'r3', name:'3단 낚시대',          price:5000,  desc:'일반 리필 사용 가능',               icon:'🎣', type:'normal'},
+  {id:'r4', name:'4단 낚시대',          price:6000,  desc:'일반 리필 사용 가능',               icon:'🎣', type:'normal'},
+  {id:'r5', name:'아크릴 와이어 막대',   price:5500,  desc:'일반 리필 사용 가능',               icon:'🔮', type:'normal'},
+  {id:'r6', name:'플라스틱 와이어 막대', price:4500,  desc:'일반 리필 사용 가능',               icon:'🪢', type:'normal'},
+  {id:'r7', name:'아크릴 막대',         price:5000,  desc:'일반 리필 사용 가능',               icon:'💎', type:'normal'},
+  {id:'r8', name:'플라스틱 막대',       price:3500,  desc:'일반 리필 사용 가능',               icon:'🦯', type:'normal'},
 ];
 
 window.rRodScreen = function(){
@@ -1873,20 +1921,44 @@ function renderRodList(){
     el.innerHTML = '<div style="text-align:center;color:var(--mu);font-size:13px;padding:20px">등록된 낚시대가 없어요.<br>관리자 패널에서 추가해주세요!</div>';
     return;
   }
-  el.innerHTML = RODS.map(r=>{
+
+  // 고스틱 / 일반 그룹으로 분리
+  const gostickRods = RODS.filter(r => r.type==='gostick' || /고스틱/i.test(r.name));
+  const normalRods  = RODS.filter(r => r.type==='normal'  || (!r.type && !/고스틱/i.test(r.name)));
+
+  function rodCard(r){
     const sel = CAT.rods && CAT.rods.includes(r.id);
-    return `<div onclick="toggleRod('${r.id}')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:${sel?'rgba(255,217,61,.12)':'rgba(255,255,255,.06)'};border:1.5px solid ${sel?'var(--g1)':'var(--border)'};border-radius:14px;cursor:pointer;transition:all .2s">
-      <div style="font-size:28px;flex-shrink:0">${r.icon||'🎣'}</div>
-      <div style="flex:1">
+    const isGostick = r.type==='gostick' || /고스틱/i.test(r.name);
+    const typeColor = isGostick ? '#c084fc' : '#4ECDC4';
+    const typeLabel = isGostick ? '고스틱 전용 리필' : '일반 리필';
+    return `<div onclick="toggleRod('${r.id}')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:${sel?'rgba(255,217,61,.12)':'rgba(255,255,255,.06)'};border:1.5px solid ${sel?'var(--g1)':'var(--border)'};border-radius:14px;cursor:pointer;transition:all .2s;margin-bottom:6px">
+      <div style="font-size:26px;flex-shrink:0">${r.icon||'🎣'}</div>
+      <div style="flex:1;min-width:0">
         <div style="font-family:Jua,sans-serif;font-size:14px;color:${sel?'var(--g1)':'var(--tx)'}">${r.name}</div>
         <div style="font-size:11px;color:var(--mu);margin-top:2px">${r.desc||''}</div>
+        <span style="display:inline-block;margin-top:4px;font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(${isGostick?'192,132,252':'78,205,196'},.15);color:${typeColor};border:1px solid ${typeColor}4d">${typeLabel}</span>
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${Number(r.price||0).toLocaleString()}원</div>
         <div style="font-size:18px;margin-top:2px">${sel?'✅':'⬜'}</div>
       </div>
     </div>`;
-  }).join('');
+  }
+
+  let html = '';
+  if(gostickRods.length){
+    html += `<div style="font-size:11px;color:#c084fc;font-family:Jua,sans-serif;margin-bottom:5px;padding:0 2px">🪄 고스틱 막대 — 고스틱 전용 리필 추천</div>`;
+    html += gostickRods.map(rodCard).join('');
+  }
+  if(normalRods.length){
+    if(gostickRods.length) html += `<div style="height:10px"></div>`;
+    html += `<div style="font-size:11px;color:#4ECDC4;font-family:Jua,sans-serif;margin-bottom:5px;padding:0 2px">🎣 일반 막대 — 일반 리필 추천</div>`;
+    html += normalRods.map(rodCard).join('');
+  }
+  if(!gostickRods.length && !normalRods.length){
+    html = RODS.map(rodCard).join('');
+  }
+  el.innerHTML = html;
 }
 
 window.toggleRod = function(id){
