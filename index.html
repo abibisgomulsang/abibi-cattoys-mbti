@@ -938,6 +938,14 @@ function formatPrice(priceStr){
   return n.toLocaleString() + '원';
 }
 
+// ── 태그 정규화 (# 제거) ──
+function normTag(t){ return (t||'').replace(/^#+/,'').trim().toLowerCase(); }
+function hasTags(tags, ...targets){
+  return targets.some(target =>
+    (tags||[]).some(t => normTag(t) === target.toLowerCase())
+  );
+}
+
 // ── 선택한 낚시대 종류 분류 ──
 function getRodType(){
   if(!CAT.rods || !CAT.rods.length) return null;
@@ -948,7 +956,7 @@ function getRodType(){
   const hasNormal = selRods.some(r =>
     r.type === 'normal' ||
     /2단|3단|4단|아크릴|플라스틱|와이어|막대/.test(r.name) ||
-    /낚시대/.test(r.name)
+    (r.type !== 'gostick' && !/고스틱/i.test(r.name))
   );
   if(hasGostick && hasNormal) return 'both';
   if(hasGostick) return 'gostick';
@@ -956,21 +964,47 @@ function getRodType(){
   return 'any';
 }
 
-// ── 낚시대 타입에 따른 상품 필터 ──
+// ── 낚시대 타입에 따른 상품 필터 (동등 비율 포함) ──
 function filterByRodType(prods){
   const rodType = getRodType();
   if(!rodType) return prods; // 낚시대 미선택 → 전체
-  return prods.filter(p => {
-    const tags = p.tags || [];
-    const hasGostickTag = tags.includes('고스틱전용') || tags.includes('고스틱');
-    const hasNormalTag  = tags.includes('일반리필') || tags.includes('일반');
-    const hasRodTag = hasGostickTag || hasNormalTag;
-    if(!hasRodTag) return true; // 태그 없는 상품(기본 장난감)은 항상 포함
-    if(rodType === 'both')    return true;
-    if(rodType === 'gostick') return hasGostickTag;
-    if(rodType === 'normal')  return hasNormalTag;
-    return true;
-  });
+
+  const isGostickProd = p => hasTags(p.tags, '고스틱전용', '고스틱');
+  const isNormalProd  = p => hasTags(p.tags, '일반리필', '일반');
+
+  if(rodType === 'gostick'){
+    // 고스틱만 → 고스틱 전용 태그 상품 + 태그 없는 일반 장난감
+    return prods.filter(p => {
+      const hasG = isGostickProd(p);
+      const hasN = isNormalProd(p);
+      if(!hasG && !hasN) return true; // 리필태그 없는 장난감 → 포함
+      return hasG;                    // 고스틱 전용만
+    });
+  }
+  if(rodType === 'normal'){
+    // 일반만 → 일반리필 태그 상품 + 태그 없는 일반 장난감
+    return prods.filter(p => {
+      const hasG = isGostickProd(p);
+      const hasN = isNormalProd(p);
+      if(!hasG && !hasN) return true; // 리필태그 없는 장난감 → 포함
+      return hasN;                    // 일반 리필만
+    });
+  }
+  if(rodType === 'both'){
+    // 둘 다 → 고스틱/일반 동등 비율로 섞기
+    const gostickProds = prods.filter(p => isGostickProd(p));
+    const normalProds  = prods.filter(p => isNormalProd(p) && !isGostickProd(p));
+    const otherProds   = prods.filter(p => !isGostickProd(p) && !isNormalProd(p));
+    // 고스틱/일반 번갈아 합치기 (동등 비율)
+    const mixed = [];
+    const maxLen = Math.max(gostickProds.length, normalProds.length);
+    for(let i=0; i<maxLen; i++){
+      if(i < gostickProds.length) mixed.push(gostickProds[i]);
+      if(i < normalProds.length)  mixed.push(normalProds[i]);
+    }
+    return [...mixed, ...otherProds];
+  }
+  return prods;
 }
 
 function getRecs(){
