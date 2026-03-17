@@ -156,8 +156,28 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <div style="font-size:13px;color:var(--mu);margin-top:5px;line-height:1.6">간단한 질문으로 우리 아이에게<br>딱 맞는 장난감을 추천해드릴게요!</div>
     </div>
     <button class="btn bp" onclick="go('name')">테스트 시작하기 🐾</button>
+    <button onclick="go('saves')" style="width:100%;margin-top:10px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;color:var(--tx);padding:13px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
+      📋 저장된 추천 보기 <span id="saves-badge" style="display:none;background:var(--g1);color:#1a1a2e;border-radius:20px;padding:1px 8px;font-size:11px"></span>
+    </button>
   </div>
   <button class="admbtn" onclick="showLogin()">⚙️ 관리자</button>
+</div>
+
+<!-- SAVES 화면 -->
+<div class="scr" id="s-saves" style="justify-content:flex-start;padding-top:28px">
+  <div style="width:100%;max-width:440px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <button onclick="go('home')" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--tx);cursor:pointer;font-size:13px">← 홈</button>
+      <div style="font-family:Jua,sans-serif;font-size:20px;color:var(--g1)">📋 저장된 추천 목록</div>
+    </div>
+    <div id="saves-list">
+      <div style="text-align:center;padding:40px 0;color:var(--mu)">
+        <div style="font-size:40px;margin-bottom:10px">📭</div>
+        <div style="font-family:Jua,sans-serif">저장된 추천이 없어요</div>
+        <div style="font-size:12px;margin-top:6px">추천 결과 화면에서 💾 저장하기를 눌러보세요!</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- NAME -->
@@ -325,6 +345,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 
   <!-- 버튼 영역 -->
   <div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+    <!-- 저장하기 (전체 너비) -->
+    <button onclick="saveResult()" id="btn-save-res" style="width:100%;background:linear-gradient(135deg,#4ECDC4,#2eb8ae);border:none;border-radius:12px;color:#fff;padding:13px 0;cursor:pointer;font-family:Jua,sans-serif;font-size:15px">💾 이 추천 저장하기</button>
     <!-- 전체선택 + 선택공유 -->
     <div style="display:flex;gap:8px">
       <button onclick="toggleSelectAll()" id="btn-sel-all" style="flex:1;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:12px;color:var(--tx);padding:10px 0;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;transition:all .2s">☑️ 전체 선택</button>
@@ -797,17 +819,6 @@ function applyConfig(){
 }
 
 // ── 화면 이동 ──
-window.go = function(id){
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  document.getElementById('s-'+id).classList.add('on');
-  window.scrollTo(0,0);
-  if(id==='age') rAge();
-  if(id==='mat') rMat();
-  if(id==='pers') rPers();
-  if(id==='budget'){ CAT.budget = CAT.budget||14000; window.rBudget(); }
-  if(id==='rod') rRodScreen();
-  rProg(id);
-};
 
 window.rProg = function(id){
   const steps={name:1,age:2,mat:3,pers:4,budget:5,rod:6};
@@ -1120,7 +1131,6 @@ function updateSelSummary(){
 
 // ── 선택 상품 공유 ──
 window.shareSelected = async function(){
-  const cards = Array.from(document.querySelectorAll('.sel-card'));
   if(selectedProds.size === 0){
     toast('먼저 공유할 상품을 선택해주세요! 📌'); return;
   }
@@ -1128,24 +1138,320 @@ window.shareSelected = async function(){
   try{
     const selPids = new Set(selectedProds);
     const dataUrl = await buildResultImage(selPids);
-    if(!dataUrl){ copyLink(); return; }
+    if(!dataUrl){ toast('이미지 생성 실패. 다시 시도해주세요.'); return; }
+
     const catName = document.getElementById('res-ttl')?.textContent||'추천 결과';
-    const appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
-    const res  = await fetch(dataUrl);
-    const blob = await res.blob();
-    const file = new File([blob],'아비비고물상_추천결과.png',{type:'image/png'});
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:'🐱 '+catName+' — 아비비의고물상',text:'우리 아이 맞춤 장난감 추천!'+appUrl});
-      toast('공유됐어요! 💬');
-    } else if(navigator.share){
-      const link=document.createElement('a'); link.download='아비비고물상_추천결과.png'; link.href=dataUrl; link.click();
-      setTimeout(()=>navigator.share({title:'🐱 '+catName,text:'우리 아이 맞춤 장난감!',url:appUrl}).catch(()=>{}),500);
-      toast('이미지 저장 후 공유 창이 열려요! 📸');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if(isMobile && navigator.share){
+      try{
+        const res  = await fetch(dataUrl);
+        const blob = await res.blob();
+        const file = new File([blob],'아비비고물상_추천결과.png',{type:'image/png'});
+        if(navigator.canShare && navigator.canShare({files:[file]})){
+          await navigator.share({
+            files: [file],
+            title: '🐱 '+catName+' — 아비비의고물상',
+            text:  '우리 아이 맞춤 장난감 추천!',
+          });
+          toast('공유됐어요! 💬');
+        } else {
+          showImgOverlay(dataUrl);
+          toast('이미지를 길게 눌러 저장 후 공유하세요! 📸');
+        }
+      } catch(shareErr){
+        if(shareErr.name !== 'AbortError'){
+          showImgOverlay(dataUrl);
+          toast('이미지를 길게 눌러 저장하세요! 📸');
+        }
+      }
     } else {
-      const link=document.createElement('a'); link.download='아비비고물상_추천결과.png'; link.href=dataUrl; link.click();
-      copyLink(); toast('이미지 저장 + 링크 복사 완료! 📸📋');
+      const link = document.createElement('a');
+      link.download = '아비비고물상_추천결과.png';
+      link.href = dataUrl; link.click();
+      toast('이미지가 저장됐어요! 📸');
     }
-  } catch(e){ if(e.name!=='AbortError') copyLink(); }
+  } catch(e){
+    console.error('shareSelected error:', e);
+    toast('공유 중 오류가 발생했어요. 다시 시도해주세요.');
+  }
+};
+
+
+// ══════════════════════════════════════════
+// 💾 저장 기능
+// ══════════════════════════════════════════
+
+// 기기 고유 ID (localStorage)
+function getDeviceId(){
+  let id = localStorage.getItem('abibi_uid');
+  if(!id){ id = 'u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8); localStorage.setItem('abibi_uid',id); }
+  return id;
+}
+
+// 추천 결과 저장
+window.saveResult = async function(){
+  const recs = getRecs();
+  if(!recs.length){ toast('추천 결과가 없어요!'); return; }
+
+  const btn = document.getElementById('btn-save-res');
+  if(btn){ btn.textContent='저장 중...'; btn.disabled=true; }
+
+  const selRods  = RODS.filter(r=>CAT.rods&&CAT.rods.includes(r.id));
+  const rodSum   = getRodSum();
+  const toyTotal = recs.reduce((s,p)=>s+(parsePrice(p.price)||0),0);
+
+  const saveData = {
+    uid:       getDeviceId(),
+    savedAt:   Date.now(),
+    cat: {
+      name:    CAT.name,
+      gender:  CAT.gender,
+      age:     CAT.age,
+      mats:    CAT.mats,
+      pers:    CAT.pers,
+      budget:  CAT.budget,
+    },
+    rods:      selRods.map(r=>({name:r.name, price:r.price, icon:r.icon||'🎣'})),
+    rodSum,
+    recs:      recs.map(p=>({
+      id:          p.id||'',
+      name:        p.name,
+      price:       p.price,
+      description: p.description||'',
+      image:       p.image||'',
+      tags:        p.tags||[],
+      storeUrl:    p.storeUrl||CFG.url||'',
+    })),
+    totalPrice: toyTotal + rodSum,
+  };
+
+  try{
+    const {addDoc, collection} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    await addDoc(collection(db,'saves'), saveData);
+    toast('저장됐어요! 📋 홈 > 저장된 추천 보기에서 확인하세요');
+    if(btn){ btn.textContent='✅ 저장됨!'; btn.style.background='linear-gradient(135deg,#03C75A,#029944)'; }
+    updateSavesBadge();
+  } catch(e){
+    console.error('save error:',e);
+    toast('저장 실패: '+e.message);
+    if(btn){ btn.textContent='💾 이 추천 저장하기'; btn.disabled=false; btn.style.background=''; }
+  }
+};
+
+// 저장 목록 불러오기
+async function loadSaves(){
+  const uid = getDeviceId();
+  const el  = document.getElementById('saves-list');
+  if(!el) return;
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--mu)"><div style="font-size:32px">⏳</div><div style="font-family:Jua,sans-serif;margin-top:8px">불러오는 중...</div></div>';
+
+  try{
+    const {collection, query, where, orderBy, getDocs, deleteDoc, doc} =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const q = query(collection(db,'saves'), where('uid','==',uid), orderBy('savedAt','desc'));
+    const snap = await getDocs(q);
+    const saves = snap.docs.map(d=>({docId:d.id,...d.data()}));
+
+    if(!saves.length){
+      el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--mu)">
+        <div style="font-size:40px;margin-bottom:10px">📭</div>
+        <div style="font-family:Jua,sans-serif">저장된 추천이 없어요</div>
+        <div style="font-size:12px;margin-top:6px">추천 결과 화면에서 💾 저장하기를 눌러보세요!</div>
+      </div>`;
+      return;
+    }
+
+    el.innerHTML = saves.map(s=>{
+      const date = new Date(s.savedAt).toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+      const chips = [s.cat.gender, s.cat.age+'살', s.cat.pers, ...(s.cat.mats||[])].filter(Boolean);
+      const topRecs = (s.recs||[]).slice(0,3);
+      return `<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;margin-bottom:12px">
+        <!-- 헤더 -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div>
+            <div style="font-family:Jua,sans-serif;font-size:17px;color:var(--g1)">🐱 ${s.cat.name}(이)의 추천</div>
+            <div style="font-size:11px;color:var(--mu);margin-top:3px">${date}</div>
+          </div>
+          <button onclick="deleteSave('${s.docId}')" style="background:rgba(233,69,96,.15);border:1px solid rgba(233,69,96,.4);border-radius:8px;color:#e94560;padding:5px 10px;cursor:pointer;font-size:11px;flex-shrink:0">🗑️ 삭제</button>
+        </div>
+        <!-- 조건 칩 -->
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">
+          ${chips.map(c=>`<span class="cp" style="font-size:11px;padding:3px 9px">${c}</span>`).join('')}
+          <span class="cp" style="font-size:11px;padding:3px 9px">예산 ${Number(s.cat.budget||0).toLocaleString()}원</span>
+          ${s.rods&&s.rods.length?`<span class="cp" style="font-size:11px;padding:3px 9px;color:#FF6B6B;border-color:rgba(255,107,107,.4)">🎣 낚시대 ${s.rods.length}개</span>`:''}
+        </div>
+        <!-- 추천 상품 미리보기 (상위 3개) -->
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+          ${topRecs.map((p,i)=>`
+            <div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);border-radius:10px;padding:8px 10px">
+              <div style="width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px">
+                ${p.image?`<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🐱'"/>`:p.name.slice(0,1)||'🐱'}
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:12px;font-family:Jua,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+                <div style="font-size:11px;color:var(--g1)">${p.price||''}</div>
+              </div>
+              <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="recordStoreClick()" style="background:rgba(3,199,90,.15);border:1px solid rgba(3,199,90,.35);border-radius:7px;color:#03C75A;padding:4px 8px;font-size:10px;font-family:Jua,sans-serif;text-decoration:none;flex-shrink:0">보기</a>
+            </div>`).join('')}
+          ${s.recs&&s.recs.length>3?`<div style="text-align:center;font-size:11px;color:var(--mu);padding:4px">외 ${s.recs.length-3}개 더</div>`:''}
+        </div>
+        <!-- 합계 + 다시보기 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(255,255,255,.1)">
+          <div>
+            <div style="font-size:11px;color:var(--mu)">💰 총 예상 금액</div>
+            <div style="font-family:Jua,sans-serif;font-size:16px;color:var(--g1)">${Number(s.totalPrice||0).toLocaleString()}원</div>
+          </div>
+          <button onclick="replayResult('${s.docId}')" style="background:linear-gradient(135deg,var(--g1),var(--g2));border:none;border-radius:10px;color:#1a1a2e;padding:9px 16px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">🔍 다시 보기</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    // 전역에 저장 데이터 캐시
+    window._savesCache = saves;
+    updateSavesBadge(saves.length);
+  } catch(e){
+    console.error('loadSaves error:',e);
+    el.innerHTML = `<div style="text-align:center;padding:30px;color:var(--mu)">불러오기 실패: ${e.message}</div>`;
+  }
+}
+
+// 저장 삭제
+window.deleteSave = async function(docId){
+  if(!confirm('이 저장 기록을 삭제할까요?')) return;
+  try{
+    const {deleteDoc, doc} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    await deleteDoc(doc(db,'saves',docId));
+    toast('삭제됐어요!');
+    loadSaves();
+  } catch(e){ toast('삭제 실패: '+e.message); }
+};
+
+// 저장된 추천 다시 보기
+window.replayResult = function(docId){
+  const save = window._savesCache?.find(s=>s.docId===docId);
+  if(!save){ toast('데이터를 찾을 수 없어요.'); return; }
+
+  // CAT 복원
+  CAT = {...CAT, ...save.cat, rods: (save.rods||[]).map((_,i)=>{ return null; }).filter(Boolean) };
+  // 저장된 rods 이름으로 RODS에서 id 매핑
+  CAT.rods = (save.rods||[]).map(sr=> (RODS.find(r=>r.name===sr.name)||{}).id ).filter(Boolean);
+
+  // 결과 화면에 저장된 recs를 직접 표시
+  window._replayRecs = save.recs;
+  window._recCount   = save.recs.length;
+
+  // 결과 화면 렌더링
+  showSavedResult(save);
+  toast('저장된 추천을 불러왔어요! 🐱');
+};
+
+// 저장된 결과 화면 렌더링
+function showSavedResult(save){
+  const recs     = save.recs||[];
+  const selRods  = save.rods||[];
+  const rodSum   = save.rodSum||0;
+
+  document.getElementById('res-ttl').textContent = `${save.cat.name}(이)의 추천 장난감`;
+  const chips = [save.cat.gender, save.cat.age+'살', save.cat.pers, ...(save.cat.mats||[]),
+    '예산 '+Number(save.cat.budget||0).toLocaleString()+'원'];
+  if(selRods.length) chips.push('🎣 낚시대 '+selRods.length+'개');
+  document.getElementById('res-cp').innerHTML = chips.filter(Boolean).map(c=>`<span class="cp">${c}</span>`).join('');
+  document.getElementById('store-all').href = CFG.url||'https://smartstore.naver.com/avivi';
+
+  // 낚시대 박스
+  let rodBox = '';
+  if(selRods.length){
+    rodBox = `<div style="width:100%;margin-bottom:12px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.35);border-radius:14px;padding:12px 16px">
+      <div style="font-family:Jua,sans-serif;font-size:13px;color:#FF6B6B;margin-bottom:6px">🎣 선택한 낚시대</div>
+      ${selRods.map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span>${r.icon||'🎣'} ${r.name}</span>
+        <span style="color:#FF6B6B;font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
+      </div>`).join('')}
+      <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px">
+        <span style="color:var(--mu)">낚시대 합계</span>
+        <span style="color:#FF6B6B">${Number(rodSum).toLocaleString()}원</span>
+      </div>
+    </div>`;
+  }
+  document.getElementById('res-rod-box').innerHTML = rodBox;
+
+  // 상품 카드 렌더링 (저장된 데이터 그대로)
+  selectedProds = new Set();
+  const use2col = recs.length >= 10;
+
+  if(!recs.length){
+    document.getElementById('res-cards').innerHTML = `<div class="pc" style="text-align:center;padding:30px"><div style="font-size:46px">😿</div></div>`;
+  } else if(use2col){
+    document.getElementById('res-cards').innerHTML =
+      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">` +
+      recs.map((p,i)=>{
+        const pid = p.id||('sv_'+i);
+        return `<div class="pc sel-card" data-pid="${pid}" data-price="${parsePrice(p.price)||0}" onclick="toggleProd('${pid}')"
+          style="margin-bottom:0;padding:12px;cursor:pointer;position:relative;user-select:none">
+          <div id="ck_${pid}" style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;z-index:1">○</div>
+          <div style="width:100%;aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:28px">
+            ${p.image?`<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🐱'"/>`:p.name?.slice(0,1)||'🐱'}
+          </div>
+          <div style="font-family:Jua,sans-serif;font-size:12px;line-height:1.3;margin-bottom:4px">${p.name}</div>
+          <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
+          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:Jua,sans-serif;text-decoration:none">🛒 스토어 보기</a>
+        </div>`;
+      }).join('') + `</div>`;
+  } else {
+    document.getElementById('res-cards').innerHTML = recs.map((p,i)=>{
+      const pid = p.id||('sv_'+i);
+      return `<div class="pc sel-card" data-pid="${pid}" data-price="${parsePrice(p.price)||0}"
+        style="cursor:pointer;user-select:none;position:relative" onclick="toggleProd('${pid}')">
+        <div id="ck_${pid}" style="position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;z-index:1">○</div>
+        <div class="pi2">
+          <div class="pt">${th(p)}</div>
+          <div class="pif">
+            <div class="pn2">${p.name}</div>
+            <div class="pde">${p.description||''}</div>
+            <div class="ppr">${formatPrice(p.price)}</div>
+          </div>
+        </div>
+        <div class="ptgs">${(p.tags||[]).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
+        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 스마트스토어에서 보기</a>
+      </div>`;
+    }).join('');
+  }
+
+  // 저장 버튼 상태 변경 (이미 저장된 항목)
+  const btn = document.getElementById('btn-save-res');
+  if(btn){ btn.textContent='✅ 저장된 추천'; btn.style.background='rgba(255,255,255,.1)'; btn.disabled=true; }
+
+  updateSelSummary();
+  go('res');
+}
+
+// 홈 뱃지 업데이트
+function updateSavesBadge(cnt){
+  const badge = document.getElementById('saves-badge');
+  if(!badge) return;
+  if(!cnt){ badge.style.display='none'; return; }
+  badge.style.display='inline-block';
+  badge.textContent = cnt+'개';
+}
+
+// saves 화면 접근 시 자동 로드
+window.go = function(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='age')    rAge();
+  if(id==='mat')    rMat();
+  if(id==='pers')   rPers();
+  if(id==='budget'){ CAT.budget=CAT.budget||14000; window.rBudget(); }
+  if(id==='rod')    rRodScreen();
+  if(id==='saves')  loadSaves();
+  // 저장 버튼 초기화 (결과화면 재진입 시)
+  if(id==='res'){
+    const btn=document.getElementById('btn-save-res');
+    if(btn){ btn.textContent='💾 이 추천 저장하기'; btn.style.background=''; btn.disabled=false; }
+  }
 };
 
 window.restart = function(){
@@ -1828,50 +2134,46 @@ window.cartUrl = function(p){
 
 // ── 공유하기 — 이미지로 생성해서 공유 ──
 window.shareWithImage = async function(){
-  toast('공유 준비 중... 📸');
+  toast('공유 이미지 생성 중... 📸');
   try{
     const dataUrl = await buildResultImage();
-    if(!dataUrl){ copyLink(); return; }
+    if(!dataUrl){ toast('이미지 생성 실패. 다시 시도해주세요.'); return; }
 
-    const catName = document.getElementById('res-ttl')?.textContent || '추천 결과';
-    const appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
+    const catName  = document.getElementById('res-ttl')?.textContent || '추천 결과';
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    // Blob/File 생성
-    const res  = await fetch(dataUrl);
-    const blob = await res.blob();
-    const file = new File([blob], '아비비고물상_추천결과.png', {type:'image/png'});
-
-    // 모바일: 이미지 파일 공유 시도
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({
-        files: [file],
-        title: '🐱 '+catName+' — 아비비의고물상',
-        text:  '우리 아이 맞춤 장난감 추천 목록이에요!\n'+appUrl,
-      });
-      toast('공유됐어요! 💬');
-    } else if(navigator.share){
-      // 파일 공유 불가 → 이미지 저장 + 텍스트 공유
-      const link = document.createElement('a');
-      link.download = '아비비고물상_추천결과.png';
-      link.href = dataUrl; link.click();
-      setTimeout(()=>{
-        navigator.share({
-          title: '🐱 '+catName+' — 아비비의고물상',
-          text:  '우리 아이 맞춤 장난감 추천 목록이에요!',
-          url:   appUrl,
-        }).catch(()=>{});
-      }, 500);
-      toast('이미지 저장 후 공유 창이 열려요! 📸');
+    if(isMobile && navigator.share){
+      try{
+        const res  = await fetch(dataUrl);
+        const blob = await res.blob();
+        const file = new File([blob], '아비비고물상_추천결과.png', {type:'image/png'});
+        if(navigator.canShare && navigator.canShare({files:[file]})){
+          await navigator.share({
+            files: [file],
+            title: '🐱 '+catName+' — 아비비의고물상',
+            text:  '우리 아이 맞춤 장난감 추천!',
+          });
+          toast('공유됐어요! 💬');
+        } else {
+          showImgOverlay(dataUrl);
+          toast('이미지를 길게 눌러 저장 후 공유하세요! 📸');
+        }
+      } catch(shareErr){
+        if(shareErr.name !== 'AbortError'){
+          showImgOverlay(dataUrl);
+          toast('이미지를 길게 눌러 저장하세요! 📸');
+        }
+      }
     } else {
-      // PC: 이미지 다운로드 + 링크 복사
+      // PC: 이미지 다운로드
       const link = document.createElement('a');
       link.download = '아비비고물상_추천결과.png';
       link.href = dataUrl; link.click();
-      copyLink();
-      toast('이미지 저장 + 링크 복사 완료! 📸📋');
+      toast('이미지가 저장됐어요! 📸');
     }
   } catch(e){
-    if(e.name !== 'AbortError') copyLink();
+    console.error('shareWithImage error:', e);
+    toast('공유 중 오류가 발생했어요. 다시 시도해주세요.');
   }
 };
 
