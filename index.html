@@ -946,22 +946,27 @@ function hasTags(tags, ...targets){
   );
 }
 
+// ── 낚시대가 고스틱 계열인지 판별 ──
+function isGostickRod(r){
+  // type 필드가 있으면 우선
+  if(r.type === 'gostick') return true;
+  if(r.type === 'normal')  return false;
+  // type 없으면 이름으로 판별
+  return /고스틱/i.test(r.name||'');
+}
+
 // ── 선택한 낚시대 종류 분류 ──
 function getRodType(){
   if(!CAT.rods || !CAT.rods.length) return null;
   const selRods = RODS.filter(r => CAT.rods.includes(r.id));
-  const hasGostick = selRods.some(r =>
-    r.type === 'gostick' || /고스틱/i.test(r.name)
-  );
-  const hasNormal = selRods.some(r =>
-    r.type === 'normal' ||
-    /2단|3단|4단|아크릴|플라스틱|와이어|막대/.test(r.name) ||
-    (r.type !== 'gostick' && !/고스틱/i.test(r.name))
-  );
+  if(!selRods.length) return null;
+
+  const hasGostick = selRods.some(r => isGostickRod(r));
+  const hasNormal  = selRods.some(r => !isGostickRod(r));
+
   if(hasGostick && hasNormal) return 'both';
   if(hasGostick) return 'gostick';
-  if(hasNormal)  return 'normal';
-  return 'any';
+  return 'normal';
 }
 
 // ── 낚시대 타입에 따른 상품 필터 (동등 비율 포함) ──
@@ -2053,6 +2058,8 @@ function renderRodAdmin(){
 window.addRod = function(){
   const n = document.getElementById('new-rod-n').value.trim();
   if(!n){ toast('낚시대 이름을 입력해주세요!'); return; }
+  // 이름에 '고스틱' 포함 시 자동으로 gostick 타입 설정
+  const autoType = /고스틱/i.test(n) ? 'gostick' : 'normal';
   RODS.push({
     id: 'r'+Date.now(),
     name: n,
@@ -2060,10 +2067,11 @@ window.addRod = function(){
     desc: document.getElementById('new-rod-d').value.trim(),
     icon: document.getElementById('new-rod-i').value.trim()||'🎣',
     image: document.getElementById('new-rod-img').value.trim(),
+    type: autoType,
   });
   ['new-rod-n','new-rod-p','new-rod-d','new-rod-i','new-rod-img'].forEach(id=>document.getElementById(id).value='');
   renderRodAdmin();
-  toast('낚시대가 추가됐어요! 🎣');
+  toast('낚시대가 추가됐어요! 🎣 ('+( autoType==='gostick'?'고스틱 전용':'일반')+' 타입으로 설정됨)');
 };
 
 window.delRod = function(idx){
