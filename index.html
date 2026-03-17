@@ -342,8 +342,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 
     <div id="res-cards" style="width:100%"></div>
     <!-- 더보기 버튼 -->
-    <div id="res-more-wrap" style="width:100%;margin-top:4px;margin-bottom:4px;display:none">
-      <button onclick="loadMoreRecs()" style="width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);border-radius:14px;color:var(--tx);padding:14px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;transition:all .2s">
+    <div id="res-more-wrap" style="width:100%;margin:12px 0 4px;display:none">
+      <button onclick="loadMoreRecs()" style="width:100%;background:rgba(255,217,61,.1);border:1.5px solid rgba(255,217,61,.4);border-radius:14px;color:var(--g1);padding:14px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px">
         🔄 다른 제품 더보기
       </button>
     </div>
@@ -2310,18 +2310,21 @@ function renderCards(){
     }).join('');
   }
 
-  // 더보기 버튼: 전체 상품이 현재 탭 개수보다 많을 때만 표시
+  // 더보기 버튼: 전체 필터된 상품 수가 현재 탭보다 많을 때 표시
   const moreWrap = document.getElementById('res-more-wrap');
   if(moreWrap){
-    if(total > cnt){
+    // 낚시대 타입 필터 적용된 전체 상품 수
+    const totalFiltered = filterByRodType(PRODS).length;
+    if(totalFiltered > cnt){
       moreWrap.style.display = 'block';
       const btn = moreWrap.querySelector('button');
       if(btn){
         const remaining = total - (page+1)*cnt;
-        const nextCount = remaining > 0 ? Math.min(remaining, cnt) : cnt;
-        btn.textContent = remaining > 0
-          ? `🔄 다른 제품 더보기 (${nextCount}개)`
-          : `🔄 처음 추천으로 돌아가기`;
+        const isLast = remaining <= 0;
+        const nextCount = isLast ? Math.min(cnt, total) : Math.min(remaining, cnt);
+        btn.innerHTML = isLast
+          ? `🔄 처음 추천으로 돌아가기`
+          : `🔄 다른 제품 더보기 <span style="font-size:12px;opacity:.7">(${nextCount}개 더)</span>`;
       }
     } else {
       moreWrap.style.display = 'none';
