@@ -124,23 +124,23 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 .nt{margin-top:10px;padding:10px;background:#111827;border-radius:8px;font-size:11px;color:#9ca3af;line-height:1.6}
 @media(max-width:380px){.card{padding:20px 14px}.abig{font-size:56px}.pg{gap:6px}}
 </style>
-<!-- 카카오톡 인앱 브라우저 → 즉시 외부 브라우저로 리다이렉트 -->
+<!-- 카카오톡 인앱 브라우저 감지 -->
 <script>
 (function(){
   var ua = navigator.userAgent;
   if(!/KAKAOTALK/i.test(ua)) return;
+
   var url = location.href;
   var isIos = /iPhone|iPad|iPod/i.test(ua);
-  if(isIos){
-    // iOS: location.replace → 카카오톡이 "Safari로 열기" 팝업 자동 제공
-    location.replace(url);
-  } else {
-    // Android: intent URL → 기기에 설치된 브라우저 선택 (크롬, 삼성 브라우저 등)
+
+  if(!isIos){
+    // Android만 intent URL 자동 리다이렉트 (iOS는 페이지 먹통 방지)
     var intentUrl = 'intent://' + url.replace(/^https?:\/\//, '')
       + '#Intent;scheme=https;action=android.intent.action.VIEW;'
       + 'category=android.intent.category.BROWSABLE;end';
     location.href = intentUrl;
   }
+  // iOS는 페이지 로드 후 배너로 안내 (아래 DOMContentLoaded에서 처리)
 })();
 </script>
 </head>
@@ -2949,10 +2949,10 @@ window.toast = function(msg){
 
 // ── 시작 ──
 initFirebase();
-// 방문 기록 (Firebase 초기화 후)
-setTimeout(()=>recordVisit(), 2000);
 
+// iOS 카카오톡 인앱 → 상단 안내 배너 표시
+(function(){
+  var ua = navigator.userAgent;
+  if(!/KAKAOTALK/i.test(ua) || !/iPhone|iPad|iPod/i.test(ua)) return;
 
-</script>
-</body>
-</html>
+  var appUr
