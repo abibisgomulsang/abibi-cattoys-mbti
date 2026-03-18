@@ -2950,30 +2950,16 @@ window.toast = function(msg){
 // ── 시작 ──
 initFirebase();
 
-// iOS 카카오톡 인앱 → 외부 브라우저 자동 시도 + 배너
+// iOS 카카오톡 인앱 → 외부 브라우저 선택 배너
 (function(){
   var ua = navigator.userAgent;
   if(!/KAKAOTALK/i.test(ua) || !/iPhone|iPad|iPod/i.test(ua)) return;
 
-  var appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
-  var encUrl  = encodeURIComponent(appUrl);
+  var appUrl     = 'https://abibi-cattoys-mbti.vercel.app';
+  var chromeUrl  = appUrl.replace('https://', 'googlechromes://');
+  var firefoxUrl = 'firefox://open-url?url=' + encodeURIComponent(appUrl);
 
-  // ── 1. 크롬 스킴으로 자동 열기 시도 (크롬 설치 시 자동으로 크롬 열림) ──
-  var chromeTried = false;
-  function tryChrome(){
-    if(chromeTried) return;
-    chromeTried = true;
-    // iOS 크롬: googlechrome://navigate?url=
-    var chromeUrl = 'googlechrome://navigate?url=' + encUrl;
-    var iframe = document.createElement('iframe');
-    iframe.style.cssText = 'display:none;width:0;height:0;border:none';
-    document.body.appendChild(iframe);
-    // iframe으로 스킴 호출 (페이지 이동 없이 시도)
-    try { iframe.src = chromeUrl; } catch(e){}
-    setTimeout(function(){ document.body.removeChild(iframe); }, 2000);
-  }
-
-  // ── 2. 안내 배너 표시 ──
+  // ── 안내 배너 ──
   var banner = document.createElement('div');
   banner.id  = 'ios-kakao-banner';
   banner.style.cssText = [
@@ -2986,51 +2972,49 @@ initFirebase();
   ].join(';');
 
   banner.innerHTML = [
-    // 헤더
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">',
       '<div>',
-        '<div style="color:#FFD93D;font-size:14px;font-weight:bold">🌐 외부 브라우저로 열어주세요</div>',
-        '<div style="color:rgba(255,255,255,.5);font-size:11px;margin-top:2px">공유 기능을 사용하려면 외부 브라우저가 필요해요</div>',
+        '<div style="color:#FFD93D;font-size:13px;font-weight:bold">🌐 외부 브라우저로 열어주세요</div>',
+        '<div style="color:rgba(255,255,255,.5);font-size:11px;margin-top:1px">공유 기능을 사용하려면 외부 브라우저가 필요해요</div>',
       '</div>',
       '<button id="ios-close-btn" style="background:none;border:none;color:rgba(255,255,255,.35);font-size:22px;cursor:pointer;padding:2px 8px;line-height:1">✕</button>',
     '</div>',
-    // 브라우저 선택 버튼들
-    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">',
-      // 크롬
-      '<button id="ios-chrome-btn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:8px 4px;cursor:pointer;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px">',
-        '<span style="font-size:20px">🟢</span><span>크롬</span>',
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:6px">',
+      '<button id="ios-chrome-btn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:8px 4px;cursor:pointer;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px">',
+        '<span style="font-size:20px">🟢</span><span>Chrome</span>',
       '</button>',
-      // 사파리 (··· 안내)
-      '<button id="ios-safari-btn" style="background:#FFD93D;border:none;border-radius:10px;color:#1a1a2e;padding:8px 4px;cursor:pointer;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:3px">',
+      '<button id="ios-firefox-btn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:8px 4px;cursor:pointer;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px">',
+        '<span style="font-size:20px">🦊</span><span>Firefox</span>',
+      '</button>',
+      '<button id="ios-safari-btn" style="background:#FFD93D;border:none;border-radius:10px;color:#1a1a2e;padding:8px 4px;cursor:pointer;font-size:10px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:3px">',
         '<span style="font-size:20px">🧭</span><span>Safari</span>',
       '</button>',
-      // 링크 복사
-      '<button id="ios-copy-btn2" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:8px 4px;cursor:pointer;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px">',
+      '<button id="ios-copy-btn2" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:8px 4px;cursor:pointer;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px">',
         '<span style="font-size:20px">📋</span><span>링크복사</span>',
       '</button>',
     '</div>',
-    '<div id="ios-status" style="font-size:10px;color:rgba(255,255,255,.35);text-align:center">',
-      '브라우저를 선택하거나 아래 ··· 버튼을 눌러 Safari로 열기를 선택하세요',
-    '</div>'
+    '<div id="ios-status" style="font-size:10px;color:rgba(255,255,255,.35);text-align:center">원하는 브라우저를 선택해주세요</div>'
   ].join('');
 
   document.body.appendChild(banner);
+
+  function setStatus(msg){ var el=document.getElementById('ios-status'); if(el) el.textContent=msg; }
 
   // 닫기
   document.getElementById('ios-close-btn').addEventListener('click', function(){
     banner.remove();
   });
 
-  // 크롬으로 열기
+  // 크롬
   document.getElementById('ios-chrome-btn').addEventListener('click', function(){
-    var chromeUrl = 'googlechrome://navigate?url=' + encUrl;
-    document.getElementById('ios-status').textContent = '크롬으로 이동 중...';
-    // location.href로 시도 — 크롬 설치 시 크롬 앱 열림
     location.href = chromeUrl;
-    // 2초 후에도 여기 있으면 크롬 없음
-    setTimeout(function(){
-      document.getElementById('ios-status').textContent = '크롬이 설치되지 않았어요. Safari를 이용해주세요!';
-    }, 2000);
+    setTimeout(function(){ setStatus('크롬이 설치되어 있지 않아요. 다른 브라우저를 선택하세요!'); }, 1500);
+  });
+
+  // Firefox
+  document.getElementById('ios-firefox-btn').addEventListener('click', function(){
+    location.href = firefoxUrl;
+    setTimeout(function(){ setStatus('Firefox가 설치되어 있지 않아요. 다른 브라우저를 선택하세요!'); }, 1500);
   });
 
   // Safari 안내
@@ -3064,15 +3048,11 @@ initFirebase();
       document.execCommand('copy');
       document.body.removeChild(el);
     };
-    if(navigator.clipboard){
-      navigator.clipboard.writeText(appUrl).catch(doCopy);
-    } else { doCopy(); }
-    document.getElementById('ios-status').textContent = '✅ 복사됐어요! Safari 주소창에 붙여넣기 하세요';
-    toast('링크 복사됐어요! Safari 주소창에 붙여넣기 하세요 📋');
+    if(navigator.clipboard){ navigator.clipboard.writeText(appUrl).catch(doCopy); }
+    else { doCopy(); }
+    setStatus('✅ 복사됐어요! Safari 주소창에 붙여넣기 하세요');
+    toast('링크 복사됐어요! 📋');
   });
-
-  // 페이지 로드 후 1초 뒤 크롬 자동 시도
-  setTimeout(tryChrome, 800);
 })();
 
 
