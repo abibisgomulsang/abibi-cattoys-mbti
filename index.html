@@ -2955,4 +2955,102 @@ initFirebase();
   var ua = navigator.userAgent;
   if(!/KAKAOTALK/i.test(ua) || !/iPhone|iPad|iPod/i.test(ua)) return;
 
-  var appUr
+  var appUrl = 'https://abibi-cattoys-mbti.vercel.app';
+  var banner = document.createElement('div');
+  banner.id  = 'ios-kakao-banner';
+  // position:fixed 이므로 body paddingTop 불필요 — 레이아웃 간섭 없음
+  banner.style.cssText = [
+    'position:fixed','top:0','left:0','right:0','z-index:99999',
+    'background:linear-gradient(135deg,#1a1a2e,#0d0b2e)',
+    'border-bottom:2px solid #FFD93D',
+    'padding:10px 14px',
+    'display:flex','flex-direction:column','gap:6px',
+    'font-family:sans-serif','box-shadow:0 4px 20px rgba(0,0,0,.5)'
+  ].join(';');
+
+  banner.innerHTML = [
+    '<div style="display:flex;justify-content:space-between;align-items:center">',
+      '<div>',
+        '<div style="color:#FFD93D;font-size:13px;font-weight:bold">',
+          '🌐 Safari에서 열면 더 편해요!',
+        '</div>',
+        '<div style="color:rgba(255,255,255,.55);font-size:11px;margin-top:1px">',
+          '카카오톡 안에서는 공유 기능이 제한돼요',
+        '</div>',
+      '</div>',
+      '<button id="ios-close-btn" style="background:none;border:none;color:rgba(255,255,255,.35);',
+        'font-size:22px;cursor:pointer;padding:2px 6px;line-height:1">✕</button>',
+    '</div>',
+    '<div style="display:flex;gap:7px">',
+      '<button id="ios-how-btn" style="flex:2;background:#FFD93D;border:none;border-radius:9px;',
+        'color:#1a1a2e;padding:9px 6px;cursor:pointer;font-size:12px;font-weight:bold">',
+        '📱 Safari로 여는 방법',
+      '</button>',
+      '<button id="ios-copy-btn" style="flex:1;background:rgba(255,255,255,.1);',
+        'border:1px solid rgba(255,255,255,.2);border-radius:9px;color:#fff;',
+        'padding:9px 6px;cursor:pointer;font-size:11px">',
+        '📋 링크 복사',
+      '</button>',
+    '</div>'
+  ].join('');
+
+  // body 패딩 없이 배너만 고정
+  document.body.appendChild(banner);
+
+  document.getElementById('ios-close-btn').addEventListener('click', function(){
+    banner.remove();
+  });
+
+  document.getElementById('ios-how-btn').addEventListener('click', function(){
+    var tip = document.createElement('div');
+    tip.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:999999;display:flex;align-items:center;justify-content:center;padding:24px';
+    tip.innerHTML = [
+      '<div style="width:100%;max-width:320px;background:#1a1a2e;',
+        'border:1.5px solid rgba(255,217,61,.5);border-radius:20px;padding:24px;text-align:center">',
+        '<div style="font-size:44px;margin-bottom:10px">📱</div>',
+        '<div style="font-size:17px;color:#FFD93D;font-weight:bold;margin-bottom:14px">',
+          'Safari로 여는 방법',
+        '</div>',
+        '<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:16px;',
+          'text-align:left;font-size:14px;color:#fff;line-height:2.4;margin-bottom:18px">',
+          '<div>① 화면 하단 <b style="color:#FFD93D;font-size:17px">···</b> 버튼 탭</div>',
+          '<div>② <b style="color:#FFD93D">Safari로 열기</b> 선택</div>',
+          '<div>③ Safari에서 모든 기능 사용 ✅</div>',
+        '</div>',
+        '<button id="ios-tip-ok" style="width:100%;background:#FFD93D;border:none;',
+          'border-radius:12px;color:#1a1a2e;padding:13px;font-size:15px;',
+          'font-weight:bold;cursor:pointer">',
+          '확인',
+        '</button>',
+      '</div>'
+    ].join('');
+    document.body.appendChild(tip);
+    document.getElementById('ios-tip-ok').addEventListener('click', function(){
+      tip.remove();
+    });
+  });
+
+  document.getElementById('ios-copy-btn').addEventListener('click', function(){
+    var doCopy = function(){
+      var el = document.createElement('textarea');
+      el.value = appUrl;
+      el.style.cssText = 'position:fixed;left:-9999px';
+      document.body.appendChild(el);
+      el.focus(); el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    };
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(appUrl).catch(doCopy);
+    } else { doCopy(); }
+    toast('링크 복사됐어요! Safari 주소창에 붙여넣기 하세요 📋');
+  });
+})();
+
+// 방문 기록 (Firebase 초기화 후)
+setTimeout(()=>recordVisit(), 2000);
+
+
+</script>
+</body>
+</html>
