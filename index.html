@@ -2816,47 +2816,61 @@ window.closeEmojiPicker = function(){
 };
 
 function selectEmoji(emoji){
-  if(_emojiCallback){
+  if(typeof emoji !== 'string' || !emoji) return;
+  if(typeof _emojiCallback === 'function'){
     _emojiCallback(emoji);
   } else if(_emojiTargetId){
     const el = document.getElementById(_emojiTargetId);
-    if(el){ el.value = emoji; el.dispatchEvent(new Event('change')); }
+    if(el){
+      el.value = emoji;
+      el.dispatchEvent(new Event('change'));
+    }
   }
   closeEmojiPicker();
 }
 
 function renderEmojiCategories(data){
   const el = document.getElementById('emoji-categories');
+  if(!el) return;
   el.innerHTML = Object.entries(data).map(([cat, emojis])=>`
     <div style="margin-bottom:12px">
       <div style="font-size:11px;color:#9ca3af;margin-bottom:6px">${cat}</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px">
-        ${emojis.map(e=>`
-          <button onclick="selectEmoji('${e}')"
-            style="background:#374151;border:none;border-radius:8px;padding:6px 8px;font-size:22px;cursor:pointer;transition:background .15s;line-height:1"
-            onmouseover="this.style.background='#4b5563'"
-            onmouseout="this.style.background='#374151'">${e}</button>`).join('')}
+        ${emojis.map(e=>`<button class="epick-btn" data-emoji="${e}"
+          style="background:#374151;border:none;border-radius:8px;padding:6px 8px;font-size:22px;cursor:pointer;line-height:1">${e}</button>`).join('')}
       </div>
     </div>`).join('');
+  // addEventListener로 이모지 선택 (onclick 속성 대신)
+  el.querySelectorAll('.epick-btn').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      selectEmoji(this.dataset.emoji);
+    });
+    btn.addEventListener('mouseover', function(){ this.style.background='#4b5563'; });
+    btn.addEventListener('mouseout',  function(){ this.style.background='#374151'; });
+  });
 }
 
 window.filterEmojis = function(query){
+  const el = document.getElementById('emoji-categories');
+  if(!el) return;
   if(!query.trim()){
     renderEmojiCategories(EMOJI_DATA);
     return;
   }
-  // 검색어로 필터 (모든 카테고리 합쳐서 표시)
   const allEmojis = Object.values(EMOJI_DATA).flat();
-  const el = document.getElementById('emoji-categories');
   el.innerHTML = `
     <div style="margin-bottom:12px">
       <div style="font-size:11px;color:#9ca3af;margin-bottom:6px">검색 결과</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px">
-        ${allEmojis.map(e=>`
-          <button onclick="selectEmoji('${e}')"
-            style="background:#374151;border:none;border-radius:8px;padding:6px 8px;font-size:22px;cursor:pointer;line-height:1">${e}</button>`).join('')}
+        ${allEmojis.map(e=>`<button class="epick-btn" data-emoji="${e}"
+          style="background:#374151;border:none;border-radius:8px;padding:6px 8px;font-size:22px;cursor:pointer;line-height:1">${e}</button>`).join('')}
       </div>
     </div>`;
+  el.querySelectorAll('.epick-btn').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      selectEmoji(this.dataset.emoji);
+    });
+  });
 };
 
 // 이모지 픽커 외부 클릭 닫기
