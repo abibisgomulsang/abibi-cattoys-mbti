@@ -159,6 +159,9 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
     <button onclick="go('saves')" style="width:100%;margin-top:10px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;color:var(--tx);padding:13px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
       📋 저장된 추천 보기 <span id="saves-badge" style="display:none;background:var(--g1);color:#1a1a2e;border-radius:20px;padding:1px 8px;font-size:11px"></span>
     </button>
+    <button onclick="shareApp()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:14px;color:#1a1a2e;padding:13px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
+      💌 친구에게 공유하기
+    </button>
   </div>
   <button class="admbtn" onclick="showLogin()">⚙️ 관리자</button>
 </div>
@@ -363,6 +366,10 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <button class="btn bp" onclick="restart()" style="flex:1;margin-top:0">🔄 다시 테스트</button>
       <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="flex:1;margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
     </div>
+    <!-- 앱 공유하기 -->
+    <button onclick="shareApp()" style="width:100%;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:12px;color:#1a1a2e;padding:12px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px">
+      💌 이 앱 친구에게 공유하기
+    </button>
   </div>
   <div style="height:32px"></div>
 </div>
@@ -2341,23 +2348,23 @@ window.cartUrl = function(p){
 
 // ── 공유 공통 함수 ──
 async function doShare(dataUrl, catName){
-  // 카카오톡 인앱 브라우저 감지
   const ua = navigator.userAgent;
-  const isKakao   = /KAKAOTALK/i.test(ua);
-  const isMobile  = /iPhone|iPad|iPod|Android/i.test(ua);
+  const isKakao  = /KAKAOTALK/i.test(ua);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+  const appUrl   = 'https://abibi-cattoys-mbti.vercel.app';
 
-  // 카카오톡 인앱 or navigator.share 없음 → 이미지 오버레이 표시
-  if(isKakao || !navigator.share){
-    showImgOverlay(dataUrl);
-    if(isKakao){
-      toast('카카오톡에서는 이미지를 길게 눌러 저장 후 공유하세요! 📸');
-    } else {
-      // PC: 다운로드
-      const link = document.createElement('a');
-      link.download = '아비비고물상_추천결과.png';
-      link.href = dataUrl; link.click();
-      toast('이미지가 저장됐어요! 📸');
-    }
+  // ── 카카오톡 인앱: 외부 브라우저 열기 유도 ──
+  if(isKakao){
+    showKakaoGuide(appUrl);
+    return;
+  }
+
+  // navigator.share 없음 (PC 등)
+  if(!navigator.share){
+    const link = document.createElement('a');
+    link.download = '아비비고물상_추천결과.png';
+    link.href = dataUrl; link.click();
+    toast('이미지가 저장됐어요! 📸');
     return;
   }
 
@@ -2377,9 +2384,8 @@ async function doShare(dataUrl, catName){
         return;
       }
     } catch(shareErr){
-      if(shareErr.name === 'AbortError') return; // 사용자 취소
+      if(shareErr.name === 'AbortError') return;
     }
-    // 파일 공유 안 되면 이미지 오버레이
     showImgOverlay(dataUrl);
     toast('이미지를 길게 눌러 저장 후 공유하세요! 📸');
     return;
@@ -2390,6 +2396,50 @@ async function doShare(dataUrl, catName){
   link.download = '아비비고물상_추천결과.png';
   link.href = dataUrl; link.click();
   toast('이미지가 저장됐어요! 📸');
+}
+
+// ── 카카오톡 인앱 브라우저 외부 열기 안내 ──
+function showKakaoGuide(appUrl){
+  const old = document.getElementById('kakao-guide-ov');
+  if(old) old.remove();
+
+  const ov = document.createElement('div');
+  ov.id = 'kakao-guide-ov';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px';
+
+  const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const guideStep = isIos
+    ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">1</span><span>오른쪽 하단 <b>···</b> 버튼 탭</span></div>
+     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">2</span><span><b>Safari로 열기</b> 선택</span></div>
+     <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">3</span><span>공유하기 버튼 눌러 카카오톡 선택</span></div>`
+    : `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">1</span><span>오른쪽 상단 <b>⋮</b> 버튼 탭</span></div>
+     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">2</span><span><b>다른 앱으로 열기</b> → 크롬 선택</span></div>
+     <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">3</span><span>공유하기 버튼 눌러 카카오톡 선택</span></div>`;
+
+  ov.innerHTML = `
+    <div style="width:100%;max-width:360px;background:#1a1a2e;border:1.5px solid rgba(255,217,61,.4);border-radius:20px;padding:24px">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-size:36px">🌐</div>
+        <div style="font-family:Jua,sans-serif;font-size:18px;color:var(--g1);margin-top:8px">외부 브라우저에서 열기</div>
+        <div style="font-size:12px;color:var(--mu);margin-top:6px">카카오톡 안에서는 공유 기능이 제한돼요.<br>아래 방법으로 외부 브라우저에서 여세요!</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border-radius:14px;padding:16px;font-size:13px;color:var(--tx);line-height:1.8;margin-bottom:16px">
+        ${guideStep}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="window.open('${appUrl}','_blank')" style="width:100%;background:linear-gradient(135deg,var(--g1),#ffb700);border:none;border-radius:12px;color:#1a1a2e;padding:13px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px">
+          🌐 외부 브라우저로 열기
+        </button>
+        <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${appUrl}').then(()=>toast('링크 복사됐어요! 붙여넣기 후 브라우저에서 여세요 📋'))" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;color:var(--tx);padding:12px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">
+          📋 링크 복사하기
+        </button>
+        <button onclick="document.getElementById('kakao-guide-ov').remove()" style="width:100%;background:none;border:none;color:var(--mu);padding:8px;cursor:pointer;font-size:12px">
+          닫기
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(ov);
 }
 
 // ── 공유하기 (전체 추천) ──
@@ -2590,6 +2640,43 @@ async function buildResultImage(selPids){
 
   return cv.toDataURL('image/png');
 }
+
+// ── 앱 공유하기 ──
+window.shareApp = async function(){
+  const appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
+  const title   = '🐱 아비비의고물상 — 고양이 장난감 추천';
+  const text    = '우리 고양이 맞춤 장난감을 추천해주는 앱이에요!\n재질, 성격, 예산에 딱 맞는 상품을 찾아드려요 🎁';
+  const ua      = navigator.userAgent;
+  const isKakao = /KAKAOTALK/i.test(ua);
+
+  if(isKakao){
+    showKakaoGuide(appUrl);
+    return;
+  }
+
+  if(navigator.share){
+    try{
+      await navigator.share({ title, text, url: appUrl });
+      toast('공유됐어요! 💬');
+      return;
+    } catch(e){
+      if(e.name === 'AbortError') return;
+    }
+  }
+
+  // 공유 불가 시 링크 복사
+  if(navigator.clipboard){
+    await navigator.clipboard.writeText(appUrl);
+    toast('링크가 복사됐어요! 친구에게 붙여넣기 해주세요 📋');
+  } else {
+    const el = document.createElement('textarea');
+    el.value = appUrl;
+    document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('링크가 복사됐어요! 친구에게 붙여넣기 해주세요 📋');
+  }
+};
 
 function copyLink(){
   const url = 'https://abibi-cattoys-mbti.vercel.app';
