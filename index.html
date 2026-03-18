@@ -2403,34 +2403,51 @@ function showKakaoGuide(appUrl){
   const old = document.getElementById('kakao-guide-ov');
   if(old) old.remove();
 
+  const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // ── 실제로 외부 브라우저 강제 오픈 시도 ──
+  function tryOpenExternal(){
+    if(isIos){
+      // iOS: kakaotalk에서 safari로 열기 → location 변경으로 유도
+      location.href = appUrl;
+    } else {
+      // Android: intent URL로 크롬 강제 실행
+      const intentUrl = `intent://${appUrl.replace('https://','')}`
+        + `#Intent;scheme=https;package=com.android.chrome;end`;
+      location.href = intentUrl;
+      // intent 실패 대비: 300ms 후 일반 이동
+      setTimeout(()=>{ location.href = appUrl; }, 300);
+    }
+  }
+
   const ov = document.createElement('div');
   ov.id = 'kakao-guide-ov';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px';
 
-  const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const guideStep = isIos
-    ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">1</span><span>오른쪽 하단 <b>···</b> 버튼 탭</span></div>
-     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">2</span><span><b>Safari로 열기</b> 선택</span></div>
-     <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">3</span><span>공유하기 버튼 눌러 카카오톡 선택</span></div>`
-    : `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">1</span><span>오른쪽 상단 <b>⋮</b> 버튼 탭</span></div>
-     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">2</span><span><b>다른 앱으로 열기</b> → 크롬 선택</span></div>
-     <div style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;background:var(--g1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-weight:bold;flex-shrink:0">3</span><span>공유하기 버튼 눌러 카카오톡 선택</span></div>`;
+  const guideImg = isIos
+    ? `<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:14px;font-size:13px;color:var(--tx);line-height:2;margin-bottom:16px">
+        <div>① 화면 하단 <b style="color:var(--g1)">···</b> 버튼 탭</div>
+        <div>② <b style="color:var(--g1)">Safari로 열기</b> 선택</div>
+        <div>③ Safari에서 공유 버튼 → 카카오톡</div>
+       </div>`
+    : `<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:14px;font-size:13px;color:var(--tx);line-height:2;margin-bottom:16px">
+        <div>아래 버튼을 누르면 <b style="color:var(--g1)">크롬으로 자동 이동</b>해요</div>
+        <div>크롬에서 공유 버튼 → 카카오톡 선택</div>
+       </div>`;
 
   ov.innerHTML = `
     <div style="width:100%;max-width:360px;background:#1a1a2e;border:1.5px solid rgba(255,217,61,.4);border-radius:20px;padding:24px">
-      <div style="text-align:center;margin-bottom:18px">
+      <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:36px">🌐</div>
         <div style="font-family:Jua,sans-serif;font-size:18px;color:var(--g1);margin-top:8px">외부 브라우저에서 열기</div>
-        <div style="font-size:12px;color:var(--mu);margin-top:6px">카카오톡 안에서는 공유 기능이 제한돼요.<br>아래 방법으로 외부 브라우저에서 여세요!</div>
+        <div style="font-size:12px;color:var(--mu);margin-top:5px">카카오톡 안에서는 공유 기능이 제한돼요!</div>
       </div>
-      <div style="background:rgba(255,255,255,.06);border-radius:14px;padding:16px;font-size:13px;color:var(--tx);line-height:1.8;margin-bottom:16px">
-        ${guideStep}
-      </div>
+      ${guideImg}
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button onclick="window.open('${appUrl}','_blank')" style="width:100%;background:linear-gradient(135deg,var(--g1),#ffb700);border:none;border-radius:12px;color:#1a1a2e;padding:13px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px">
-          🌐 외부 브라우저로 열기
+        <button id="kakao-open-btn" style="width:100%;background:linear-gradient(135deg,var(--g1),#ffb700);border:none;border-radius:12px;color:#1a1a2e;padding:14px;cursor:pointer;font-family:Jua,sans-serif;font-size:15px;font-weight:bold">
+          🌐 ${isIos ? 'Safari' : '크롬'}으로 열기
         </button>
-        <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${appUrl}').then(()=>toast('링크 복사됐어요! 붙여넣기 후 브라우저에서 여세요 📋'))" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;color:var(--tx);padding:12px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">
+        <button id="kakao-copy-btn" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;color:var(--tx);padding:12px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">
           📋 링크 복사하기
         </button>
         <button onclick="document.getElementById('kakao-guide-ov').remove()" style="width:100%;background:none;border:none;color:var(--mu);padding:8px;cursor:pointer;font-size:12px">
@@ -2440,6 +2457,23 @@ function showKakaoGuide(appUrl){
     </div>`;
 
   document.body.appendChild(ov);
+
+  // 버튼 이벤트 연결 (innerHTML에 함수 직접 못 써서 addEventListener 사용)
+  document.getElementById('kakao-open-btn').addEventListener('click', tryOpenExternal);
+  document.getElementById('kakao-copy-btn').addEventListener('click', ()=>{
+    const txt = appUrl;
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(txt).then(()=>
+        toast('링크 복사됐어요! 브라우저 주소창에 붙여넣기 하세요 📋')
+      );
+    } else {
+      const el = document.createElement('textarea');
+      el.value = txt; document.body.appendChild(el);
+      el.select(); document.execCommand('copy');
+      document.body.removeChild(el);
+      toast('링크 복사됐어요! 브라우저 주소창에 붙여넣기 하세요 📋');
+    }
+  });
 }
 
 // ── 공유하기 (전체 추천) ──
