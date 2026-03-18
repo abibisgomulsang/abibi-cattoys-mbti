@@ -2017,13 +2017,18 @@ function renderRodList(){
   const gostickRods = RODS.filter(r => r.type==='gostick' || /고스틱/i.test(r.name));
   const normalRods  = RODS.filter(r => r.type==='normal'  || (!r.type && !/고스틱/i.test(r.name)));
 
-  function rodCard(r){
+   function rodCard(r){
     const sel = CAT.rods && CAT.rods.includes(r.id);
     const isGostick = r.type==='gostick' || /고스틱/i.test(r.name);
     const typeColor = isGostick ? '#c084fc' : '#4ECDC4';
     const typeLabel = isGostick ? '고스틱 전용 리필' : '일반 리필';
-    return `<div onclick="toggleRod('${r.id}')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:${sel?'rgba(255,217,61,.12)':'rgba(255,255,255,.06)'};border:1.5px solid ${sel?'var(--g1)':'var(--border)'};border-radius:14px;cursor:pointer;transition:all .2s;margin-bottom:6px">
-      <div style="font-size:26px;flex-shrink:0">${r.icon||'🎣'}</div>
+    // 이미지 있으면 이미지, 없으면 아이콘
+    const imgSrc = r.image ? proxyImg(r.image) : '';
+    const imgHtml = imgSrc
+      ? `<div style="width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#2a1a4e"><img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='<span style=font-size:26px>${r.icon||'🎣'}</span>';this.parentElement.style.display='flex';this.parentElement.style.alignItems='center';this.parentElement.style.justifyContent='center'"/></div>`
+      : `<div style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">${r.icon||'🎣'}</div>`;
+    return `<div onclick="toggleRod('${r.id}')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${sel?'rgba(255,217,61,.12)':'rgba(255,255,255,.06)'};border:1.5px solid ${sel?'var(--g1)':'var(--border)'};border-radius:14px;cursor:pointer;transition:all .2s;margin-bottom:6px">
+      ${imgHtml}
       <div style="flex:1;min-width:0">
         <div style="font-family:Jua,sans-serif;font-size:14px;color:${sel?'var(--g1)':'var(--tx)'}">${r.name}</div>
         <div style="font-size:11px;color:var(--mu);margin-top:2px">${r.desc||''}</div>
