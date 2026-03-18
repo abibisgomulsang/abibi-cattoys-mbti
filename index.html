@@ -124,6 +124,25 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 .nt{margin-top:10px;padding:10px;background:#111827;border-radius:8px;font-size:11px;color:#9ca3af;line-height:1.6}
 @media(max-width:380px){.card{padding:20px 14px}.abig{font-size:56px}.pg{gap:6px}}
 </style>
+<!-- 카카오톡 인앱 브라우저 → 즉시 외부 브라우저로 리다이렉트 -->
+<script>
+(function(){
+  var ua = navigator.userAgent;
+  if(!/KAKAOTALK/i.test(ua)) return;
+  var url = location.href;
+  var isIos = /iPhone|iPad|iPod/i.test(ua);
+  if(isIos){
+    // iOS: location.replace → 카카오톡이 "Safari로 열기" 팝업 자동 제공
+    location.replace(url);
+  } else {
+    // Android: intent URL → 기기에 설치된 브라우저 선택 (크롬, 삼성 브라우저 등)
+    var intentUrl = 'intent://' + url.replace(/^https?:\/\//, '')
+      + '#Intent;scheme=https;action=android.intent.action.VIEW;'
+      + 'category=android.intent.category.BROWSABLE;end';
+    location.href = intentUrl;
+  }
+})();
+</script>
 </head>
 <body>
 
@@ -2405,18 +2424,16 @@ function showKakaoGuide(appUrl){
 
   const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  // ── 실제로 외부 브라우저 강제 오픈 시도 ──
+  // ── 외부 브라우저 열기 (브라우저 선택 가능) ──
   function tryOpenExternal(){
     if(isIos){
-      // iOS: kakaotalk에서 safari로 열기 → location 변경으로 유도
+      // iOS: 카카오톡이 자동으로 "Safari로 열기" 팝업 띄움
       location.href = appUrl;
     } else {
-      // Android: intent URL로 크롬 강제 실행
-      const intentUrl = `intent://${appUrl.replace('https://','')}`
-        + `#Intent;scheme=https;package=com.android.chrome;end`;
+      // Android: package 지정 없이 → 기기에 설치된 브라우저 선택 가능
+      const intentUrl = 'intent://' + appUrl.replace('https://','')
+        + '#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end';
       location.href = intentUrl;
-      // intent 실패 대비: 300ms 후 일반 이동
-      setTimeout(()=>{ location.href = appUrl; }, 300);
     }
   }
 
