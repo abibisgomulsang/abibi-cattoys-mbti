@@ -124,23 +124,31 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 .nt{margin-top:10px;padding:10px;background:#111827;border-radius:8px;font-size:11px;color:#9ca3af;line-height:1.6}
 @media(max-width:380px){.card{padding:20px 14px}.abig{font-size:56px}.pg{gap:6px}}
 </style>
-<!-- 카카오톡 인앱 브라우저 감지 -->
+<!-- 인앱 브라우저 감지 → 외부 브라우저 리다이렉트 -->
 <script>
 (function(){
-  var ua = navigator.userAgent;
-  if(!/KAKAOTALK/i.test(ua)) return;
-
+  var ua  = navigator.userAgent;
   var url = location.href;
-  var isIos = /iPhone|iPad|iPod/i.test(ua);
+  var isIos     = /iPhone|iPad|iPod/i.test(ua);
+  var isAndroid = /Android/i.test(ua);
 
-  if(!isIos){
-    // Android만 intent URL 자동 리다이렉트 (iOS는 페이지 먹통 방지)
+  // 인앱 브라우저 감지 (카카오톡, 인스타그램, 페이스북, 라인, 네이버 등)
+  var isInApp = /KAKAOTALK/i.test(ua)
+             || /Instagram/i.test(ua)
+             || /FBAN|FBAV|FB_IAB|FBIOS/i.test(ua)
+             || ua.indexOf('Line/')>-1
+             || /NaverApp/i.test(ua);
+
+  if(!isInApp) return;
+
+  if(isAndroid){
+    // Android: intent URL → 기기 기본 브라우저 선택 화면
     var intentUrl = 'intent://' + url.replace(/^https?:\/\//, '')
       + '#Intent;scheme=https;action=android.intent.action.VIEW;'
       + 'category=android.intent.category.BROWSABLE;end';
     location.href = intentUrl;
   }
-  // iOS는 페이지 로드 후 배너로 안내 (아래 DOMContentLoaded에서 처리)
+  // iOS는 페이지 로드 후 배너로 안내
 })();
 </script>
 </head>
@@ -2449,12 +2457,14 @@ window.cartUrl = function(p){
 // ── 공유 공통 함수 ──
 async function doShare(dataUrl, catName){
   const ua = navigator.userAgent;
-  const isKakao  = /KAKAOTALK/i.test(ua);
+  const isInApp  = /KAKAOTALK/i.test(ua) || /Instagram/i.test(ua)
+                || /FBAN|FBAV|FB_IAB|FBIOS/i.test(ua) || ua.indexOf('Line/')>-1
+                || /NaverApp/i.test(ua);
   const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
   const appUrl   = 'https://abibi-cattoys-mbti.vercel.app';
 
-  // ── 카카오톡 인앱: 외부 브라우저 열기 유도 ──
-  if(isKakao){
+  // ── 인앱 브라우저: 외부 브라우저 열기 유도 ──
+  if(isInApp){
     showKakaoGuide(appUrl);
     return;
   }
@@ -2538,7 +2548,7 @@ function showKakaoGuide(appUrl){
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:36px">🌐</div>
         <div style="font-family:Jua,sans-serif;font-size:18px;color:var(--g1);margin-top:8px">외부 브라우저에서 열기</div>
-        <div style="font-size:12px;color:var(--mu);margin-top:5px">카카오톡 안에서는 공유 기능이 제한돼요!</div>
+        <div style="font-size:12px;color:var(--mu);margin-top:5px">앱 내 브라우저에서는 공유 기능이 제한돼요!</div>
       </div>
       ${guideImg}
       <div style="display:flex;flex-direction:column;gap:8px">
@@ -2779,9 +2789,11 @@ window.shareApp = async function(){
   const title   = '🐱 아비비의고물상 — 고양이 장난감 추천';
   const text    = '우리 고양이 맞춤 장난감을 추천해주는 앱이에요!\n재질, 성격, 예산에 딱 맞는 상품을 찾아드려요 🎁';
   const ua      = navigator.userAgent;
-  const isKakao = /KAKAOTALK/i.test(ua);
+  const isInApp2 = /KAKAOTALK/i.test(ua) || /Instagram/i.test(ua)
+               || /FBAN|FBAV|FB_IAB|FBIOS/i.test(ua) || ua.indexOf('Line/')>-1
+               || /NaverApp/i.test(ua);
 
-  if(isKakao){
+  if(isInApp2){
     showKakaoGuide(appUrl);
     return;
   }
@@ -3125,7 +3137,11 @@ initFirebase();
 // iOS 카카오톡 인앱 → 외부 브라우저 선택 배너
 (function(){
   var ua = navigator.userAgent;
-  if(!/KAKAOTALK/i.test(ua) || !/iPhone|iPad|iPod/i.test(ua)) return;
+  // 인스타그램, 카카오톡, 페이스북 등 인앱 브라우저 + iOS
+  var isInAppIos = (/KAKAOTALK/i.test(ua) || /Instagram/i.test(ua)
+                 || /FBAN|FBAV|FB_IAB|FBIOS/i.test(ua) || ua.indexOf('Line/')>-1
+                 || /NaverApp/i.test(ua));
+  if(!isInAppIos || !/iPhone|iPad|iPod/i.test(ua)) return;
 
   var appUrl     = 'https://abibi-cattoys-mbti.vercel.app';
   var chromeUrl  = appUrl.replace('https://', 'googlechromes://');
