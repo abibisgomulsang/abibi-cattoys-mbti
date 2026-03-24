@@ -298,12 +298,77 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <!-- 빠른 선택 버튼 -->
       <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:16px;justify-content:center" id="budget-quick"></div>
 
-      <button class="btn bp" onclick="go('rod')" style="margin-top:18px">다음으로 →</button>
+      <button class="btn bp" onclick="go('activity')" style="margin-top:18px">다음으로 →</button>
       <button class="btn bg" onclick="go('pers')">← 이전</button>
     </div>
   </div>
 </div>
 
+
+<!-- ACTIVITY LEVEL -->
+<div class="scr" id="s-activity">
+  <div style="width:100%;max-width:420px">
+    <div class="prog" id="pg-activity"></div>
+    <div class="card">
+      <div class="ttl" id="activity-ttl">⚡ 활동량은 어때요?</div>
+      <div class="sub">평소 운동량과 에너지 수준을 알려주세요!</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px" id="activity-g">
+        <button class="act-btn" data-v="매우활발" onclick="selActivity('매우활발')"
+          style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
+          <span style="font-size:28px">🐆</span>
+          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">매우 활발해요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">항상 뛰고 점프해요. 에너지가 넘쳐요!</div></div>
+        </button>
+        <button class="act-btn" data-v="보통" onclick="selActivity('보통')"
+          style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
+          <span style="font-size:28px">🐱</span>
+          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">보통이에요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">적당히 놀고 쉬는 균형잡힌 타입</div></div>
+        </button>
+        <button class="act-btn" data-v="조용함" onclick="selActivity('조용함')"
+          style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
+          <span style="font-size:28px">😴</span>
+          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">조용한 편이에요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">낮잠을 좋아하고 차분해요</div></div>
+        </button>
+      </div>
+      <button class="btn bp" id="btn-activity" disabled onclick="go('hunting')" style="margin-top:18px">다음으로 →</button>
+      <button class="btn bg" onclick="go('budget')">← 이전</button>
+    </div>
+  </div>
+</div>
+
+<!-- HUNTING PATTERN -->
+<div class="scr" id="s-hunting">
+  <div style="width:100%;max-width:420px">
+    <div class="prog" id="pg-hunting"></div>
+    <div class="card">
+      <div class="ttl" id="hunting-ttl">🎯 사냥 스타일은?</div>
+      <div class="sub">장난감을 가지고 노는 방식을 알려주세요!</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px" id="hunting-g">
+        <button class="hunt-btn" data-v="추격형" onclick="selHunting('추격형')"
+          style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
+          <span style="font-size:28px">🏃</span>
+          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">추격형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">빠르게 움직이는 것을 쫓아가며 공격해요</div></div>
+        </button>
+        <button class="hunt-btn" data-v="잠복형" onclick="selHunting('잠복형')"
+          style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
+          <span style="font-size:28px">🦊</span>
+          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">잠복형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">숨어서 기다렸다가 기습 공격해요</div></div>
+        </button>
+        <button class="hunt-btn" data-v="탐색형" onclick="selHunting('탐색형')"
+          style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
+          <span style="font-size:28px">🔍</span>
+          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">탐색형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">장난감을 냄새 맡고 구석구석 탐험해요</div></div>
+        </button>
+        <button class="hunt-btn" data-v="무관심" onclick="selHunting('무관심')"
+          style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
+          <span style="font-size:28px">😑</span>
+          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">별로 안 놀아요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">장난감에 큰 관심이 없어요</div></div>
+        </button>
+      </div>
+      <button class="btn bp" id="btn-hunting" disabled onclick="go('rod')" style="margin-top:18px">다음으로 →</button>
+      <button class="btn bg" onclick="go('activity')">← 이전</button>
+    </div>
+  </div>
+</div>
 
 <!-- ROD SELECTION -->
 <div class="scr" id="s-rod">
@@ -673,11 +738,13 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         <div style="background:#111827;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #374151">
           <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:Jua,sans-serif">🏆 인기 성격 TOP 3</div>
           <div id="stat-pers-rank"></div>
+          <canvas id="chart-pers" height="140" style="margin-top:10px;display:none"></canvas>
         </div>
         <!-- 인기 재질 -->
         <div style="background:#111827;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #374151">
           <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:Jua,sans-serif">🪶 인기 재질 TOP 3</div>
           <div id="stat-mat-rank"></div>
+          <canvas id="chart-mat" height="140" style="margin-top:10px;display:none"></canvas>
         </div>
         <!-- 평균 예산 -->
         <div style="background:#111827;border-radius:10px;padding:14px;border:1px solid #374151">
@@ -732,7 +799,7 @@ const DEFAULT_PRODUCTS = [
 // ── 상태 ──
 let PRODS = [];
 let CFG = {sub:"우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁", url:"https://smartstore.naver.com/avivi", notice:"", logo:"", pw:"avivi2024", theme:{bg:"#0d0b1e",a1:"#FFD93D",a2:"#FF6B6B"}};
-let CAT = {name:"",gender:"",age:1,mats:[],pers:""};
+let CAT = {name:"",gender:"",age:1,mats:[],pers:"",activity:"",hunting:""};
 let pendLogo = null;
 let uploadedImgData = "";
 let editId = null;
@@ -744,6 +811,35 @@ let PERS = [{n:"활발한",i:"⚡",d:"뛰고 점프하는 걸 좋아해요"},{n:
 function pe(p){for(const t of p.tags){if(EM[t])return EM[t];}return"🐱";}
 
 // 네이버 이미지 CORS 우회 — 프록시 URL 변환
+// ── 이미지 리사이징 (Canvas, 최대 800px, 품질 0.85) ──
+function resizeImage(file, maxPx = 800, quality = 0.85){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        // 이미 충분히 작으면 그대로 반환
+        if(w <= maxPx && h <= maxPx){
+          resolve(e.target.result);
+          return;
+        }
+        // 비율 유지하며 축소
+        if(w > h){ h = Math.round(h * maxPx / w); w = maxPx; }
+        else      { w = Math.round(w * maxPx / h); h = maxPx; }
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(cv.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function proxyImg(url){
   if(!url) return '';
   // base64 이미지는 그대로 사용
@@ -1086,11 +1182,41 @@ function getAllScored(){
   const budget = Math.max((CAT.budget || 14000) - rodSum, 1000);
   const filteredProds = filterByRodType(PRODS);
 
+  // 활동량 → 태그 매핑
+  const actTags = {
+    '매우활발': ['높은활동','활발한','호기심많은','추격형'],
+    '보통':     ['보통활동','활발한','진지한'],
+    '조용함':   ['낮은활동','진지한','잠복형'],
+  }[CAT.activity] || [];
+
+  // 사냥패턴 → 태그 매핑
+  const huntTags = {
+    '추격형': ['추격형','활발한','높은활동'],
+    '잠복형': ['잠복형','진지한','낮은활동'],
+    '탐색형': ['탐색형','호기심많은','보통활동'],
+    '무관심': ['진지한','낮은활동'],
+  }[CAT.hunting] || [];
+
   const scored = filteredProds.map(p=>{
+    const tags = p.tags || [];
     let s = 0;
-    if(p.tags && p.tags.includes(at)) s += 3;
-    CAT.mats.forEach(m=>{ if(p.tags && p.tags.includes(m)) s += 2; });
-    pt.forEach(t=>{ if(p.tags && p.tags.includes(t)) s += 2; });
+
+    // 나이 (3점)
+    if(tags.includes(at)) s += 3;
+
+    // 재질 (2점씩)
+    CAT.mats.forEach(m=>{ if(tags.includes(m)) s += 2; });
+
+    // 성격 (2점씩)
+    pt.forEach(t=>{ if(tags.includes(t)) s += 2; });
+
+    // ── 활동량 (2점씩) ──
+    actTags.forEach(t=>{ if(tags.includes(t)) s += 2; });
+
+    // ── 사냥패턴 (2점씩) ──
+    huntTags.forEach(t=>{ if(tags.includes(t)) s += 2; });
+
+    // 예산 (4/3/1점)
     const price = parsePrice(p.price);
     if(price !== null){
       const diff = Math.abs(price - budget) / budget;
@@ -1098,6 +1224,7 @@ function getAllScored(){
       else if(diff <= 0.3) s += 3;
       else if(diff <= 0.5) s += 1;
     }
+
     return {...p, score:s};
   }).sort((a,b) => b.score - a.score || Math.random() - 0.5);
 
@@ -1153,7 +1280,13 @@ window.showResult = function(){
   const rodSum  = getRodSum();
   const selRods = RODS.filter(r=>CAT.rods&&CAT.rods.includes(r.id));
   document.getElementById('res-ttl').textContent = `${CAT.name}(이)의 추천 장난감`;
-  const chips = [CAT.gender, CAT.age+'살', CAT.pers, ...CAT.mats, '예산 '+Number(CAT.budget||14000).toLocaleString()+'원'];
+  const chips = [
+    CAT.gender, CAT.age+'살', CAT.pers,
+    CAT.activity ? '⚡ '+CAT.activity : '',
+    CAT.hunting  ? '🎯 '+CAT.hunting  : '',
+    ...CAT.mats,
+    '예산 '+Number(CAT.budget||14000).toLocaleString()+'원'
+  ].filter(Boolean);
   if(selRods.length) chips.push('🎣 낚시대 '+selRods.length+'개');
   document.getElementById('res-cp').innerHTML = chips.map(c=>`<span class="cp">${c}</span>`).join('');
   document.getElementById('store-all').href = CFG.url||'https://smartstore.naver.com/avivi';
@@ -1365,12 +1498,14 @@ window.saveResult = async function(){
     uid:       getDeviceId(),
     savedAt:   Date.now(),
     cat: {
-      name:    CAT.name,
-      gender:  CAT.gender,
-      age:     CAT.age,
-      mats:    CAT.mats,
-      pers:    CAT.pers,
-      budget:  CAT.budget,
+      name:     CAT.name,
+      gender:   CAT.gender,
+      age:      CAT.age,
+      mats:     CAT.mats,
+      pers:     CAT.pers,
+      activity: CAT.activity||'',
+      hunting:  CAT.hunting||'',
+      budget:   CAT.budget,
     },
     rods:      selRods.map(r=>({name:r.name, price:r.price, icon:r.icon||'🎣'})),
     rodSum,
@@ -1600,21 +1735,71 @@ window.go = function(id){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById('s-'+id).classList.add('on');
   window.scrollTo(0,0);
-  if(id==='age')    rAge();
-  if(id==='mat')    rMat();
-  if(id==='pers')   rPers();
-  if(id==='budget'){ CAT.budget=CAT.budget||14000; window.rBudget(); }
-  if(id==='rod')    rRodScreen();
-  if(id==='saves')  loadSaves();
-  // 저장 버튼 초기화 (결과화면 재진입 시)
+  if(id==='age')      rAge();
+  if(id==='mat')      rMat();
+  if(id==='pers')     rPers();
+  if(id==='budget'){  CAT.budget=CAT.budget||14000; window.rBudget(); }
+  if(id==='activity') rActivity();
+  if(id==='hunting')  rHunting();
+  if(id==='rod')      rRodScreen();
+  if(id==='saves')    loadSaves();
   if(id==='res'){
     const btn=document.getElementById('btn-save-res');
     if(btn){ btn.textContent='💾 이 추천 저장하기'; btn.style.background=''; btn.disabled=false; }
   }
 };
 
+// ── 활동량 화면 ──
+function rActivity(){
+  const ttl = document.getElementById('activity-ttl');
+  if(ttl) ttl.textContent = `⚡ ${CAT.name||'우리 아이'}의 활동량은?`;
+  // 이전 선택 복원
+  document.querySelectorAll('.act-btn').forEach(b=>{
+    const sel = b.dataset.v === CAT.activity;
+    b.style.background    = sel ? 'rgba(255,217,61,.12)' : 'rgba(255,255,255,.06)';
+    b.style.borderColor   = sel ? 'var(--g1)' : 'var(--border)';
+  });
+  const btn = document.getElementById('btn-activity');
+  if(btn) btn.disabled = !CAT.activity;
+}
+
+window.selActivity = function(v){
+  CAT.activity = v;
+  document.querySelectorAll('.act-btn').forEach(b=>{
+    const sel = b.dataset.v === v;
+    b.style.background  = sel ? 'rgba(255,217,61,.12)' : 'rgba(255,255,255,.06)';
+    b.style.borderColor = sel ? 'var(--g1)' : 'var(--border)';
+  });
+  const btn = document.getElementById('btn-activity');
+  if(btn) btn.disabled = false;
+};
+
+// ── 사냥패턴 화면 ──
+function rHunting(){
+  const ttl = document.getElementById('hunting-ttl');
+  if(ttl) ttl.textContent = `🎯 ${CAT.name||'우리 아이'}의 사냥 스타일은?`;
+  document.querySelectorAll('.hunt-btn').forEach(b=>{
+    const sel = b.dataset.v === CAT.hunting;
+    b.style.background  = sel ? 'rgba(255,217,61,.12)' : 'rgba(255,255,255,.06)';
+    b.style.borderColor = sel ? 'var(--g1)' : 'var(--border)';
+  });
+  const btn = document.getElementById('btn-hunting');
+  if(btn) btn.disabled = !CAT.hunting;
+}
+
+window.selHunting = function(v){
+  CAT.hunting = v;
+  document.querySelectorAll('.hunt-btn').forEach(b=>{
+    const sel = b.dataset.v === v;
+    b.style.background  = sel ? 'rgba(255,217,61,.12)' : 'rgba(255,255,255,.06)';
+    b.style.borderColor = sel ? 'var(--g1)' : 'var(--border)';
+  });
+  const btn = document.getElementById('btn-hunting');
+  if(btn) btn.disabled = false;
+};
+
 window.restart = function(){
-  CAT={name:"",gender:"",age:1,mats:[],pers:"",budget:14000,rods:[],rodSkip:false};
+  CAT={name:"",gender:"",age:1,mats:[],pers:"",activity:"",hunting:"",budget:14000,rods:[],rodSkip:false};
   document.getElementById('cat-name').value='';
   document.getElementById('gm').classList.remove('s');
   document.getElementById('gf').classList.remove('s');
@@ -1660,17 +1845,19 @@ window.prevQI = function(){
   if(url){p.src=proxyImg(url);p.style.display='block';p.onerror=()=>{p.src=url;p.onerror=()=>{p.style.display='none';}};}
   else p.style.display='none';
 };
-window.uploadImgFile = function(input){
+window.uploadImgFile = async function(input){
   const f=input.files[0]; if(!f) return;
-  if(f.size>2*1024*1024){toast('2MB 이하 이미지를 사용해주세요!');return;}
-  const r=new FileReader();
-  r.onloadend=()=>{
-    uploadedImgData=r.result;
+  if(f.size>10*1024*1024){toast('10MB 이하 이미지를 사용해주세요!');return;}
+  try{
+    toast('이미지 최적화 중... ✨');
+    const data = await resizeImage(f, 800, 0.85);
+    uploadedImgData = data;
     const p=document.getElementById('qi-iprev');
-    p.src=r.result; p.style.display='block';
+    p.src=data; p.style.display='block';
     document.getElementById('qi-img').value='';
-  };
-  r.readAsDataURL(f);
+    const kb = Math.round(data.length * 0.75 / 1024);
+    toast(`이미지 최적화 완료! (${kb}KB) ✅`);
+  } catch(e){ toast('이미지 처리 실패: '+e.message); }
 };
 window.addProduct = async function(){
   const name=document.getElementById('qi-n').value.trim();
@@ -1782,26 +1969,25 @@ window.applyEpImgUrl = function(){
 
 // 파일 업로드 미리보기
 let editImgData = '';
-window.uploadEpImg = function(input){
+window.uploadEpImg = async function(input){
   const f = input.files[0]; if(!f) return;
-  if(f.size > 2*1024*1024){ toast('2MB 이하 이미지를 사용해주세요!'); return; }
-  const r = new FileReader();
-  r.onloadend = ()=>{
-    editImgData = r.result;
+  if(f.size > 10*1024*1024){ toast('10MB 이하 이미지를 사용해주세요!'); return; }
+  try{
+    toast('이미지 최적화 중... ✨');
+    const data = await resizeImage(f, 800, 0.85);
+    editImgData = data;
     const prev = document.getElementById('ep-file-preview');
-    if(prev){ prev.src=r.result; prev.style.display='block'; }
-    // URL 입력란 초기화
+    if(prev){ prev.src=data; prev.style.display='block'; }
     const urlInput = document.getElementById('ep-img');
     if(urlInput) urlInput.value='';
     const urlPrev = document.getElementById('ep-url-preview');
     if(urlPrev) urlPrev.style.display='none';
-    // 현재 이미지 미리보기 업데이트
     const wrap = document.getElementById('ep-img-preview-wrap');
     const imgPrev = document.getElementById('ep-img-preview');
-    if(wrap && imgPrev){ wrap.style.display='block'; imgPrev.src=r.result; }
-    toast('이미지가 선택됐어요! 저장 버튼을 눌러주세요 ✓');
-  };
-  r.readAsDataURL(f);
+    if(wrap && imgPrev){ wrap.style.display='block'; imgPrev.src=data; }
+    const kb = Math.round(data.length * 0.75 / 1024);
+    toast('이미지 최적화 완료! ('+kb+'KB) ✅');
+  } catch(e){ toast('이미지 처리 실패: '+e.message); }
 };
 
 // 이미지 삭제
@@ -1879,12 +2065,16 @@ window.clearNotice = async function(){
 };
 
 // ── 로고 ──
-window.prevLogo = function(input){
+window.prevLogo = async function(input){
   const f=input.files[0]; if(!f) return;
-  if(f.size>2*1024*1024){toast('2MB 이하 이미지를 사용해주세요!');return;}
-  const r=new FileReader();
-  r.onloadend=()=>{ pendLogo=r.result; document.getElementById('logo-adm').src=r.result; };
-  r.readAsDataURL(f);
+  if(f.size>10*1024*1024){toast('10MB 이하 이미지를 사용해주세요!');return;}
+  try{
+    toast('이미지 최적화 중... ✨');
+    const data = await resizeImage(f, 800, 0.9);
+    pendLogo = data;
+    document.getElementById('logo-adm').src = data;
+    toast('로고 이미지 준비 완료! 저장 버튼을 눌러주세요 ✅');
+  } catch(e){ toast('이미지 처리 실패: '+e.message); }
 };
 window.saveLogo = async function(){
   if(!pendLogo){toast('먼저 이미지를 선택해주세요!');return;}
@@ -3086,7 +3276,7 @@ window.loadStats = async function(){
     document.getElementById('stat-clicks').textContent = (td.clicks||0).toLocaleString();
 
     // 인기 성격 TOP3
-    const persRank = Object.entries(td.pers||{}).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    const persRank = Object.entries(td.pers||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
     const persEmoji = {"활발한":"⚡","진지한":"🧐","호기심많은":"👀","겁쟁이":"🙈","식탐이많은":"🍗","게으른":"💤"};
     document.getElementById('stat-pers-rank').innerHTML = persRank.length
       ? persRank.map(([k,v],i)=>`
@@ -3098,8 +3288,8 @@ window.loadStats = async function(){
           </div>`).join('')
       : '<div style="font-size:12px;color:#6b7280">아직 데이터가 없어요</div>';
 
-    // 인기 재질 TOP3
-    const matRank = Object.entries(td.mats||{}).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    // 인기 재질 TOP5
+    const matRank = Object.entries(td.mats||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
     const matEmoji = {"깃털":"🪶","비닐":"🛍️","폼폼이":"🎾","실리콘":"🔵","끈":"🧵","천":"🧶","종이":"📄","나무":"🪵"};
     document.getElementById('stat-mat-rank').innerHTML = matRank.length
       ? matRank.map(([k,v],i)=>`
@@ -3116,6 +3306,9 @@ window.loadStats = async function(){
     const avg = budgets.length ? Math.round(budgets.reduce((a,b)=>a+b,0)/budgets.length) : 0;
     document.getElementById('stat-avg-budget').textContent = avg ? avg.toLocaleString()+'원' : '-';
 
+    // ── Chart.js 차트 렌더링 ──
+    renderStatCharts(persRank, matRank);
+
     document.getElementById('stats-loading').style.display='none';
     document.getElementById('stats-content').style.display='block';
   } catch(e){
@@ -3125,6 +3318,67 @@ window.loadStats = async function(){
 
 
 // ── 통계 초기화 ──
+// ── 통계 차트 렌더링 (Chart.js) ──
+let _chartPers = null;
+let _chartMat  = null;
+
+function renderStatCharts(persRank, matRank){
+  // Chart.js 동적 로드
+  if(!window.Chart){
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+    s.onload = () => _drawCharts(persRank, matRank);
+    document.head.appendChild(s);
+  } else {
+    _drawCharts(persRank, matRank);
+  }
+}
+
+function _drawCharts(persRank, matRank){
+  const chartDefaults = {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color:'#9ca3af', font:{size:11} }, grid:{ color:'rgba(255,255,255,.05)' } },
+      y: { ticks: { color:'#9ca3af', font:{size:11}, precision:0 }, grid:{ color:'rgba(255,255,255,.07)' }, beginAtZero:true },
+    },
+  };
+
+  // 성격 차트
+  const pcv = document.getElementById('chart-pers');
+  if(pcv && persRank.length){
+    pcv.style.display = 'block';
+    if(_chartPers) _chartPers.destroy();
+    _chartPers = new Chart(pcv, {
+      type: 'bar',
+      data: {
+        labels: persRank.map(([k])=>k),
+        datasets:[{ data: persRank.map(([,v])=>v),
+          backgroundColor: 'rgba(255,217,61,.7)',
+          borderColor: '#FFD93D', borderWidth:1, borderRadius:6 }]
+      },
+      options: chartDefaults,
+    });
+  }
+
+  // 재질 차트
+  const mcv = document.getElementById('chart-mat');
+  if(mcv && matRank.length){
+    mcv.style.display = 'block';
+    if(_chartMat) _chartMat.destroy();
+    _chartMat = new Chart(mcv, {
+      type: 'bar',
+      data: {
+        labels: matRank.map(([k])=>k),
+        datasets:[{ data: matRank.map(([,v])=>v),
+          backgroundColor: 'rgba(78,205,196,.7)',
+          borderColor: '#4ECDC4', borderWidth:1, borderRadius:6 }]
+      },
+      options: chartDefaults,
+    });
+  }
+}
+
 window.resetStats = async function(){
   if(!confirm('통계를 초기화할까요?\n방문자 수, 테스트 횟수, 스토어 클릭 수가 모두 0으로 리셋됩니다.')) return;
 
