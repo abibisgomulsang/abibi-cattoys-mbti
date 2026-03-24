@@ -686,6 +686,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         </div>
       </div>
       <button onclick="loadStats()" style="background:#374151;border:none;border-radius:8px;color:#fff;padding:8px 14px;cursor:pointer;font-size:12px;margin-top:12px;width:100%">🔄 새로고침</button>
+      <button onclick="resetStats()" style="background:rgba(233,69,96,.15);border:1px solid rgba(233,69,96,.4);border-radius:8px;color:#e94560;padding:8px 14px;cursor:pointer;font-size:12px;margin-top:8px;width:100%">🗑️ 통계 초기화</button>
     </div>
   </div>
 </div>
@@ -3122,6 +3123,37 @@ window.loadStats = async function(){
   }
 };
 
+
+// ── 통계 초기화 ──
+window.resetStats = async function(){
+  if(!confirm('통계를 초기화할까요?\n방문자 수, 테스트 횟수, 스토어 클릭 수가 모두 0으로 리셋됩니다.')) return;
+
+  const btn = document.querySelector('[onclick="resetStats()"]');
+  if(btn){ btn.textContent='초기화 중...'; btn.disabled=true; }
+
+  try{
+    // visits, tests 문서를 기본값으로 덮어씌우기
+    await setDoc(doc(db,'stats','visits'),{
+      total: 0,
+      today: 0,
+      lastDate: '',
+      storeClicks: 0,
+    });
+    await setDoc(doc(db,'stats','tests'),{
+      total: 0,
+      persCount: {},
+      matCount: {},
+      budgetSum: 0,
+      budgetCount: 0,
+    });
+    toast('통계가 초기화됐어요! 📊');
+    loadStats();
+  } catch(e){
+    toast('초기화 실패: ' + e.message);
+  } finally{
+    if(btn){ btn.textContent='🗑️ 통계 초기화'; btn.disabled=false; }
+  }
+};
 // ── 토스트 ──
 let toastT=null;
 window.toast = function(msg){
