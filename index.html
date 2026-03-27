@@ -3,104 +3,121 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<meta name="theme-color" content="#0d0b1e"/>
+<meta name="theme-color" content="#F5F0E8"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="아비비고물상"/>
 <link rel="manifest" href="manifest.json"/>
 <title>아비비의고물상 🐱</title>
-<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0d0b1e;--bg2:#16213e;--card:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.13);--g1:#FFD93D;--g2:#FF6B6B;--tx:#fff;--mu:rgba(255,255,255,0.55)}
+:root{
+  --bg:#F5F0E8;
+  --bg2:#EDE7DC;
+  --card:#FFFFFF;
+  --border:#D9D0C4;
+  --g1:#C4733A;
+  --g2:#8B4513;
+  --g1h:#A85D2A;
+  --tx:#1A1410;
+  --tx2:#3D2B1A;
+  --mu:#9B8A7A;
+  --mu2:#6B5E52;
+  --serif:'Hahmlet',serif;
+  --sans:'Noto Sans KR',sans-serif;
+  --accent:#C4733A;
+  --accent2:#EAE4DC;
+  --line:#D9D0C4;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%;overflow-x:hidden}
-body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);transition:background .4s}
-body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(100,60,200,0.18) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(255,107,107,0.12) 0%,transparent 60%);pointer-events:none;z-index:0}
-.scr{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px 16px;position:relative;z-index:1;animation:fi .35s ease}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);transition:background .4s}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#C4733A,#A85D2A,#8B4513);z-index:9999;pointer-events:none}
+.scr{display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:0;position:relative;z-index:1;animation:fi .3s ease}
 .scr.on{display:flex}
-#s-res{justify-content:flex-start;padding-top:32px}
+#s-res{justify-content:flex-start;padding-top:0}
 @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.card{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:22px;padding:26px 20px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
-.prog{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
-.pd{height:8px;border-radius:10px;background:rgba(255,255,255,.18);transition:all .35s;width:10px}
-.pd.a{background:var(--g1);width:28px}.pd.d{background:rgba(255,217,61,.4)}
-.ttl{font-family:"Jua",sans-serif;font-size:22px;text-align:center;color:var(--g1);margin-bottom:6px}
-.sub{font-size:13px;color:var(--mu);text-align:center;margin-bottom:20px;line-height:1.6}
-.btn{display:block;width:100%;border:none;border-radius:14px;cursor:pointer;font-size:15px;padding:13px;text-align:center;text-decoration:none;margin-top:10px;transition:transform .15s;font-family:"Jua",sans-serif}
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:26px 20px;width:100%;max-width:480px;box-shadow:0 4px 24px rgba(61,27,10,.1)}
+.prog{width:100%;max-width:480px;height:2px;background:var(--line);margin-bottom:28px;position:relative;border-radius:1px}
+.pd{display:none}
+.prog-fill{position:absolute;top:0;left:0;height:100%;background:var(--g1);border-radius:1px;transition:width .4s ease}
+.ttl{font-family:var(--serif);font-size:22px;text-align:left;color:var(--tx);margin-bottom:6px;font-weight:700;letter-spacing:.3px;line-height:1.25}
+.sub{font-size:12px;color:var(--mu);text-align:left;margin-bottom:20px;line-height:1.7;letter-spacing:.2px}
+.btn{display:block;width:100%;border:none;border-radius:2px;cursor:pointer;font-size:14px;padding:14px;text-align:center;text-decoration:none;margin-top:10px;transition:all .15s;font-family:var(--serif);letter-spacing:1.5px;font-weight:600}
 .btn:active{transform:scale(.97)}.btn:disabled{opacity:.35;pointer-events:none}
-.bp{background:linear-gradient(135deg,var(--g1),var(--g2));color:#1a1a2e;box-shadow:0 4px 18px rgba(255,217,61,.25)}
-.bg{background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--tx)}
-.bgr{background:linear-gradient(135deg,#03C75A,#029944);color:#fff;display:block;text-align:center;box-shadow:0 4px 16px rgba(3,199,90,.3)}
-input[type=text],input[type=password],input[type=url],textarea{width:100%;background:rgba(255,255,255,.09);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--tx);font-size:14px;font-family:"Noto Sans KR",sans-serif;outline:none;transition:border-color .2s}
-input:focus,textarea:focus{border-color:var(--g1)}
-input::placeholder,textarea::placeholder{color:rgba(255,255,255,.3)}
-.lbl{font-size:12px;color:rgba(255,255,255,.7);display:block;margin-bottom:5px;margin-top:13px}
+.bp{background:var(--g1);color:#F5F0E8;box-shadow:none}
+.bg{background:transparent;border:1px solid var(--line);color:var(--mu2)}
+.bgr{background:#3A7D44;color:#fff;display:block;text-align:center;box-shadow:none;border-radius:2px}
+input[type=text],input[type=password],input[type=url],textarea{width:100%;background:#fff;border:none;border-bottom:1.5px solid var(--line);border-radius:0;padding:11px 4px;color:var(--tx);font-size:14px;font-family:var(--sans);outline:none;transition:border-color .2s}
+input:focus,textarea:focus{border-bottom-color:var(--g1);background:#FFF8F4}
+input::placeholder,textarea::placeholder{color:var(--mu)}
+.lbl{font-size:10px;color:var(--mu);display:block;margin-bottom:6px;margin-top:16px;letter-spacing:2px;text-transform:uppercase;font-family:var(--sans)}
 .gw{display:flex;gap:10px;margin-top:4px}
-.gb{flex:1;background:rgba(255,255,255,.08);border:1.5px solid var(--border);border-radius:16px;color:var(--tx);cursor:pointer;padding:15px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:"Jua",sans-serif;font-size:14px;transition:all .2s}
+.gb{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:4px;color:var(--tx);cursor:pointer;padding:15px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:var(--serif);font-size:13px;transition:all .2s;letter-spacing:.5px}
 .gb .gi{font-size:30px}
-.gb.s{background:rgba(255,217,61,.15);border-color:var(--g1);color:var(--g1)}
-.abig{font-family:"Jua",sans-serif;font-size:68px;color:var(--g1);line-height:1;text-align:center;text-shadow:0 0 40px rgba(255,217,61,.35)}
-.asub{font-size:13px;color:var(--mu);text-align:center;margin:4px 0 16px}
-input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
+.gb.s{background:#FFF3EB;border-color:var(--g1);color:var(--g1)}
+.abig{font-family:"Bebas Neue",sans-serif;font-size:80px;color:var(--g1);line-height:1;text-align:center;letter-spacing:2px}
+.asub{font-size:11px;color:var(--mu);text-align:center;margin:4px 0 16px;letter-spacing:1px}
+input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
 .aq{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;justify-content:center}
-.aqb{background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--tx);font-size:12px;padding:5px 13px;cursor:pointer;transition:all .2s;font-family:"Jua",sans-serif}
-.aqb.s{background:rgba(255,217,61,.18);border-color:var(--g1);color:var(--g1)}
+.aqb{background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--tx);font-size:12px;padding:5px 13px;cursor:pointer;transition:all .2s;font-family:var(--serif)}
+.aqb.s{background:#FFF3EB;border-color:var(--g1);color:var(--g1)}
 .tg{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
-.tb{background:rgba(255,255,255,.08);border:1.5px solid var(--border);border-radius:22px;color:var(--tx);cursor:pointer;padding:9px 15px;font-size:14px;font-family:"Jua",sans-serif;display:flex;align-items:center;gap:5px;transition:all .2s}
-.tb.s{background:rgba(255,217,61,.2);border-color:var(--g1);color:var(--g1);box-shadow:0 3px 12px rgba(255,217,61,.2)}
-.tc{text-align:center;color:var(--g1);font-size:12px;margin-bottom:14px}
+.tb{background:#fff;border:1.5px solid var(--line);border-radius:50px;color:var(--tx2);cursor:pointer;padding:9px 16px;font-size:13px;font-family:var(--sans);display:flex;align-items:center;gap:5px;transition:all .2s}
+.tb.s{background:#FFF3EB;border-color:var(--g1);color:var(--g1);box-shadow:none}
+.tc{text-align:right;color:var(--mu);font-size:11px;margin-bottom:14px;letter-spacing:1px}
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.pb{background:rgba(255,255,255,.07);border:1.5px solid var(--border);border-radius:15px;color:var(--tx);cursor:pointer;padding:13px 9px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s}
-.pb .pi{font-size:28px}.pb .pn{font-family:"Jua",sans-serif;font-size:14px}.pb .pd2{font-size:10px;color:var(--mu);line-height:1.4}
-.pb.s{background:rgba(255,217,61,.16);border-color:var(--g1)}.pb.s .pn,.pb.s .pd2{color:var(--g1)}
-.rh{text-align:center;width:100%;max-width:440px;margin-bottom:18px}
-.rh h2{font-family:"Jua",sans-serif;font-size:22px;color:var(--g1);margin-top:8px}
+.pb{background:#fff;border:1.5px solid var(--line);border-radius:4px;color:var(--tx2);cursor:pointer;padding:14px 9px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s}
+.pb .pi{font-size:28px}.pb .pn{font-family:var(--serif);font-size:14px}.pb .pd2{font-size:10px;color:var(--mu);line-height:1.4}
+.pb.s{background:#FFF3EB;border-color:var(--g1)}.pb.s .pn,.pb.s .pd2{color:var(--g1)}
+.rh{text-align:left;width:100%;max-width:480px;margin-bottom:0;padding:20px 20px 16px;border-bottom:1px solid var(--line)}
+.rh h2{font-family:var(--serif);font-size:22px;color:var(--tx);margin-top:8px;font-weight:700;letter-spacing:.3px}
 .cps{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:8px}
-.cp{background:rgba(255,217,61,.13);border:1px solid rgba(255,217,61,.3);border-radius:20px;padding:3px 11px;color:var(--g1);font-size:12px}
-.pc{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:18px;padding:16px;width:100%;max-width:440px;margin-bottom:12px;position:relative;overflow:hidden;animation:fi .4s ease both}
-.pc.best{border-color:var(--g1);border-width:2px}
-.bb{position:absolute;top:0;right:0;background:linear-gradient(135deg,var(--g1),var(--g2));color:#1a1a2e;font-family:"Jua",sans-serif;font-size:11px;padding:4px 12px;border-bottom-left-radius:11px}
+.cp{background:var(--accent2);border:1px solid var(--line);border-radius:2px;padding:3px 10px;color:var(--mu2);font-size:10px;letter-spacing:.5px}
+.pc{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-left:none;border-right:none;border-radius:0;padding:16px 0;width:100%;max-width:480px;margin-bottom:0;position:relative;overflow:hidden;animation:fi .4s ease both}
+.pc.best{border-top:2px solid var(--g1)}
+.bb{position:absolute;top:0;right:0;background:var(--g1);color:#F5F0E8;font-family:var(--serif);font-size:9px;padding:4px 10px;letter-spacing:1.5px}
 .pi2{display:flex;gap:13px}
-.pt{width:86px;height:86px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden}
+.pt{width:80px;height:80px;border-radius:4px;flex-shrink:0;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;border:1px solid var(--line)}
 .pt img{width:100%;height:100%;object-fit:cover}
-.pif{flex:1}.pn2{font-family:"Jua",sans-serif;font-size:16px;margin-bottom:4px}
-.pde{font-size:12px;color:var(--mu);line-height:1.5;margin-bottom:5px}
-.ppr{color:var(--g1);font-family:"Jua",sans-serif;font-size:15px}
+.pif{flex:1}.pn2{font-family:var(--serif);font-size:15px;margin-bottom:4px;font-weight:700;color:var(--tx);letter-spacing:.2px}
+.pde{font-size:11px;color:var(--mu);line-height:1.6;margin-bottom:5px}
+.ppr{color:var(--g1);font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:1px}
 .ptgs{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
-.ptg{background:rgba(255,255,255,.09);border-radius:20px;padding:2px 8px;font-size:10px;color:var(--mu)}
-.ra{display:flex;gap:9px;width:100%;max-width:440px;margin-bottom:40px}
+.ptg{background:var(--accent2);border-radius:2px;padding:2px 7px;font-size:9px;color:var(--mu2);letter-spacing:.3px}
+.ra{display:flex;gap:9px;width:100%;max-width:480px;margin-bottom:40px}
 .ra .btn{margin-top:0}
-.hlogo{display:block;text-align:center;margin-bottom:6px}
+.hlogo{display:block;text-align:center;margin-bottom:16px}
 .hlogo img{max-width:260px;width:85%;height:auto;animation:fl 3s ease-in-out infinite}
 @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
-.hsub{color:var(--mu);font-size:13px;text-align:center;margin:6px 0 18px;line-height:1.6}
-.feats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;width:100%;max-width:420px}
-.feat{text-align:center;background:rgba(255,217,61,.09);border-radius:14px;padding:13px 7px}
-.feat .fi{font-size:24px}.feat .fl{font-size:11px;color:var(--g1);margin-top:3px}
-.nb{width:100%;max-width:420px;margin-bottom:14px;background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);border-radius:14px;padding:11px 16px;font-size:13px;color:var(--g1);text-align:center;line-height:1.5;display:none}
-.admbtn{margin-top:16px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:20px;color:rgba(255,255,255,.35);padding:8px 20px;cursor:pointer;font-size:12px;transition:all .2s}
+.hsub{color:var(--mu2);font-size:12px;text-align:center;margin:6px 0 18px;line-height:1.7;letter-spacing:.3px}
+.feats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;margin-bottom:18px;width:100%;max-width:480px;border:1px solid var(--line)}
+.feat{text-align:center;background:var(--card);padding:14px 7px}
+.feat .fi{font-size:22px}.feat .fl{font-size:9px;color:var(--mu2);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.nb{width:100%;max-width:480px;margin-bottom:14px;background:#FFF8F0;border:none;border-left:3px solid var(--g1);padding:11px 16px;font-size:12px;color:var(--g1);text-align:left;line-height:1.6;display:none}
+.admbtn{margin-top:16px;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--mu);padding:6px 16px;cursor:pointer;font-size:11px;transition:all .2s;letter-spacing:1px}
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;overflow-y:auto;padding:16px;align-items:flex-start;justify-content:center}
 .ov.on{display:flex}
-.ap{background:#111827;border:1.5px solid #374151;border-radius:22px;padding:22px 18px;width:100%;max-width:680px;color:#fff;margin:auto}
+.ap{background:#1A1410;border:1px solid #2A2218;border-radius:4px;padding:22px 18px;width:100%;max-width:680px;color:#F5F0E8;margin:auto}
 .ath{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.attl{font-family:"Jua",sans-serif;font-size:19px;color:var(--g1)}
+.attl{font-family:var(--serif);font-size:18px;color:var(--g1);letter-spacing:1px}
 .acls{background:#e94560;border:none;border-radius:8px;color:#fff;padding:7px 13px;cursor:pointer;font-size:13px}
 .atbs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.atb{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:rgba(255,255,255,.6);padding:7px 13px;cursor:pointer;font-size:12px;font-family:"Jua",sans-serif;transition:all .2s}
-.atb.on{background:rgba(255,217,61,.18);border-color:var(--g1);color:var(--g1)}
+.atb{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:rgba(255,255,255,.6);padding:7px 13px;cursor:pointer;font-size:12px;font-family:var(--serif);transition:all .2s}
+.atb.on{background:rgba(196,115,58,.15);border-color:var(--g1);color:var(--g1)}
 .atc{display:none}.atc.on{display:block}
-.asec{background:#1f2937;border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid #374151}
-.ast{font-family:"Jua",sans-serif;color:var(--g1);font-size:15px;margin-bottom:13px}
+.asec{background:#111;border-radius:2px;padding:16px;margin-bottom:14px;border:1px solid #2A2218}
+.ast{font-family:var(--serif);color:var(--g1);font-size:14px;margin-bottom:13px;letter-spacing:.5px}
 .ag{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .af{display:flex;flex-direction:column;gap:4px}.af label{font-size:11px;color:#9ca3af}
 .af input,.af textarea{background:#111827;border:1px solid #374151;border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;font-family:"Noto Sans KR",sans-serif}
 .afc{grid-column:1/-1}
-.asb{background:var(--g1);border:none;border-radius:10px;color:#1a1a2e;padding:10px 22px;cursor:pointer;font-family:"Jua",sans-serif;font-size:14px;margin-top:12px;transition:opacity .2s}
+.asb{background:var(--g1);border:none;border-radius:10px;color:#1a1a2e;padding:10px 22px;cursor:pointer;font-family:var(--serif);font-size:14px;margin-top:12px;transition:opacity .2s}
 .asb:hover{opacity:.9}
-.pli{background:#1f2937;border-radius:11px;padding:13px;margin-bottom:9px;border:1px solid #374151;display:flex;align-items:center;gap:11px}
+.pli{background:#161008;border-radius:2px;padding:13px;margin-bottom:1px;border-top:1px solid #2A2218;display:flex;align-items:center;gap:11px}
 .plt{width:50px;height:50px;border-radius:8px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0}
 .plt img{width:100%;height:100%;object-fit:cover}
-.pli-i{flex:1;min-width:0}.pli-n{font-family:"Jua",sans-serif;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pli-i{flex:1;min-width:0}.pli-n{font-family:var(--serif);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pli-p{font-size:11px;color:var(--g1)}.pli-t{font-size:10px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pla{display:flex;gap:5px;flex-shrink:0}
 .be{background:#111827;border:1px solid #4ECDC4;border-radius:6px;color:#4ECDC4;padding:4px 9px;cursor:pointer;font-size:11px}
@@ -111,16 +128,17 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 .cr input[type=color]{width:42px;height:30px;border-radius:7px;cursor:pointer;padding:2px;border:1px solid #374151;background:#111827}
 .sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:#03C75A;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes shimmer{0%{left:-100%}100%{left:200%}}
 .sync-status{font-size:11px;color:#9ca3af;display:flex;align-items:center;margin-bottom:12px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,20,40,.96);border:1px solid var(--g1);border-radius:12px;padding:10px 22px;color:var(--g1);font-size:13px;font-family:"Jua",sans-serif;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--tx);border:none;border-radius:2px;padding:10px 22px;color:var(--bg);font-size:12px;font-family:var(--serif);z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;letter-spacing:.5px}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .pw-msg{display:none;margin-top:8px;padding:9px;border-radius:8px;font-size:12px}
-.loading-scr{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998;transition:opacity .5s}
+.loading-scr{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998;transition:opacity .5s;border-top:3px solid var(--g1)}
 .loading-scr.hidden{opacity:0;pointer-events:none}
-.lbar{width:160px;height:4px;background:rgba(255,255,255,.1);border-radius:10px;margin-top:20px;overflow:hidden}
-.lfill{height:100%;background:linear-gradient(90deg,var(--g1),var(--g2));border-radius:10px;animation:lf 1.4s ease forwards}
+.lbar{width:160px;height:1px;background:var(--line);margin-top:20px;overflow:hidden}
+.lfill{height:100%;background:var(--g1);animation:lf 1.4s ease forwards}
 @keyframes lf{from{width:0}to{width:100%}}
-.ltxt{font-family:"Jua",sans-serif;color:var(--g1);font-size:14px;margin-top:12px}
+.ltxt{font-family:var(--serif);color:var(--g1);font-size:13px;margin-top:12px;letter-spacing:2px}
 .nt{margin-top:10px;padding:10px;background:#111827;border-radius:8px;font-size:11px;color:#9ca3af;line-height:1.6}
 @media(max-width:380px){.card{padding:20px 14px}.abig{font-size:56px}.pg{gap:6px}}
 </style>
@@ -164,10 +182,16 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 <div class="toast" id="toast"></div>
 
 <!-- HOME -->
-<div class="scr" id="s-home" style="padding-top:36px">
+<div class="scr" id="s-home" style="padding-top:0;justify-content:flex-start">
+  <!-- Editorial 상단 바 -->
+  <div style="width:100%;background:var(--tx);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
+    <div style="font-family:var(--serif);font-size:13px;color:var(--bg);letter-spacing:3px;font-weight:700">아비비의고물상</div>
+    <div style="font-size:9px;color:rgba(245,240,232,.5);letter-spacing:2px">COLLECTION</div>
+  </div>
+  <div style="width:100%;max-width:480px;padding:24px 20px 0">
   <div class="hlogo">
-    <img id="logo-el" src="" alt="아비비의고물상" style="max-width:260px;width:85%;height:auto;animation:fl 3s ease-in-out infinite" onerror="this.style.display='none';document.getElementById('logo-txt').style.display='block'"/>
-    <div id="logo-txt" style="display:none;font-family:Jua,sans-serif;font-size:26px;color:var(--g1)">아비비의고물상</div>
+    <img id="logo-el" src="" alt="아비비의고물상" style="max-width:220px;width:75%;height:auto" onerror="this.style.display='none';document.getElementById('logo-txt').style.display='block'"/>
+    <div id="logo-txt" style="display:none;font-family:var(--serif);font-size:26px;color:var(--g1)">아비비의고물상</div>
   </div>
   <div class="hsub" id="h-sub">우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁</div>
   <div class="nb" id="notice-el"></div>
@@ -179,31 +203,45 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
   <div class="card">
     <div style="text-align:center;margin-bottom:16px">
       <div style="font-size:32px">🧬</div>
-      <div style="font-family:Jua,sans-serif;font-size:18px;margin-top:5px">고양이 장난감 MBTI 테스트</div>
+      <div style="font-family:var(--serif);font-size:18px;margin-top:5px">고양이 장난감 MBTI 테스트</div>
       <div style="font-size:13px;color:var(--mu);margin-top:5px;line-height:1.6">간단한 질문으로 우리 아이에게<br>딱 맞는 장난감을 추천해드릴게요!</div>
     </div>
     <button class="btn bp" onclick="go('name')">테스트 시작하기 🐾</button>
-    <button onclick="go('saves')" style="width:100%;margin-top:10px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;color:var(--tx);padding:13px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
+    <button onclick="go('saves')" style="width:100%;margin-top:10px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;color:var(--tx);padding:13px;cursor:pointer;font-family:var(--serif);font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
       📋 저장된 추천 보기 <span id="saves-badge" style="display:none;background:var(--g1);color:#1a1a2e;border-radius:20px;padding:1px 8px;font-size:11px"></span>
     </button>
-    <button onclick="shareApp()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:14px;color:#1a1a2e;padding:13px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
+    <button onclick="shareApp()" style="width:100%;margin-top:8px;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:14px;color:#1a1a2e;padding:13px;cursor:pointer;font-family:var(--serif);font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
       💌 친구에게 공유하기
     </button>
+    <!-- 홈 톡톡 상담 버튼 (talkUrl 설정 시 표시) -->
+    <a id="home-talk-btn" href="#" target="_blank" style="display:none;width:100%;margin-top:8px;background:linear-gradient(135deg,#03C75A,#029944);border:none;border-radius:14px;color:#fff;padding:13px;cursor:pointer;font-family:var(--serif);font-size:14px;text-decoration:none;justify-content:center;align-items:center;gap:8px;box-shadow:0 4px 15px rgba(3,199,90,.3)">
+      💬 전문가 상담 문의하기
+    </a>
   </div>
   <button class="admbtn" onclick="showLogin()">⚙️ 관리자</button>
+  </div>
+</div>
+
+<!-- 플로팅 톡톡 버튼 (모든 화면에서 표시) -->
+<div id="float-talk-btn" style="display:none;position:fixed;bottom:20px;right:16px;z-index:9000">
+  <a id="float-talk-link" href="#" target="_blank"
+    style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:50px;color:#fff;text-decoration:none;font-family:var(--serif);font-size:13px;box-shadow:0 4px 20px rgba(3,199,90,.5);white-space:nowrap">
+    <span style="font-size:18px">💬</span>
+    <span>1:1 상담</span>
+  </a>
 </div>
 
 <!-- SAVES 화면 -->
-<div class="scr" id="s-saves" style="justify-content:flex-start;padding-top:28px">
-  <div style="width:100%;max-width:440px">
+<div class="scr" id="s-saves" style="justify-content:flex-start;padding-top:0">
+  <div style="width:100%;max-width:480px">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
       <button onclick="go('home')" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--tx);cursor:pointer;font-size:13px">← 홈</button>
-      <div style="font-family:Jua,sans-serif;font-size:20px;color:var(--g1)">📋 저장된 추천 목록</div>
+      <div style="font-family:var(--serif);font-size:20px;color:var(--g1)">📋 저장된 추천 목록</div>
     </div>
     <div id="saves-list">
       <div style="text-align:center;padding:40px 0;color:var(--mu)">
         <div style="font-size:40px;margin-bottom:10px">📭</div>
-        <div style="font-family:Jua,sans-serif">저장된 추천이 없어요</div>
+        <div style="font-family:var(--serif)">저장된 추천이 없어요</div>
         <div style="font-size:12px;margin-top:6px">추천 결과 화면에서 💾 저장하기를 눌러보세요!</div>
       </div>
     </div>
@@ -211,8 +249,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- NAME -->
-<div class="scr" id="s-name">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-name" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-name"></div>
     <div class="card">
       <div class="ttl">😺 우리 아이를 소개해요</div>
@@ -231,8 +269,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- AGE -->
-<div class="scr" id="s-age">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-age" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-age"></div>
     <div class="card">
       <div class="ttl" id="age-ttl">🎂 나이는?</div>
@@ -249,8 +287,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- MATERIAL -->
-<div class="scr" id="s-mat">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-mat" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-mat"></div>
     <div class="card">
       <div class="ttl">🪄 좋아하는 재질은?</div>
@@ -264,8 +302,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- PERSONALITY -->
-<div class="scr" id="s-pers">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-pers" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-pers"></div>
     <div class="card">
       <div class="ttl" id="pers-ttl">😸 성격은?</div>
@@ -278,15 +316,15 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- BUDGET -->
-<div class="scr" id="s-budget">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-budget" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-budget"></div>
     <div class="card">
       <div class="ttl">💰 예산은 얼마나요?</div>
       <div class="sub" id="budget-sub">아이에게 딱 맞는 가격대를 골라드려요!</div>
 
       <div style="text-align:center;margin:10px 0 18px">
-        <div style="font-family:Jua,sans-serif;font-size:52px;color:var(--g1);text-shadow:0 0 30px rgba(255,217,61,.35)" id="budget-val">14,000원</div>
+        <div style="font-family:var(--serif);font-size:52px;color:var(--g1);text-shadow:0 0 30px rgba(255,217,61,.35)" id="budget-val">14,000원</div>
         <div style="font-size:12px;color:var(--mu);margin-top:4px" id="budget-range-lbl">적당한 가격대예요 😊</div>
       </div>
 
@@ -306,8 +344,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 
 
 <!-- ACTIVITY LEVEL -->
-<div class="scr" id="s-activity">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-activity" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-activity"></div>
     <div class="card">
       <div class="ttl" id="activity-ttl">⚡ 활동량은 어때요?</div>
@@ -316,17 +354,17 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         <button class="act-btn" data-v="매우활발" onclick="selActivity('매우활발')"
           style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
           <span style="font-size:28px">🐆</span>
-          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">매우 활발해요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">항상 뛰고 점프해요. 에너지가 넘쳐요!</div></div>
+          <div><div style="font-family:var(--serif);font-size:15px;color:var(--tx)">매우 활발해요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">항상 뛰고 점프해요. 에너지가 넘쳐요!</div></div>
         </button>
         <button class="act-btn" data-v="보통" onclick="selActivity('보통')"
           style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
           <span style="font-size:28px">🐱</span>
-          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">보통이에요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">적당히 놀고 쉬는 균형잡힌 타입</div></div>
+          <div><div style="font-family:var(--serif);font-size:15px;color:var(--tx)">보통이에요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">적당히 놀고 쉬는 균형잡힌 타입</div></div>
         </button>
         <button class="act-btn" data-v="조용함" onclick="selActivity('조용함')"
           style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
           <span style="font-size:28px">😴</span>
-          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">조용한 편이에요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">낮잠을 좋아하고 차분해요</div></div>
+          <div><div style="font-family:var(--serif);font-size:15px;color:var(--tx)">조용한 편이에요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">낮잠을 좋아하고 차분해요</div></div>
         </button>
       </div>
       <button class="btn bp" id="btn-activity" disabled onclick="go('hunting')" style="margin-top:18px">다음으로 →</button>
@@ -336,8 +374,8 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- HUNTING PATTERN -->
-<div class="scr" id="s-hunting">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-hunting" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-hunting"></div>
     <div class="card">
       <div class="ttl" id="hunting-ttl">🎯 사냥 스타일은?</div>
@@ -346,22 +384,22 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         <button class="hunt-btn" data-v="추격형" onclick="selHunting('추격형')"
           style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
           <span style="font-size:28px">🏃</span>
-          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">추격형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">빠르게 움직이는 것을 쫓아가며 공격해요</div></div>
+          <div><div style="font-family:var(--serif);font-size:15px;color:var(--tx)">추격형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">빠르게 움직이는 것을 쫓아가며 공격해요</div></div>
         </button>
         <button class="hunt-btn" data-v="잠복형" onclick="selHunting('잠복형')"
           style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
           <span style="font-size:28px">🦊</span>
-          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">잠복형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">숨어서 기다렸다가 기습 공격해요</div></div>
+          <div><div style="font-family:var(--serif);font-size:15px;color:var(--tx)">잠복형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">숨어서 기다렸다가 기습 공격해요</div></div>
         </button>
         <button class="hunt-btn" data-v="탐색형" onclick="selHunting('탐색형')"
           style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
           <span style="font-size:28px">🔍</span>
-          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">탐색형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">장난감을 냄새 맡고 구석구석 탐험해요</div></div>
+          <div><div style="font-family:var(--serif);font-size:15px;color:var(--tx)">탐색형</div><div style="font-size:12px;color:var(--mu);margin-top:2px">장난감을 냄새 맡고 구석구석 탐험해요</div></div>
         </button>
         <button class="hunt-btn" data-v="무관심" onclick="selHunting('무관심')"
           style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;text-align:left;transition:all .2s">
           <span style="font-size:28px">😑</span>
-          <div><div style="font-family:Jua,sans-serif;font-size:15px;color:var(--tx)">별로 안 놀아요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">장난감에 큰 관심이 없어요</div></div>
+          <div><div style="font-family:var(--serif);font-size:15px;color:var(--tx)">별로 안 놀아요</div><div style="font-size:12px;color:var(--mu);margin-top:2px">장난감에 큰 관심이 없어요</div></div>
         </button>
       </div>
       <button class="btn bp" id="btn-hunting" disabled onclick="go('rod')" style="margin-top:18px">다음으로 →</button>
@@ -371,31 +409,31 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- ROD SELECTION -->
-<div class="scr" id="s-rod">
-  <div style="width:100%;max-width:420px">
+<div class="scr" id="s-rod" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;max-width:480px;padding:0">
     <div class="prog" id="pg-rod"></div>
     <div class="card">
       <div class="ttl">🎣 낚시대/막대가 필요하신가요?</div>
       <div class="sub">함께 구매할 낚시대를 선택하면<br>합산 가격으로 추천해드려요! (복수 선택 가능)</div>
       <div id="rod-skip-wrap" style="text-align:center;margin-bottom:14px">
-        <button id="rod-skip-btn" onclick="toggleRodSkip()" style="background:rgba(255,255,255,.08);border:1.5px solid var(--border);border-radius:20px;color:var(--mu);padding:7px 18px;cursor:pointer;font-size:13px;font-family:Jua,sans-serif;transition:all .2s">
+        <button id="rod-skip-btn" onclick="toggleRodSkip()" style="background:rgba(255,255,255,.08);border:1.5px solid var(--border);border-radius:20px;color:var(--mu);padding:7px 18px;cursor:pointer;font-size:13px;font-family:var(--serif);transition:all .2s">
           필요없어요 (건너뛰기)
         </button>
       </div>
       <div id="rod-list" style="display:flex;flex-direction:column;gap:10px"></div>
       <div id="rod-total-wrap" style="display:none;margin-top:16px;padding:14px 16px;background:rgba(255,107,107,.1);border:1.5px solid rgba(255,107,107,.4);border-radius:14px">
-        <div style="font-family:Jua,sans-serif;font-size:13px;color:#FF6B6B;margin-bottom:10px">🧾 선택한 낚시대 금액</div>
+        <div style="font-family:var(--serif);font-size:13px;color:#FF6B6B;margin-bottom:10px">🧾 선택한 낚시대 금액</div>
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
           <span style="color:var(--mu)">💰 장난감 예산</span>
-          <span style="font-family:Jua,sans-serif;color:var(--g1)" id="rod-toy-budget"></span>
+          <span style="font-family:var(--serif);color:var(--g1)" id="rod-toy-budget"></span>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
           <span style="color:var(--mu)">🎣 낚시대 합계</span>
-          <span style="font-family:Jua,sans-serif;color:#FF6B6B" id="rod-rod-sum"></span>
+          <span style="font-family:var(--serif);color:#FF6B6B" id="rod-rod-sum"></span>
         </div>
         <div style="border-top:1px solid rgba(255,107,107,.3);padding-top:10px;display:flex;justify-content:space-between;align-items:center">
-          <span style="font-family:Jua,sans-serif;font-size:14px">🛒 예상 총 구매금액</span>
-          <span style="font-family:Jua,sans-serif;font-size:22px;color:var(--g1)" id="rod-total-val"></span>
+          <span style="font-family:var(--serif);font-size:14px">🛒 예상 총 구매금액</span>
+          <span style="font-family:var(--serif);font-size:22px;color:var(--g1)" id="rod-total-val"></span>
         </div>
         <div style="font-size:11px;color:var(--mu);margin-top:6px;text-align:center">장난감은 추천 결과에서 선택 후 구매해요!</div>
       </div>
@@ -406,12 +444,16 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 </div>
 
 <!-- RESULT -->
-<div class="scr" id="s-res">
+<div class="scr" id="s-res" style="padding:0;justify-content:flex-start">
+  <div style="width:100%;background:var(--tx);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
+    <div style="font-family:var(--serif);font-size:13px;color:var(--bg);letter-spacing:3px;font-weight:700">추천 결과</div>
+    <div id="res-vol" style="font-size:9px;color:rgba(245,240,232,.5);letter-spacing:2px">RESULT</div>
+  </div>
   <!-- 캡처 대상 영역 (버튼 제외) -->
-  <div id="capture-area" style="width:100%;max-width:440px;padding:20px 0 10px">
+  <div id="capture-area" style="width:100%;max-width:480px;padding:0">
     <div class="rh">
       <div style="font-size:54px">🎉</div>
-      <h2 id="res-ttl">추천 장난감</h2>
+      <h2 id="res-ttl" style="font-family:var(--serif);font-size:22px;color:var(--tx);font-weight:700">추천 장난감</h2>
       <div class="cps" id="res-cp"></div>
     </div>
     <div id="res-rod-box" style="width:100%"></div>
@@ -419,39 +461,39 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 
     <!-- 더보기 버튼 -->
     <div id="res-more-wrap" style="width:100%;margin:12px 0 4px;display:none">
-      <button onclick="loadMoreRecs()" style="width:100%;background:rgba(255,217,61,.1);border:1.5px solid rgba(255,217,61,.4);border-radius:14px;color:var(--g1);padding:14px;cursor:pointer;font-family:Jua,sans-serif;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px">
+      <button onclick="loadMoreRecs()" style="width:100%;background:rgba(255,217,61,.1);border:1.5px solid rgba(255,217,61,.4);border-radius:14px;color:var(--g1);padding:14px;cursor:pointer;font-family:var(--serif);font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px">
         🔄 다른 제품 더보기
       </button>
     </div>
 
     <!-- 추천 개수 선택 (맨 아래) -->
     <div style="display:flex;gap:7px;margin:16px 0 4px;justify-content:center">
-      <button class="rcnt-btn" data-cnt="4"  onclick="setRecCount(4)"  style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--mu);padding:6px 16px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">4개 보기</button>
-      <button class="rcnt-btn" data-cnt="10" onclick="setRecCount(10)" style="background:rgba(255,217,61,.18);border:1.5px solid var(--g1);border-radius:20px;color:var(--g1);padding:6px 16px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">10개 보기</button>
-      <button class="rcnt-btn" data-cnt="16" onclick="setRecCount(16)" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--mu);padding:6px 16px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">16개 보기</button>
+      <button class="rcnt-btn" data-cnt="4"  onclick="setRecCount(4)"  style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--mu);padding:6px 16px;cursor:pointer;font-family:var(--serif);font-size:13px">4개 보기</button>
+      <button class="rcnt-btn" data-cnt="10" onclick="setRecCount(10)" style="background:rgba(196,115,58,.15);border:1.5px solid var(--g1);border-radius:20px;color:var(--g1);padding:6px 16px;cursor:pointer;font-family:var(--serif);font-size:13px">10개 보기</button>
+      <button class="rcnt-btn" data-cnt="16" onclick="setRecCount(16)" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--mu);padding:6px 16px;cursor:pointer;font-family:var(--serif);font-size:13px">16개 보기</button>
     </div>
   </div>
 
   <!-- 버튼 영역 -->
-  <div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+  <div style="width:100%;max-width:480px;display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
     <!-- 합계 금액 (저장하기 바로 위) -->
     <div id="res-sel-summary" style="display:none;background:rgba(255,217,61,.1);border:1.5px solid rgba(255,217,61,.4);border-radius:16px;padding:13px 16px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">🛒 선택한 상품</span>
+        <span style="font-family:var(--serif);font-size:14px;color:var(--g1)">🛒 선택한 상품</span>
         <span style="font-size:11px;color:var(--mu)" id="res-sel-count">0개 선택</span>
       </div>
       <div id="res-sel-rows"></div>
       <div style="border-top:1px solid rgba(255,217,61,.25);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:Jua,sans-serif;font-size:14px;color:var(--tx)">💰 총 예상 금액</span>
-        <span style="font-family:Jua,sans-serif;font-size:22px;color:var(--g1)" id="res-sel-total">0원</span>
+        <span style="font-family:var(--serif);font-size:14px;color:var(--tx)">💰 총 예상 금액</span>
+        <span style="font-family:var(--serif);font-size:22px;color:var(--g1)" id="res-sel-total">0원</span>
       </div>
     </div>
     <!-- 저장하기 -->
-    <button onclick="saveResult()" id="btn-save-res" style="width:100%;background:linear-gradient(135deg,#4ECDC4,#2eb8ae);border:none;border-radius:12px;color:#fff;padding:13px 0;cursor:pointer;font-family:Jua,sans-serif;font-size:15px">💾 이 추천 저장하기</button>
+    <button onclick="saveResult()" id="btn-save-res" style="width:100%;background:linear-gradient(135deg,#4ECDC4,#2eb8ae);border:none;border-radius:12px;color:#fff;padding:13px 0;cursor:pointer;font-family:var(--serif);font-size:15px">💾 이 추천 저장하기</button>
     <!-- 전체선택 + 선택공유 -->
     <div style="display:flex;gap:8px">
-      <button onclick="toggleSelectAll()" id="btn-sel-all" style="flex:1;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:12px;color:var(--tx);padding:10px 0;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;transition:all .2s">☑️ 전체 선택</button>
-      <button onclick="shareSelected()" style="flex:2;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:12px;color:#1a1a2e;padding:10px 0;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">💬 선택 상품 공유</button>
+      <button onclick="toggleSelectAll()" id="btn-sel-all" style="flex:1;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:12px;color:var(--tx);padding:10px 0;cursor:pointer;font-family:var(--serif);font-size:13px;transition:all .2s">☑️ 전체 선택</button>
+      <button onclick="shareSelected()" style="flex:2;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:12px;color:#1a1a2e;padding:10px 0;cursor:pointer;font-family:var(--serif);font-size:13px">💬 선택 상품 공유</button>
     </div>
     <!-- 다시테스트 + 전체상품 -->
     <div style="display:flex;gap:8px">
@@ -459,9 +501,26 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="flex:1;margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
     </div>
     <!-- 앱 공유하기 -->
-    <button onclick="shareApp()" style="width:100%;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:12px;color:#1a1a2e;padding:12px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px">
+    <button onclick="shareApp()" style="width:100%;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:12px;color:#1a1a2e;padding:12px;cursor:pointer;font-family:var(--serif);font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px">
       💌 이 앱 친구에게 공유하기
     </button>
+    <!-- 네이버 톡톡 상담 배너 (talkUrl 설정 시 표시) -->
+    <div id="talk-banner" style="display:none;margin-top:4px">
+      <a id="talk-banner-link" href="#" target="_blank"
+        style="display:flex;align-items:center;gap:12px;padding:16px;background:linear-gradient(135deg,#03C75A,#029944);border:none;border-radius:14px;text-decoration:none;box-shadow:0 4px 20px rgba(3,199,90,.35);position:relative;overflow:hidden">
+        <!-- 반짝임 효과 -->
+        <div style="position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmer 2.5s infinite"></div>
+        <div style="width:44px;height:44px;background:rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">💬</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:var(--serif);font-size:15px;color:#fff">전문가에게 상담받기</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:2px">결과를 가지고 네이버 톡톡으로 1:1 문의 →</div>
+        </div>
+        <div style="font-size:22px">→</div>
+      </a>
+      <div style="font-size:10px;color:rgba(255,255,255,.35);text-align:center;margin-top:5px">
+        💡 버튼을 누르면 상담 내용이 자동으로 복사돼요
+      </div>
+    </div>
   </div>
   <div style="height:32px"></div>
 </div>
@@ -470,7 +529,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
 <div class="ov" id="ov-login">
   <div class="card" style="max-width:320px;text-align:center">
     <div style="font-size:38px;margin-bottom:10px">🔐</div>
-    <div style="font-family:Jua,sans-serif;font-size:18px;margin-bottom:14px">관리자 로그인</div>
+    <div style="font-family:var(--serif);font-size:18px;margin-bottom:14px">관리자 로그인</div>
     <input type="password" id="adm-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')chkAdm()"/>
     <div style="display:flex;gap:8px;margin-top:10px">
       <button class="btn bg" style="margin-top:0" onclick="closeOv('ov-login')">취소</button>
@@ -513,7 +572,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         엑셀이나 CSV 파일로 상품을 한 번에 Firebase에 추가해요!<br>
         <strong style="color:#4ECDC4">필수 열:</strong> 상품명, 가격, URL, 태그, 설명, 이미지URL
       </div>
-      <button onclick="downloadTemplate()" style="background:rgba(78,205,196,0.15);border:1px solid #4ECDC4;border-radius:9px;color:#4ECDC4;padding:9px 16px;cursor:pointer;font-size:12px;font-family:Jua,sans-serif;margin-bottom:12px;width:100%">
+      <button onclick="downloadTemplate()" style="background:rgba(78,205,196,0.15);border:1px solid #4ECDC4;border-radius:9px;color:#4ECDC4;padding:9px 16px;cursor:pointer;font-size:12px;font-family:var(--serif);margin-bottom:12px;width:100%">
         📥 엑셀 템플릿 다운로드
       </button>
       <div class="af">
@@ -523,7 +582,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <div id="csv-loading" style="display:none;text-align:center;padding:12px;color:#9ca3af;font-size:12px">⏳ 파일 읽는 중...</div>
       <div id="csv-error" style="display:none;margin-top:10px;padding:10px;background:rgba(233,69,96,0.1);border:1px solid #e94560;border-radius:8px;color:#e94560;font-size:12px;line-height:1.6;white-space:pre-line"></div>
       <div id="csv-preview" style="display:none;margin-top:12px">
-        <div style="font-size:12px;color:#4ECDC4;margin-bottom:8px;font-family:Jua,sans-serif" id="csv-preview-title"></div>
+        <div style="font-size:12px;color:#4ECDC4;margin-bottom:8px;font-family:var(--serif)" id="csv-preview-title"></div>
         <div style="overflow-x:auto;border-radius:8px;border:1px solid #374151;max-height:200px;overflow-y:auto">
           <table id="csv-table" style="width:100%;border-collapse:collapse;font-size:11px">
             <thead id="csv-thead" style="background:#111827;position:sticky;top:0"></thead>
@@ -531,7 +590,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
           </table>
         </div>
         <div style="display:flex;gap:8px;margin-top:10px">
-          <button onclick="confirmCsvUpload()" style="background:linear-gradient(135deg,#4ECDC4,#2bb5ac);border:none;border-radius:9px;color:#1a1a2e;padding:9px 18px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;font-weight:bold">✓ Firebase에 전체 추가</button>
+          <button onclick="confirmCsvUpload()" style="background:linear-gradient(135deg,#4ECDC4,#2bb5ac);border:none;border-radius:9px;color:#1a1a2e;padding:9px 18px;cursor:pointer;font-family:var(--serif);font-size:13px;font-weight:bold">✓ Firebase에 전체 추가</button>
           <button onclick="cancelCsvUpload()" style="background:#374151;border:none;border-radius:8px;color:#fff;padding:9px 14px;cursor:pointer;font-size:12px">취소</button>
         </div>
       </div>
@@ -560,7 +619,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <button class="asb" onclick="addProduct()">Firebase에 저장 ✓</button>
     </div>
 
-    <div style="font-family:Jua,sans-serif;color:var(--g1);font-size:15px;margin-bottom:10px">📋 등록된 상품 목록</div>
+    <div style="font-family:var(--serif);color:var(--g1);font-size:15px;margin-bottom:10px">📋 등록된 상품 목록</div>
     <div id="plist"></div>
   </div>
 
@@ -573,10 +632,10 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <div class="cr"><label>강조색 2 (레드)</label><input type="color" id="c-a2" value="#FF6B6B" oninput="liveClr()"/></div>
       <div class="ast" style="margin-top:16px">프리셋</div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <button onclick="applyPreset('dark')" style="background:#1a1a2e;border:1px solid #444;border-radius:8px;color:#FFD93D;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">🌙 다크</button>
-        <button onclick="applyPreset('light')" style="background:#f0ece0;border:1px solid #ccc;border-radius:8px;color:#333;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">☀️ 라이트</button>
-        <button onclick="applyPreset('forest')" style="background:#0d1f0f;border:1px solid #2d5a33;border-radius:8px;color:#7ecf82;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">🌿 포레스트</button>
-        <button onclick="applyPreset('pink')" style="background:#1e0a18;border:1px solid #8b1a4a;border-radius:8px;color:#ff85c2;padding:7px 13px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px">🌸 핑크</button>
+        <button onclick="applyPreset('dark')" style="background:#1a1a2e;border:1px solid #444;border-radius:8px;color:#FFD93D;padding:7px 13px;cursor:pointer;font-family:var(--serif);font-size:12px">🌙 다크</button>
+        <button onclick="applyPreset('light')" style="background:#f0ece0;border:1px solid #ccc;border-radius:8px;color:#333;padding:7px 13px;cursor:pointer;font-family:var(--serif);font-size:12px">☀️ 라이트</button>
+        <button onclick="applyPreset('forest')" style="background:#0d1f0f;border:1px solid #2d5a33;border-radius:8px;color:#7ecf82;padding:7px 13px;cursor:pointer;font-family:var(--serif);font-size:12px">🌿 포레스트</button>
+        <button onclick="applyPreset('pink')" style="background:#1e0a18;border:1px solid #8b1a4a;border-radius:8px;color:#ff85c2;padding:7px 13px;cursor:pointer;font-family:var(--serif);font-size:12px">🌸 핑크</button>
       </div>
       <button class="asb" onclick="saveTheme()">테마 저장 → Firebase ✓</button>
     </div>
@@ -588,6 +647,14 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <div class="ast">🏷️ 브랜드 정보</div>
       <div class="af"><label>홈 소개 문구</label><input type="text" id="b-sub" placeholder="우리 아이 성격에 딱 맞는..."/></div>
       <div class="af"><label>스마트스토어 URL</label><input type="text" id="b-url" placeholder="https://smartstore.naver.com/avivi"/></div>
+      <div class="af">
+        <label>💬 네이버 톡톡 URL <span style="font-size:10px;color:#9ca3af">(결과 화면에 상담 버튼 표시)</span></label>
+        <input type="text" id="b-talk" placeholder="https://talk.naver.com/ct/XXXXXXX"/>
+        <div style="font-size:10px;color:#9ca3af;margin-top:4px;line-height:1.6">
+          네이버 스마트스토어 → 톡톡 설정 → 채널 URL을 복사해서 붙여넣으세요.<br>
+          비워두면 상담 버튼이 표시되지 않아요.
+        </div>
+      </div>
       <button class="asb" onclick="saveBrand()">저장 → Firebase ✓</button>
     </div>
   </div>
@@ -647,7 +714,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
           <input type="text" id="new-mat-i" placeholder="🏷️" style="width:48px;font-size:18px;text-align:center;cursor:pointer" readonly onclick="openEmojiPicker('new-mat-i')"/>
           <div style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:9px;color:#9ca3af;white-space:nowrap">탭해서 선택</div>
         </div>
-        <button onclick="addMat()" style="background:linear-gradient(135deg,#4ECDC4,#2bb5ac);border:none;border-radius:9px;color:#1a1a2e;padding:9px 14px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px;white-space:nowrap;flex-shrink:0;margin-top:0">+ 추가</button>
+        <button onclick="addMat()" style="background:linear-gradient(135deg,#4ECDC4,#2bb5ac);border:none;border-radius:9px;color:#1a1a2e;padding:9px 14px;cursor:pointer;font-family:var(--serif);font-size:12px;white-space:nowrap;flex-shrink:0;margin-top:0">+ 추가</button>
       </div>
       <button class="asb" style="background:linear-gradient(135deg,#4ECDC4,#2bb5ac);color:#1a1a2e;margin-top:18px" onclick="saveMats()">재질 저장 → Firebase ✓</button>
     </div>
@@ -664,7 +731,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         </div>
         <input type="text" id="new-pers-d" placeholder="설명 (예: 사람을 좋아해요)" style="font-size:12px"/>
       </div>
-      <button onclick="addPers()" style="background:linear-gradient(135deg,#C77DFF,#9b5de5);border:none;border-radius:9px;color:#fff;padding:9px 14px;cursor:pointer;font-family:Jua,sans-serif;font-size:12px;margin-top:14px;width:100%">+ 성격 추가</button>
+      <button onclick="addPers()" style="background:linear-gradient(135deg,#C77DFF,#9b5de5);border:none;border-radius:9px;color:#fff;padding:9px 14px;cursor:pointer;font-family:var(--serif);font-size:12px;margin-top:14px;width:100%">+ 성격 추가</button>
       <button class="asb" style="background:linear-gradient(135deg,#C77DFF,#9b5de5);color:#fff;margin-top:8px" onclick="savePers()">성격 저장 → Firebase ✓</button>
     </div>
   </div>
@@ -673,7 +740,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
   <div id="emoji-picker-ov" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;align-items:flex-end;justify-content:center">
     <div style="width:100%;max-width:480px;background:#1f2937;border-radius:20px 20px 0 0;padding:16px;max-height:70vh;overflow-y:auto">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-family:Jua,sans-serif;font-size:15px;color:#fff">이모지 선택</div>
+        <div style="font-family:var(--serif);font-size:15px;color:#fff">이모지 선택</div>
         <button onclick="closeEmojiPicker()" style="background:none;border:none;color:#9ca3af;font-size:22px;cursor:pointer;line-height:1">✕</button>
       </div>
       <div id="emoji-picker-search-wrap" style="margin-bottom:10px">
@@ -695,7 +762,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
       <div id="rod-admin-list" style="margin-bottom:14px"></div>
       <!-- 새 낚시대 추가 -->
       <div style="background:#111827;border-radius:10px;padding:12px;border:1px solid #374151">
-        <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:Jua,sans-serif">➕ 새 낚시대 추가</div>
+        <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:var(--serif)">➕ 새 낚시대 추가</div>
         <div class="ag">
           <div class="af"><label>이름 *</label><input type="text" id="new-rod-n" placeholder="예) 40cm 깃털 낚싯대"/></div>
           <div class="af"><label>가격 (원)</label><input type="number" id="new-rod-p" placeholder="5000" min="0"/></div>
@@ -703,7 +770,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
           <div class="af"><label>이모지/아이콘</label><input type="text" id="new-rod-i" placeholder="🎣" style="text-align:center"/></div>
           <div class="af"><label>이미지 URL (선택)</label><input type="text" id="new-rod-img" placeholder="https://..."/></div>
         </div>
-        <button onclick="addRod()" style="background:linear-gradient(135deg,#FF6B6B,#e94560);border:none;border-radius:9px;color:#fff;padding:9px 18px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px;margin-top:10px;width:100%">+ 낚시대 추가</button>
+        <button onclick="addRod()" style="background:linear-gradient(135deg,#FF6B6B,#e94560);border:none;border-radius:9px;color:#fff;padding:9px 18px;cursor:pointer;font-family:var(--serif);font-size:13px;margin-top:10px;width:100%">+ 낚시대 추가</button>
       </div>
       <button class="asb" style="background:linear-gradient(135deg,#FF6B6B,#e94560);color:#fff;margin-top:10px" onclick="saveRods()">저장 → Firebase ✓</button>
     </div>
@@ -719,37 +786,37 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:6px}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
           <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
             <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">총 방문자</div>
-            <div style="font-family:Jua,sans-serif;font-size:26px;color:var(--g1)" id="stat-total">0</div>
+            <div style="font-family:var(--serif);font-size:26px;color:var(--g1)" id="stat-total">0</div>
           </div>
           <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
             <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">오늘 방문자</div>
-            <div style="font-family:Jua,sans-serif;font-size:26px;color:#4ECDC4" id="stat-today">0</div>
+            <div style="font-family:var(--serif);font-size:26px;color:#4ECDC4" id="stat-today">0</div>
           </div>
           <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
             <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">테스트 완료</div>
-            <div style="font-family:Jua,sans-serif;font-size:26px;color:#C77DFF" id="stat-tests">0</div>
+            <div style="font-family:var(--serif);font-size:26px;color:#C77DFF" id="stat-tests">0</div>
           </div>
           <div style="background:#111827;border-radius:10px;padding:14px;text-align:center;border:1px solid #374151">
             <div style="font-size:11px;color:#9ca3af;margin-bottom:4px">스토어 클릭</div>
-            <div style="font-family:Jua,sans-serif;font-size:26px;color:#03C75A" id="stat-clicks">0</div>
+            <div style="font-family:var(--serif);font-size:26px;color:#03C75A" id="stat-clicks">0</div>
           </div>
         </div>
         <!-- 인기 성격 -->
         <div style="background:#111827;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #374151">
-          <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:Jua,sans-serif">🏆 인기 성격 TOP 3</div>
+          <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:var(--serif)">🏆 인기 성격 TOP 3</div>
           <div id="stat-pers-rank"></div>
           <canvas id="chart-pers" height="140" style="margin-top:10px;display:none"></canvas>
         </div>
         <!-- 인기 재질 -->
         <div style="background:#111827;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #374151">
-          <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:Jua,sans-serif">🪶 인기 재질 TOP 3</div>
+          <div style="font-size:12px;color:#9ca3af;margin-bottom:10px;font-family:var(--serif)">🪶 인기 재질 TOP 3</div>
           <div id="stat-mat-rank"></div>
           <canvas id="chart-mat" height="140" style="margin-top:10px;display:none"></canvas>
         </div>
         <!-- 평균 예산 -->
         <div style="background:#111827;border-radius:10px;padding:14px;border:1px solid #374151">
-          <div style="font-size:12px;color:#9ca3af;margin-bottom:6px;font-family:Jua,sans-serif">💰 평균 예산</div>
-          <div style="font-family:Jua,sans-serif;font-size:22px;color:var(--g1)" id="stat-avg-budget">-</div>
+          <div style="font-size:12px;color:#9ca3af;margin-bottom:6px;font-family:var(--serif)">💰 평균 예산</div>
+          <div style="font-family:var(--serif);font-size:22px;color:var(--g1)" id="stat-avg-budget">-</div>
         </div>
       </div>
       <button onclick="loadStats()" style="background:#374151;border:none;border-radius:8px;color:#fff;padding:8px 14px;cursor:pointer;font-size:12px;margin-top:12px;width:100%">🔄 새로고침</button>
@@ -798,7 +865,7 @@ const DEFAULT_PRODUCTS = [
 
 // ── 상태 ──
 let PRODS = [];
-let CFG = {sub:"우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁", url:"https://smartstore.naver.com/avivi", notice:"", logo:"", pw:"avivi2024", theme:{bg:"#0d0b1e",a1:"#FFD93D",a2:"#FF6B6B"}};
+let CFG = {sub:"우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁", url:"https://smartstore.naver.com/avivi", talkUrl:"", notice:"", logo:"", pw:"avivi2024", theme:{bg:"#0d0b1e",a1:"#FFD93D",a2:"#FF6B6B"}};
 let CAT = {name:"",gender:"",age:1,mats:[],pers:"",activity:"",hunting:""};
 let pendLogo = null;
 let uploadedImgData = "";
@@ -967,6 +1034,9 @@ function applyConfig(){
   // 스토어 URL
   const sa = document.getElementById('store-all');
   if(sa) sa.href = CFG.url||"https://smartstore.naver.com/avivi";
+  // 관리자 패널 입력란 동기화
+  const bTalk = document.getElementById('b-talk');
+  if(bTalk) bTalk.value = CFG.talkUrl||'';
   // 테마
   if(CFG.theme){
     const r = document.documentElement.style;
@@ -974,6 +1044,8 @@ function applyConfig(){
     r.setProperty('--g1', CFG.theme.a1||"#FFD93D");
     r.setProperty('--g2', CFG.theme.a2||"#FF6B6B");
   }
+  // 톡톡 배너 업데이트
+  updateTalkBanner();
 }
 
 // ── 화면 이동 ──
@@ -982,7 +1054,8 @@ window.rProg = function(id){
   const steps={name:1,age:2,mat:3,pers:4,budget:5,rod:6};
   const step=steps[id]; if(!step)return;
   const el=document.getElementById('pg-'+id); if(!el)return;
-  el.innerHTML=[1,2,3,4,5,6].map(i=>`<div class="pd ${i===step?'a':i<step?'d':''}" style="width:${i===step?26:9}px"></div>`).join('');
+  const total=8, pct=Math.round((step/total)*100);
+  el.innerHTML=`<div class="prog-fill" style="width:${pct}%"></div><div style="position:absolute;right:0;top:-16px;font-size:9px;color:var(--mu);letter-spacing:1px;font-family:var(--sans)">${step} / ${total}</div>`;
 };
 
 // ── STEP 1: 이름/성별 ──
@@ -1300,15 +1373,15 @@ window.showResult = function(){
                      : rodType==='both'    ? '💜 고스틱 전용 + 🩵 일반 리필 상품이 모두 추천됩니다'
                      : '';
     rodBox = `<div style="width:100%;margin-bottom:12px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.35);border-radius:14px;padding:12px 16px">
-      <div style="font-family:Jua,sans-serif;font-size:13px;color:#FF6B6B;margin-bottom:6px">🎣 선택한 낚시대</div>
+      <div style="font-family:var(--serif);font-size:13px;color:#FF6B6B;margin-bottom:6px">🎣 선택한 낚시대</div>
       ${selRods.map(r=>{
         const isGostick = r.type==='gostick'||/고스틱/i.test(r.name);
         return `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;align-items:center">
           <span>${r.icon||'🎣'} ${r.name} <span style="font-size:10px;color:${isGostick?'#c084fc':'#4ECDC4'}">(${isGostick?'고스틱전용':'일반리필'})</span></span>
-          <span style="color:#FF6B6B;font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
+          <span style="color:#FF6B6B;font-family:var(--serif)">${Number(r.price||0).toLocaleString()}원</span>
         </div>`;
       }).join('')}
-      <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px">
+      <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-family:var(--serif);font-size:13px">
         <span style="color:var(--mu)">낚시대 합계</span>
         <span style="color:#FF6B6B">${Number(rodSum).toLocaleString()}원</span>
       </div>
@@ -1335,11 +1408,11 @@ window.showResult = function(){
           <div style="width:100%;aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:28px">
             ${p.image?`<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='${pe(p)}'"/>`:pe(p)}
           </div>
-          <div style="font-family:Jua,sans-serif;font-size:12px;line-height:1.3;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
-          <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
+          <div style="font-family:var(--serif);font-size:12px;line-height:1.3;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
+          <div style="font-family:var(--serif);font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
           <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()"
-            style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:Jua,sans-serif;text-decoration:none">🛒 스토어 보기</a>
+            style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 스토어 보기</a>
         </div>`;
       }).join('') + `</div>`;
   } else {
@@ -1440,12 +1513,12 @@ function updateSelSummary(){
   let rows = selItems.map(p=>`
     <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
       <span style="color:var(--mu);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px">🎁 ${p.name}</span>
-      <span style="font-family:Jua,sans-serif;font-size:12px;color:var(--g1);flex-shrink:0">${p.price.toLocaleString()}원</span>
+      <span style="font-family:var(--serif);font-size:12px;color:var(--g1);flex-shrink:0">${p.price.toLocaleString()}원</span>
     </div>`).join('');
   selRods.forEach(r=>{
     rows += `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
       <span style="color:var(--mu)">${r.icon||'🎣'} ${r.name}</span>
-      <span style="font-family:Jua,sans-serif;font-size:12px;color:#FF6B6B;flex-shrink:0">${Number(r.price||0).toLocaleString()}원</span>
+      <span style="font-family:var(--serif);font-size:12px;color:#FF6B6B;flex-shrink:0">${Number(r.price||0).toLocaleString()}원</span>
     </div>`;
   });
   rowsEl.innerHTML = rows;
@@ -1538,7 +1611,7 @@ async function loadSaves(){
   const uid = getDeviceId();
   const el  = document.getElementById('saves-list');
   if(!el) return;
-  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--mu)"><div style="font-size:32px">⏳</div><div style="font-family:Jua,sans-serif;margin-top:8px">불러오는 중...</div></div>';
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--mu)"><div style="font-size:32px">⏳</div><div style="font-family:var(--serif);margin-top:8px">불러오는 중...</div></div>';
 
   try{
     // 최상단에서 import된 query, where, getDocs 직접 사용
@@ -1551,7 +1624,7 @@ async function loadSaves(){
     if(!saves.length){
       el.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--mu)">
         <div style="font-size:40px;margin-bottom:10px">📭</div>
-        <div style="font-family:Jua,sans-serif">저장된 추천이 없어요</div>
+        <div style="font-family:var(--serif)">저장된 추천이 없어요</div>
         <div style="font-size:12px;margin-top:6px">추천 결과 화면에서 💾 저장하기를 눌러보세요!</div>
       </div>`;
       return;
@@ -1565,7 +1638,7 @@ async function loadSaves(){
         <!-- 헤더 -->
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
           <div>
-            <div style="font-family:Jua,sans-serif;font-size:17px;color:var(--g1)">🐱 ${s.cat.name}(이)의 추천</div>
+            <div style="font-family:var(--serif);font-size:17px;color:var(--g1)">🐱 ${s.cat.name}(이)의 추천</div>
             <div style="font-size:11px;color:var(--mu);margin-top:3px">${date}</div>
           </div>
           <button onclick="deleteSave('${s.docId}')" style="background:rgba(233,69,96,.15);border:1px solid rgba(233,69,96,.4);border-radius:8px;color:#e94560;padding:5px 10px;cursor:pointer;font-size:11px;flex-shrink:0">🗑️ 삭제</button>
@@ -1584,10 +1657,10 @@ async function loadSaves(){
                 ${p.image?`<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🐱'"/>`:p.name.slice(0,1)||'🐱'}
               </div>
               <div style="flex:1;min-width:0">
-                <div style="font-size:12px;font-family:Jua,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+                <div style="font-size:12px;font-family:var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
                 <div style="font-size:11px;color:var(--g1)">${p.price||''}</div>
               </div>
-              <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="recordStoreClick()" style="background:rgba(3,199,90,.15);border:1px solid rgba(3,199,90,.35);border-radius:7px;color:#03C75A;padding:4px 8px;font-size:10px;font-family:Jua,sans-serif;text-decoration:none;flex-shrink:0">보기</a>
+              <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="recordStoreClick()" style="background:rgba(3,199,90,.15);border:1px solid rgba(3,199,90,.35);border-radius:7px;color:#03C75A;padding:4px 8px;font-size:10px;font-family:var(--serif);text-decoration:none;flex-shrink:0">보기</a>
             </div>`).join('')}
           ${s.recs&&s.recs.length>3?`<div style="text-align:center;font-size:11px;color:var(--mu);padding:4px">외 ${s.recs.length-3}개 더</div>`:''}
         </div>
@@ -1595,9 +1668,9 @@ async function loadSaves(){
         <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(255,255,255,.1)">
           <div>
             <div style="font-size:11px;color:var(--mu)">💰 총 예상 금액</div>
-            <div style="font-family:Jua,sans-serif;font-size:16px;color:var(--g1)">${Number(s.totalPrice||0).toLocaleString()}원</div>
+            <div style="font-family:var(--serif);font-size:16px;color:var(--g1)">${Number(s.totalPrice||0).toLocaleString()}원</div>
           </div>
-          <button onclick="replayResult('${s.docId}')" style="background:linear-gradient(135deg,var(--g1),var(--g2));border:none;border-radius:10px;color:#1a1a2e;padding:9px 16px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">🔍 다시 보기</button>
+          <button onclick="replayResult('${s.docId}')" style="background:linear-gradient(135deg,var(--g1),var(--g2));border:none;border-radius:10px;color:#1a1a2e;padding:9px 16px;cursor:pointer;font-family:var(--serif);font-size:13px">🔍 다시 보기</button>
         </div>
       </div>`;
     }).join('');
@@ -1657,12 +1730,12 @@ function showSavedResult(save){
   let rodBox = '';
   if(selRods.length){
     rodBox = `<div style="width:100%;margin-bottom:12px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.35);border-radius:14px;padding:12px 16px">
-      <div style="font-family:Jua,sans-serif;font-size:13px;color:#FF6B6B;margin-bottom:6px">🎣 선택한 낚시대</div>
+      <div style="font-family:var(--serif);font-size:13px;color:#FF6B6B;margin-bottom:6px">🎣 선택한 낚시대</div>
       ${selRods.map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
         <span>${r.icon||'🎣'} ${r.name}</span>
-        <span style="color:#FF6B6B;font-family:Jua,sans-serif">${Number(r.price||0).toLocaleString()}원</span>
+        <span style="color:#FF6B6B;font-family:var(--serif)">${Number(r.price||0).toLocaleString()}원</span>
       </div>`).join('')}
-      <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-family:Jua,sans-serif;font-size:13px">
+      <div style="border-top:1px solid rgba(255,107,107,.25);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-family:var(--serif);font-size:13px">
         <span style="color:var(--mu)">낚시대 합계</span>
         <span style="color:#FF6B6B">${Number(rodSum).toLocaleString()}원</span>
       </div>
@@ -1687,10 +1760,10 @@ function showSavedResult(save){
           <div style="width:100%;aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:28px">
             ${p.image?`<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🐱'"/>`:p.name?.slice(0,1)||'🐱'}
           </div>
-          <div style="font-family:Jua,sans-serif;font-size:12px;line-height:1.3;margin-bottom:4px">${p.name}</div>
-          <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
+          <div style="font-family:var(--serif);font-size:12px;line-height:1.3;margin-bottom:4px">${p.name}</div>
+          <div style="font-family:var(--serif);font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:Jua,sans-serif;text-decoration:none">🛒 스토어 보기</a>
+          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 스토어 보기</a>
         </div>`;
       }).join('') + `</div>`;
   } else {
@@ -1896,7 +1969,7 @@ function rPlist(){
 
           <!-- 이미지 섹션 -->
           <div class="af afc" style="background:#111827;border-radius:10px;padding:12px;border:1px solid #374151">
-            <label style="color:#4ECDC4;font-family:Jua,sans-serif;font-size:12px;margin-bottom:8px;display:block">🖼️ 상품 이미지</label>
+            <label style="color:#4ECDC4;font-family:var(--serif);font-size:12px;margin-bottom:8px;display:block">🖼️ 상품 이미지</label>
 
             <!-- 현재 이미지 미리보기 -->
             <div id="ep-img-preview-wrap" style="${hasImg?'':'display:none'}margin-bottom:10px">
@@ -2046,10 +2119,15 @@ window.saveTheme = async function(){
 
 // ── 브랜딩 ──
 window.saveBrand = async function(){
-  const sub=document.getElementById('b-sub').value||CFG.sub;
-  const url=document.getElementById('b-url').value||CFG.url;
-  try{ await updateDoc(doc(db,"config","app"),{sub,url}); toast('브랜딩이 모든 기기에 반영됐어요! 🏷️'); }
-  catch(e){ toast('저장 실패: '+e.message); }
+  const sub     = document.getElementById('b-sub').value  || CFG.sub;
+  const url     = document.getElementById('b-url').value  || CFG.url;
+  const talkUrl = document.getElementById('b-talk').value.trim();
+  try{
+    await updateDoc(doc(db,"config","app"),{sub, url, talkUrl});
+    CFG.talkUrl = talkUrl;
+    applyConfig();
+    toast('브랜딩이 모든 기기에 반영됐어요! 🏷️');
+  } catch(e){ toast('저장 실패: '+e.message); }
 };
 
 // ── 공지 ──
@@ -2237,7 +2315,7 @@ window.rRodScreen = function(){
   const skipBtn = document.getElementById('rod-skip-btn');
   if(skipBtn){
     const skipped = CAT.rods && CAT.rods.length === 0 && CAT.rodSkip;
-    skipBtn.style.background = skipped ? 'rgba(255,217,61,.18)' : 'rgba(255,255,255,.08)';
+    skipBtn.style.background = skipped ? 'rgba(196,115,58,.15)' : 'rgba(255,255,255,.08)';
     skipBtn.style.borderColor = skipped ? 'var(--g1)' : 'var(--border)';
     skipBtn.style.color = skipped ? 'var(--g1)' : 'var(--mu)';
   }
@@ -2275,12 +2353,12 @@ function renderRodList(){
     return `<div onclick="toggleRod('${r.id}')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:${sel?'rgba(255,217,61,.12)':'rgba(255,255,255,.06)'};border:1.5px solid ${sel?'var(--g1)':'var(--border)'};border-radius:14px;cursor:pointer;transition:all .2s;margin-bottom:6px">
       ${imgHtml}
       <div style="flex:1;min-width:0">
-        <div style="font-family:Jua,sans-serif;font-size:14px;color:${sel?'var(--g1)':'var(--tx)'}">${r.name}</div>
+        <div style="font-family:var(--serif);font-size:14px;color:${sel?'var(--g1)':'var(--tx)'}">${r.name}</div>
         <div style="font-size:11px;color:var(--mu);margin-top:2px">${r.desc||''}</div>
         <span style="display:inline-block;margin-top:4px;font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(${isGostick?'192,132,252':'78,205,196'},.15);color:${typeColor};border:1px solid ${typeColor}4d">${typeLabel}</span>
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${Number(r.price||0).toLocaleString()}원</div>
+        <div style="font-family:var(--serif);font-size:14px;color:var(--g1)">${Number(r.price||0).toLocaleString()}원</div>
         <div style="font-size:18px;margin-top:2px">${sel?'✅':'⬜'}</div>
       </div>
     </div>`;
@@ -2288,12 +2366,12 @@ function renderRodList(){
 
   let html = '';
   if(gostickRods.length){
-    html += `<div style="font-size:11px;color:#c084fc;font-family:Jua,sans-serif;margin-bottom:5px;padding:0 2px">🪄 고스틱 막대 — 고스틱 전용 리필 추천</div>`;
+    html += `<div style="font-size:11px;color:#c084fc;font-family:var(--serif);margin-bottom:5px;padding:0 2px">🪄 고스틱 막대 — 고스틱 전용 리필 추천</div>`;
     html += gostickRods.map(rodCard).join('');
   }
   if(normalRods.length){
     if(gostickRods.length) html += `<div style="height:10px"></div>`;
-    html += `<div style="font-size:11px;color:#4ECDC4;font-family:Jua,sans-serif;margin-bottom:5px;padding:0 2px">🎣 일반 막대 — 일반 리필 추천</div>`;
+    html += `<div style="font-size:11px;color:#4ECDC4;font-family:var(--serif);margin-bottom:5px;padding:0 2px">🎣 일반 막대 — 일반 리필 추천</div>`;
     html += normalRods.map(rodCard).join('');
   }
   if(!gostickRods.length && !normalRods.length){
@@ -2531,7 +2609,7 @@ window.setRecCount = function(n){
   window._recPage  = 0; // 탭 변경 시 페이지 초기화
   document.querySelectorAll('.rcnt-btn').forEach(b=>{
     const active = parseInt(b.dataset.cnt) === n;
-    b.style.background = active ? 'rgba(255,217,61,.18)' : 'rgba(255,255,255,.08)';
+    b.style.background = active ? 'rgba(196,115,58,.15)' : 'rgba(255,255,255,.08)';
     b.style.border = active ? '1.5px solid var(--g1)' : '1px solid var(--border)';
     b.style.color = active ? 'var(--g1)' : 'var(--mu)';
   });
@@ -2590,10 +2668,10 @@ function renderCards(){
           <div style="width:100%;aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,#2a1a4e,#1a2a4e);overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:28px">
             ${p.image?`<img src="${proxyImg(p.image)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🐱'"/>`:pe(p)}
           </div>
-          <div style="font-family:Jua,sans-serif;font-size:12px;line-height:1.3;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
-          <div style="font-family:Jua,sans-serif;font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
+          <div style="font-family:var(--serif);font-size:12px;line-height:1.3;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
+          <div style="font-family:var(--serif);font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:Jua,sans-serif;text-decoration:none">🛒 스토어 보기</a>
+          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 스토어 보기</a>
         </div>`;
       }).join('') + `</div>`;
   } else {
@@ -2738,15 +2816,15 @@ function showKakaoGuide(appUrl){
     <div style="width:100%;max-width:360px;background:#1a1a2e;border:1.5px solid rgba(255,217,61,.4);border-radius:20px;padding:24px">
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:36px">🌐</div>
-        <div style="font-family:Jua,sans-serif;font-size:18px;color:var(--g1);margin-top:8px">외부 브라우저에서 열기</div>
+        <div style="font-family:var(--serif);font-size:18px;color:var(--g1);margin-top:8px">외부 브라우저에서 열기</div>
         <div style="font-size:12px;color:var(--mu);margin-top:5px">앱 내 브라우저에서는 공유 기능이 제한돼요!</div>
       </div>
       ${guideImg}
       <div style="display:flex;flex-direction:column;gap:8px">
-        <button id="kakao-open-btn" style="width:100%;background:linear-gradient(135deg,var(--g1),#ffb700);border:none;border-radius:12px;color:#1a1a2e;padding:14px;cursor:pointer;font-family:Jua,sans-serif;font-size:15px;font-weight:bold">
+        <button id="kakao-open-btn" style="width:100%;background:linear-gradient(135deg,var(--g1),#ffb700);border:none;border-radius:12px;color:#1a1a2e;padding:14px;cursor:pointer;font-family:var(--serif);font-size:15px;font-weight:bold">
           🌐 ${isIos ? 'Safari' : '크롬'}으로 열기
         </button>
-        <button id="kakao-copy-btn" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;color:var(--tx);padding:12px;cursor:pointer;font-family:Jua,sans-serif;font-size:13px">
+        <button id="kakao-copy-btn" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;color:var(--tx);padding:12px;cursor:pointer;font-family:var(--serif);font-size:13px">
           📋 링크 복사하기
         </button>
         <button onclick="document.getElementById('kakao-guide-ov').remove()" style="width:100%;background:none;border:none;color:var(--mu);padding:8px;cursor:pointer;font-size:12px">
@@ -2974,6 +3052,90 @@ async function buildResultImage(selPids){
   return cv.toDataURL('image/png');
 }
 
+// ── 네이버 톡톡 배너 업데이트 ──
+function updateTalkBanner(){
+  const banner = document.getElementById('talk-banner');
+  const link   = document.getElementById('talk-banner-link');
+  if(!banner || !link) return;
+
+  const talkUrl = CFG.talkUrl || '';
+  if(!talkUrl){
+    banner.style.display = 'none';
+    const hb = document.getElementById('home-talk-btn');
+    const fb = document.getElementById('float-talk-btn');
+    if(hb) hb.style.display = 'none';
+    if(fb) fb.style.display = 'none';
+    return;
+  }
+
+  // 추천 결과 메시지 자동 생성
+  const name    = CAT.name    ? `${CAT.name} ` : '';
+  const age     = CAT.age     ? `${CAT.age}살 ` : '';
+  const pers    = CAT.pers    ? `${CAT.pers} ` : '';
+  const act     = CAT.activity? `${CAT.activity} ` : '';
+  const hunt    = CAT.hunting ? `(${CAT.hunting}) ` : '';
+  const mats    = CAT.mats && CAT.mats.length ? CAT.mats.join('/') + ' 재질 선호 ' : '';
+  const budget  = CAT.budget  ? `예산 ${Number(CAT.budget).toLocaleString()}원 ` : '';
+  const appLink = 'https://abibi-cattoys-mbti.vercel.app';
+
+  const msg = `안녕하세요! 장난감 MBTI 테스트 결과를 가지고 왔어요 🐱\n\n`
+    + `[테스트 결과]\n`
+    + `고양이: ${name}${age}\n`
+    + `성격: ${pers}${act}${hunt}\n`
+    + `${mats}${budget}\n`
+    + `테스트 링크: ${appLink}\n\n`
+    + `어떤 장난감을 추천해주실 수 있나요?`;
+
+  // 톡톡 URL에 인트로 메시지 파라미터 추가
+  const finalUrl = talkUrl.includes('?')
+    ? talkUrl + '&inflow=outlink'
+    : talkUrl + '?inflow=outlink';
+
+  link.href = finalUrl;
+  // 클릭 시 클립보드에 메시지 복사 + 톡톡 열기
+  link.onclick = function(e){
+    e.preventDefault();
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(msg).then(()=>{
+        toast('✅ 상담 내용이 복사됐어요! 톡톡에서 붙여넣기 해주세요 💬');
+      });
+    }
+    setTimeout(()=> window.open(finalUrl, '_blank'), 300);
+  };
+
+  banner.style.display = 'block';
+
+  // 홈 화면 톡톡 버튼 업데이트
+  const homeBtn = document.getElementById('home-talk-btn');
+  if(homeBtn){
+    homeBtn.href = finalUrl;
+    homeBtn.style.display = 'flex';
+    homeBtn.onclick = function(e){
+      e.preventDefault();
+      window.open(finalUrl, '_blank');
+    };
+  }
+
+  // 플로팅 버튼 업데이트
+  const floatWrap = document.getElementById('float-talk-btn');
+  const floatLink = document.getElementById('float-talk-link');
+  if(floatWrap && floatLink){
+    floatWrap.style.display = 'block';
+    floatLink.href = finalUrl;
+    floatLink.onclick = function(e){
+      e.preventDefault();
+      // 결과 화면에서는 메시지 복사 포함
+      const isRes = document.getElementById('s-res').classList.contains('on');
+      if(isRes && navigator.clipboard){
+        navigator.clipboard.writeText(msg).then(()=>{
+          toast('✅ 상담 내용이 복사됐어요! 톡톡에서 붙여넣기 해주세요 💬');
+        });
+      }
+      setTimeout(()=> window.open(finalUrl, '_blank'), 200);
+    };
+  }
+}
+
 // ── 앱 공유하기 ──
 window.shareApp = async function(){
   const appUrl  = 'https://abibi-cattoys-mbti.vercel.app';
@@ -3128,7 +3290,7 @@ function showImgOverlay(dataUrl){
   ov.id = 'img-save-ov';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:16px';
   ov.innerHTML = `
-    <div style="color:#FFD93D;font-family:Jua,sans-serif;font-size:16px;margin-bottom:10px;text-align:center">
+    <div style="color:#FFD93D;font-family:var(--serif);font-size:16px;margin-bottom:10px;text-align:center">
       📸 이미지를 길게 눌러서 저장하세요!
     </div>
     <button onclick="document.getElementById('img-save-ov').remove()" style="background:#374151;border:none;border-radius:8px;color:#fff;padding:8px 18px;cursor:pointer;font-size:13px;margin-bottom:12px">✕ 닫기</button>
@@ -3147,7 +3309,7 @@ async function captureWithCanvas(){
     if(isMobile){
       const win = window.open('');
       if(win){
-        win.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"/><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0d0b1e;display:flex;flex-direction:column;align-items:center;padding:16px;gap:12px}.tip{color:#FFD93D;font-family:sans-serif;font-size:14px;text-align:center;background:rgba(255,217,61,.12);border:1px solid rgba(255,217,61,.3);border-radius:10px;padding:12px 16px;line-height:1.6;width:100%;max-width:440px}img{max-width:100%;border-radius:10px}</style></head><body><div class="tip">📸 이미지를 <strong>길게 눌러</strong> 저장하세요!</div><img src="'+dataUrl+'"/></body></html>');
+        win.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"/><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0d0b1e;display:flex;flex-direction:column;align-items:center;padding:16px;gap:12px}.tip{color:#FFD93D;font-family:sans-serif;font-size:14px;text-align:center;background:#FFF8F4;border:1px solid rgba(255,217,61,.3);border-radius:10px;padding:12px 16px;line-height:1.6;width:100%;max-width:480px}img{max-width:100%;border-radius:10px}</style></head><body><div class="tip">📸 이미지를 <strong>길게 눌러</strong> 저장하세요!</div><img src="'+dataUrl+'"/></body></html>');
         win.document.close();
         toast('새 탭에서 길게 눌러 저장하세요! 📸');
       } else {
@@ -3281,10 +3443,10 @@ window.loadStats = async function(){
     document.getElementById('stat-pers-rank').innerHTML = persRank.length
       ? persRank.map(([k,v],i)=>`
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-            <span style="font-family:Jua,sans-serif;font-size:16px;color:var(--g1);width:20px">${i+1}</span>
+            <span style="font-family:var(--serif);font-size:16px;color:var(--g1);width:20px">${i+1}</span>
             <span style="font-size:18px">${persEmoji[k]||'😺'}</span>
             <span style="flex:1;font-size:13px">${k}</span>
-            <div style="background:rgba(255,217,61,.15);border-radius:20px;padding:3px 10px;font-size:12px;color:var(--g1);font-family:Jua,sans-serif">${v}회</div>
+            <div style="background:rgba(255,217,61,.15);border-radius:20px;padding:3px 10px;font-size:12px;color:var(--g1);font-family:var(--serif)">${v}회</div>
           </div>`).join('')
       : '<div style="font-size:12px;color:#6b7280">아직 데이터가 없어요</div>';
 
@@ -3294,10 +3456,10 @@ window.loadStats = async function(){
     document.getElementById('stat-mat-rank').innerHTML = matRank.length
       ? matRank.map(([k,v],i)=>`
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-            <span style="font-family:Jua,sans-serif;font-size:16px;color:#4ECDC4;width:20px">${i+1}</span>
+            <span style="font-family:var(--serif);font-size:16px;color:#4ECDC4;width:20px">${i+1}</span>
             <span style="font-size:18px">${matEmoji[k]||'🏷️'}</span>
             <span style="flex:1;font-size:13px">${k}</span>
-            <div style="background:rgba(78,205,196,.15);border-radius:20px;padding:3px 10px;font-size:12px;color:#4ECDC4;font-family:Jua,sans-serif">${v}회</div>
+            <div style="background:rgba(78,205,196,.15);border-radius:20px;padding:3px 10px;font-size:12px;color:#4ECDC4;font-family:var(--serif)">${v}회</div>
           </div>`).join('')
       : '<div style="font-size:12px;color:#6b7280">아직 데이터가 없어요</div>';
 
