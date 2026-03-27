@@ -12,20 +12,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#F5F0E8;
-  --bg2:#EDE7DC;
-  --card:#FFFFFF;
-  --border:#D9D0C4;
-  --g1:#C4733A;
-  --g2:#8B4513;
-  --g1h:#A85D2A;
-  --tx:#1A1410;
-  --tx2:#3D2B1A;
-  --mu:#9B8A7A;
-  --mu2:#6B5E52;
+  --bg:#F0EAE0;
+  --bg2:#E6DDD2;
+  --card:#FAFAF8;
+  --border:#C8BCB0;
+  --g1:#B5601E;
+  --g2:#7A3A0A;
+  --g1h:#9A4F18;
+  --tx:#0F0A06;
+  --tx2:#2A1A0E;
+  --mu:#6B5A4E;
+  --mu2:#4A3728;
   --serif:'Hahmlet',serif;
   --sans:'Noto Sans KR',sans-serif;
-  --accent:#C4733A;
+  --accent:#B5601E;
+  --accent2:#E8DDD0;
+  --line:#C8BCB0;
+}
   --accent2:#EAE4DC;
   --line:#D9D0C4;
 }
@@ -42,11 +45,11 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:3px;backgroun
 .pd{display:none}
 .prog-fill{position:absolute;top:0;left:0;height:100%;background:var(--g1);border-radius:1px;transition:width .4s ease}
 .ttl{font-family:var(--serif);font-size:22px;text-align:left;color:var(--tx);margin-bottom:6px;font-weight:700;letter-spacing:.3px;line-height:1.25}
-.sub{font-size:12px;color:var(--mu);text-align:left;margin-bottom:20px;line-height:1.7;letter-spacing:.2px}
+.sub{font-size:12px;color:var(--mu2);text-align:left;margin-bottom:20px;line-height:1.7;letter-spacing:.2px}
 .btn{display:block;width:100%;border:none;border-radius:2px;cursor:pointer;font-size:14px;padding:14px;text-align:center;text-decoration:none;margin-top:10px;transition:all .15s;font-family:var(--serif);letter-spacing:1.5px;font-weight:600}
 .btn:active{transform:scale(.97)}.btn:disabled{opacity:.35;pointer-events:none}
 .bp{background:var(--g1);color:#F5F0E8;box-shadow:none}
-.bg{background:transparent;border:1px solid var(--line);color:var(--mu2)}
+.bg{background:rgba(0,0,0,.05);border:1px solid var(--line);color:var(--tx2)}
 .bgr{background:#3A7D44;color:#fff;display:block;text-align:center;box-shadow:none;border-radius:2px}
 input[type=text],input[type=password],input[type=url],textarea{width:100%;background:#fff;border:none;border-bottom:1.5px solid var(--line);border-radius:0;padding:11px 4px;color:var(--tx);font-size:14px;font-family:var(--sans);outline:none;transition:border-color .2s}
 input:focus,textarea:focus{border-bottom-color:var(--g1);background:#FFF8F4}
@@ -57,17 +60,17 @@ input::placeholder,textarea::placeholder{color:var(--mu)}
 .gb .gi{font-size:30px}
 .gb.s{background:#FFF3EB;border-color:var(--g1);color:var(--g1)}
 .abig{font-family:"Bebas Neue",sans-serif;font-size:80px;color:var(--g1);line-height:1;text-align:center;letter-spacing:2px}
-.asub{font-size:11px;color:var(--mu);text-align:center;margin:4px 0 16px;letter-spacing:1px}
+.asub{font-size:11px;color:var(--mu2);text-align:center;margin:4px 0 16px;letter-spacing:1px}
 input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
 .aq{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;justify-content:center}
 .aqb{background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:20px;color:var(--tx);font-size:12px;padding:5px 13px;cursor:pointer;transition:all .2s;font-family:var(--serif)}
 .aqb.s{background:#FFF3EB;border-color:var(--g1);color:var(--g1)}
 .tg{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
-.tb{background:#fff;border:1.5px solid var(--line);border-radius:50px;color:var(--tx2);cursor:pointer;padding:9px 16px;font-size:13px;font-family:var(--sans);display:flex;align-items:center;gap:5px;transition:all .2s}
+.tb{background:#fff;border:1.5px solid var(--line);border-radius:50px;color:var(--tx);cursor:pointer;padding:9px 16px;font-size:13px;font-family:var(--sans);display:flex;align-items:center;gap:5px;transition:all .2s}
 .tb.s{background:#FFF3EB;border-color:var(--g1);color:var(--g1);box-shadow:none}
 .tc{text-align:right;color:var(--mu);font-size:11px;margin-bottom:14px;letter-spacing:1px}
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.pb{background:#fff;border:1.5px solid var(--line);border-radius:4px;color:var(--tx2);cursor:pointer;padding:14px 9px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s}
+.pb{background:#fff;border:1.5px solid var(--line);border-radius:4px;color:var(--tx);cursor:pointer;padding:14px 9px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .2s}
 .pb .pi{font-size:28px}.pb .pn{font-family:var(--serif);font-size:14px}.pb .pd2{font-size:10px;color:var(--mu);line-height:1.4}
 .pb.s{background:#FFF3EB;border-color:var(--g1)}.pb.s .pn,.pb.s .pd2{color:var(--g1)}
 .rh{text-align:left;width:100%;max-width:480px;margin-bottom:0;padding:20px 20px 16px;border-bottom:1px solid var(--line)}
@@ -81,7 +84,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
 .pt{width:80px;height:80px;border-radius:4px;flex-shrink:0;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;border:1px solid var(--line)}
 .pt img{width:100%;height:100%;object-fit:cover}
 .pif{flex:1}.pn2{font-family:var(--serif);font-size:15px;margin-bottom:4px;font-weight:700;color:var(--tx);letter-spacing:.2px}
-.pde{font-size:11px;color:var(--mu);line-height:1.6;margin-bottom:5px}
+.pde{font-size:11px;color:var(--mu2);line-height:1.6;margin-bottom:5px;font-weight:500}
 .ppr{color:var(--g1);font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:1px}
 .ptgs{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
 .ptg{background:var(--accent2);border-radius:2px;padding:2px 7px;font-size:9px;color:var(--mu2);letter-spacing:.3px}
@@ -90,10 +93,10 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
 .hlogo{display:block;text-align:center;margin-bottom:16px}
 .hlogo img{max-width:260px;width:85%;height:auto;animation:fl 3s ease-in-out infinite}
 @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
-.hsub{color:var(--mu2);font-size:12px;text-align:center;margin:6px 0 18px;line-height:1.7;letter-spacing:.3px}
+.hsub{color:var(--tx2);font-size:13px;text-align:center;margin:6px 0 18px;line-height:1.7;letter-spacing:.3px}
 .feats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;margin-bottom:18px;width:100%;max-width:480px;border:1px solid var(--line)}
 .feat{text-align:center;background:var(--card);padding:14px 7px}
-.feat .fi{font-size:22px}.feat .fl{font-size:9px;color:var(--mu2);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.feat .fi{font-size:22px}.feat .fl{font-size:9px;color:var(--tx2);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
 .nb{width:100%;max-width:480px;margin-bottom:14px;background:#FFF8F0;border:none;border-left:3px solid var(--g1);padding:11px 16px;font-size:12px;color:var(--g1);text-align:left;line-height:1.6;display:none}
 .admbtn{margin-top:16px;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--mu);padding:6px 16px;cursor:pointer;font-size:11px;transition:all .2s;letter-spacing:1px}
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;overflow-y:auto;padding:16px;align-items:flex-start;justify-content:center}
@@ -184,7 +187,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
 <!-- HOME -->
 <div class="scr" id="s-home" style="padding-top:0;justify-content:flex-start">
   <!-- Editorial 상단 바 -->
-  <div style="width:100%;background:var(--tx);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
+  <div style="width:100%;background:#0F0A06;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
     <div style="font-family:var(--serif);font-size:13px;color:var(--bg);letter-spacing:3px;font-weight:700">아비비의고물상</div>
     <div style="font-size:9px;color:rgba(245,240,232,.5);letter-spacing:2px">COLLECTION</div>
   </div>
@@ -445,7 +448,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
 
 <!-- RESULT -->
 <div class="scr" id="s-res" style="padding:0;justify-content:flex-start">
-  <div style="width:100%;background:var(--tx);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
+  <div style="width:100%;background:#0F0A06;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
     <div style="font-family:var(--serif);font-size:13px;color:var(--bg);letter-spacing:3px;font-weight:700">추천 결과</div>
     <div id="res-vol" style="font-size:9px;color:rgba(245,240,232,.5);letter-spacing:2px">RESULT</div>
   </div>
@@ -1055,7 +1058,7 @@ window.rProg = function(id){
   const step=steps[id]; if(!step)return;
   const el=document.getElementById('pg-'+id); if(!el)return;
   const total=8, pct=Math.round((step/total)*100);
-  el.innerHTML=`<div class="prog-fill" style="width:${pct}%"></div><div style="position:absolute;right:0;top:-16px;font-size:9px;color:var(--mu);letter-spacing:1px;font-family:var(--sans)">${step} / ${total}</div>`;
+  el.innerHTML=`<div class="prog-fill" style="width:${pct}%"></div><div style="position:absolute;right:0;top:-16px;font-size:9px;color:var(--tx2);letter-spacing:1px;font-family:var(--sans);font-weight:700">${step} / ${total}</div>`;
 };
 
 // ── STEP 1: 이름/성별 ──
