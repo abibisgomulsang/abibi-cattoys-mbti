@@ -11,7 +11,7 @@
 <title>아비비의고물상 🐱</title>
 <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
 <style>
-:root{
+:root{h
   --bg:#F0EAE0;
   --bg2:#E6DDD2;
   --card:#FAFAF8;
@@ -501,7 +501,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
     <!-- 다시테스트 + 전체상품 -->
     <div style="display:flex;gap:8px">
       <button class="btn bp" onclick="restart()" style="flex:1;margin-top:0">🔄 다시 테스트</button>
-      <a class="btn bp" id="store-all" href="https://smartstore.naver.com/avivi" target="_blank" style="flex:1;margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
+      <a class="btn bp" id="store-all" href="https://abibi-shopping-mall.vercel.app/products" target="_blank" style="flex:1;margin-top:0;display:flex;align-items:center;justify-content:center">🏪 전체 상품</a>
     </div>
     <!-- 앱 공유하기 -->
     <button onclick="shareApp()" style="width:100%;background:linear-gradient(135deg,#FEE500,#FFCD00);border:none;border-radius:12px;color:#1a1a2e;padding:12px;cursor:pointer;font-family:var(--serif);font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px">
@@ -607,7 +607,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
       <div class="ag">
         <div class="af"><label>상품명 *</label><input type="text" id="qi-n" placeholder="장난감 이름"/></div>
         <div class="af"><label>가격</label><input type="text" id="qi-p" placeholder="12,900원"/></div>
-        <div class="af afc"><label>스마트스토어 URL</label><input type="text" id="qi-u" placeholder="https://smartstore.naver.com/..."/></div>
+        <div class="af afc"><label>스마트스토어 URL</label><input type="text" id="qi-u" placeholder="https://abibi-shopping-mall.vercel.app/products"/></div>
         <div class="af afc">
           <label>이미지 URL</label>
           <input type="text" id="qi-img" placeholder="https://shop-phinf.pstatic.net/..." oninput="prevQI()"/>
@@ -649,7 +649,7 @@ input[type=range]{width:100%;accent-color:var(--g1);cursor:pointer;height:3px}
     <div class="asec">
       <div class="ast">🏷️ 브랜드 정보</div>
       <div class="af"><label>홈 소개 문구</label><input type="text" id="b-sub" placeholder="우리 아이 성격에 딱 맞는..."/></div>
-      <div class="af"><label>스마트스토어 URL</label><input type="text" id="b-url" placeholder="https://smartstore.naver.com/avivi"/></div>
+      <div class="af"><label>스마트스토어 URL</label><input type="text" id="b-url" placeholder="https://abibi-shopping-mall.vercel.app/products"/></div>
       <div class="af">
         <label>💬 네이버 톡톡 URL <span style="font-size:10px;color:#9ca3af">(결과 화면에 상담 버튼 표시)</span></label>
         <input type="text" id="b-talk" placeholder="https://talk.naver.com/ct/XXXXXXX"/>
@@ -856,19 +856,19 @@ const db = getFirestore(app);
 
 // ── 기본 상품 데이터 ──
 const DEFAULT_PRODUCTS = [
-  {name:"무지개 깃털 낚싯대",image:"",tags:["깃털","활발한","호기심많은","젊은"],description:"형형색색 깃털이 달린 낚싯대로 사냥 본능을 자극해요!",price:"12,900원",storeUrl:"https://smartstore.naver.com/avivi"},
-  {name:"바스락 비닐 터널",image:"",tags:["비닐","활발한","호기심많은"],description:"바스락거리는 소리에 고양이가 미쳐요!",price:"18,500원",storeUrl:"https://smartstore.naver.com/avivi"},
-  {name:"폼폼이 공 세트",image:"",tags:["폼폼이","활발한","젊은","중년"],description:"가볍고 부드러운 폼폼이 공!",price:"8,900원",storeUrl:"https://smartstore.naver.com/avivi"},
-  {name:"실리콘 물고기 장난감",image:"",tags:["실리콘","진지한","중년","노령"],description:"내구성 최강 실리콘! 씹고 뜯는 물고기 모양",price:"14,000원",storeUrl:"https://smartstore.naver.com/avivi"},
-  {name:"끈 달린 낚시 세트",image:"",tags:["끈","활발한","호기심많은","젊은"],description:"주인이 직접 놀아주는 끈 낚시! 유대감 UP",price:"9,500원",storeUrl:"https://smartstore.naver.com/avivi"},
-  {name:"고급 깃털 왕관",image:"",tags:["깃털","진지한","중년"],description:"우아한 고양이를 위한 고급 깃털 왕관",price:"22,000원",storeUrl:"https://smartstore.naver.com/avivi"},
-  {name:"노령묘 전용 폼폼이",image:"",tags:["폼폼이","실리콘","노령","진지한"],description:"관절이 약한 노령묘를 위해 특별 제작",price:"11,000원",storeUrl:"https://smartstore.naver.com/avivi"},
-  {name:"비닐 바스락 쥐돌이",image:"",tags:["비닐","끈","호기심많은","젊은"],description:"쥐 모양에 바스락 소재! 사냥 본능을 깨워요",price:"7,900원",storeUrl:"https://smartstore.naver.com/avivi"},
+  {name:"무지개 깃털 낚싯대",image:"",tags:["깃털","활발한","호기심많은","젊은"],description:"형형색색 깃털이 달린 낚싯대로 사냥 본능을 자극해요!",price:"12,900원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
+  {name:"바스락 비닐 터널",image:"",tags:["비닐","활발한","호기심많은"],description:"바스락거리는 소리에 고양이가 미쳐요!",price:"18,500원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
+  {name:"폼폼이 공 세트",image:"",tags:["폼폼이","활발한","젊은","중년"],description:"가볍고 부드러운 폼폼이 공!",price:"8,900원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
+  {name:"실리콘 물고기 장난감",image:"",tags:["실리콘","진지한","중년","노령"],description:"내구성 최강 실리콘! 씹고 뜯는 물고기 모양",price:"14,000원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
+  {name:"끈 달린 낚시 세트",image:"",tags:["끈","활발한","호기심많은","젊은"],description:"주인이 직접 놀아주는 끈 낚시! 유대감 UP",price:"9,500원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
+  {name:"고급 깃털 왕관",image:"",tags:["깃털","진지한","중년"],description:"우아한 고양이를 위한 고급 깃털 왕관",price:"22,000원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
+  {name:"노령묘 전용 폼폼이",image:"",tags:["폼폼이","실리콘","노령","진지한"],description:"관절이 약한 노령묘를 위해 특별 제작",price:"11,000원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
+  {name:"비닐 바스락 쥐돌이",image:"",tags:["비닐","끈","호기심많은","젊은"],description:"쥐 모양에 바스락 소재! 사냥 본능을 깨워요",price:"7,900원",storeUrl:"https://abibi-shopping-mall.vercel.app/products"},
 ];
 
 // ── 상태 ──
 let PRODS = [];
-let CFG = {sub:"우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁", url:"https://smartstore.naver.com/avivi", talkUrl:"", notice:"", logo:"", pw:"avivi2024", theme:{bg:"#0d0b1e",a1:"#FFD93D",a2:"#FF6B6B"}};
+let CFG = {sub:"우리 아이 성격에 딱 맞는 장난감을 찾아드려요 🎁", url:"https://abibi-shopping-mall.vercel.app/products", talkUrl:"", notice:"", logo:"", pw:"avivi2024", theme:{bg:"#0d0b1e",a1:"#FFD93D",a2:"#FF6B6B"}};
 let CAT = {name:"",gender:"",age:1,mats:[],pers:"",activity:"",hunting:""};
 let pendLogo = null;
 let uploadedImgData = "";
@@ -1036,7 +1036,7 @@ function applyConfig(){
   if(nb){ if(CFG.notice){nb.textContent=CFG.notice;nb.style.display="block";}else{nb.style.display="none";} }
   // 스토어 URL
   const sa = document.getElementById('store-all');
-  if(sa) sa.href = CFG.url||"https://smartstore.naver.com/avivi";
+  if(sa) sa.href = CFG.url||"https://abibi-shopping-mall.vercel.app/products";
   // 관리자 패널 입력란 동기화
   const bTalk = document.getElementById('b-talk');
   if(bTalk) bTalk.value = CFG.talkUrl||'';
@@ -1365,7 +1365,7 @@ window.showResult = function(){
   ].filter(Boolean);
   if(selRods.length) chips.push('🎣 낚시대 '+selRods.length+'개');
   document.getElementById('res-cp').innerHTML = chips.map(c=>`<span class="cp">${c}</span>`).join('');
-  document.getElementById('store-all').href = CFG.url||'https://smartstore.naver.com/avivi';
+  document.getElementById('store-all').href = CFG.url||'https://abibi-shopping-mall.vercel.app/products';
 
   // 낚시대 요약
   let rodBox = '';
@@ -1727,7 +1727,7 @@ function showSavedResult(save){
     '예산 '+Number(save.cat.budget||0).toLocaleString()+'원'];
   if(selRods.length) chips.push('🎣 낚시대 '+selRods.length+'개');
   document.getElementById('res-cp').innerHTML = chips.filter(Boolean).map(c=>`<span class="cp">${c}</span>`).join('');
-  document.getElementById('store-all').href = CFG.url||'https://smartstore.naver.com/avivi';
+  document.getElementById('store-all').href = CFG.url||'https://abibi-shopping-mall.vercel.app/products';
 
   // 낚시대 박스
   let rodBox = '';
@@ -2474,7 +2474,7 @@ let csvParsed = [];
 window.downloadTemplate = function(){
   const bom = '\uFEFF';
   const header = '상품명,가격,스마트스토어URL,태그(슬래시구분),설명,이미지URL\n';
-  const sample = '무지개 깃털 낚싯대,12900원,https://smartstore.naver.com/avivi/products/12345,깃털/활발한/젊은,사냥 본능을 자극하는 낚싯대,https://shop-phinf.pstatic.net/example.jpg\n';
+  const sample = '무지개 깃털 낚싯대,12900원,https://abibi-shopping-mall.vercel.app/products,깃털/활발한/젊은,사냥 본능을 자극하는 낚싯대,https://shop-phinf.pstatic.net/example.jpg\n';
   const blob = new Blob([bom+header+sample], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
