@@ -3702,46 +3702,35 @@ setTimeout(()=>recordVisit(), 2000);
 </script>
 
 <script>
-/* === 자사몰 URL 오버라이드 === */
+/* === 자사몰 URL 오버라이드 v2 === */
 (function(){
-  var MALL = 'https://abibi-shopping-mall.vercel.app';
-  var SM = /smartstore\.naver\.com/;
-
-  // 1. MutationObserver: fix links as they appear in DOM
-  var obs = new MutationObserver(function(muts){
-    muts.forEach(function(m){
-      m.addedNodes.forEach(function(n){ fixNode(n); });
-      if(m.type==='attributes' && m.target) fixNode(m.target);
+  var MALL='https://abibi-shopping-mall.vercel.app';
+  function fixAll(){
+    document.querySelectorAll('a').forEach(function(a){
+      var h=a.getAttribute('href')||'';
+      if(h.indexOf('smartstore.naver.com')!==-1){
+        a.setAttribute('href',MALL+'/products');
+        a.href=MALL+'/products';
+      }
     });
-  });
-  function fixNode(n){
-    if(!n || !n.querySelectorAll) return;
-    var links = n.querySelectorAll ? n.querySelectorAll('a[href]') : [];
-    links.forEach(fixLink);
-    if(n.tagName==='A' && n.href) fixLink(n);
   }
-  function fixLink(a){
-    if(a.href && SM.test(a.href)){
-      a.href = a.href.replace(/https?:\/\/smartstore\.naver\.com\/[^\s"'<>)]*/, MALL+'/products');
+  // Run immediately and keep checking
+  setInterval(fixAll, 300);
+  // Also intercept clicks
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    if(a&&a.href&&a.href.indexOf('smartstore.naver.com')!==-1){
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(MALL+'/products','_blank');
     }
-  }
-  if(document.body){
-    obs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['href']});
-    document.body.querySelectorAll('a[href]').forEach(fixLink);
-  }
-
-  // 2. Intercept window.open
-  var _open = window.open;
-  window.open = function(u){
-    if(u && SM.test(u)) arguments[0] = u.replace(/https?:\/\/smartstore\.naver\.com\/[^\s"'<>)*/, MALL+'/products');
-    return _open.apply(window, arguments);
+  },true);
+  // Intercept window.open
+  var _o=window.open;
+  window.open=function(u){
+    if(u&&typeof u==='string'&&u.indexOf('smartstore.naver.com')!==-1) arguments[0]=MALL+'/products';
+    return _o.apply(window,arguments);
   };
-
-  // 3. Periodic scan for late Firebase loads
-  var c=0, iv=setInterval(function(){
-    document.querySelectorAll('a[href]').forEach(fixLink);
-    if(++c>30) clearInterval(iv);
-  }, 500);
 })();
 </script>
 
