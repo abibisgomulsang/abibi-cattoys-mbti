@@ -3702,33 +3702,69 @@ setTimeout(()=>recordVisit(), 2000);
 </script>
 
 <script>
-/* === 자사몰 URL 오버라이드 v2 === */
+/* === 자사몰 URL 오버라이드 v3 - 개별 상품 페이지 연결 === */
 (function(){
-  var MALL='https://abibi-shopping-mall.vercel.app';
+  var MALL="https://abibi-shopping-mall.vercel.app";
+  var MAP={};
+  var READY=false;
+  fetch(MALL+"/api/products").then(function(r){return r.json()}).then(function(res){
+    var prods=res.data||res;
+    prods.forEach(function(p){
+      if(p.seller_code) MAP[p.seller_code.trim()]=p.id;
+    });
+    READY=true;
+  }).catch(function(){READY=true});
+
+  function findProductId(name){
+    if(!name) return null;
+    name=name.trim();
+    if(MAP[name]) return MAP[name];
+    var keys=Object.keys(MAP);
+    for(var i=0;i<keys.length;i++){
+      if(name.indexOf(keys[i])!==-1||keys[i].indexOf(name)!==-1) return MAP[keys[i]];
+    }
+    return null;
+  }
+
+  function getProductUrl(name){
+    var id=findProductId(name);
+    return id ? MALL+"/products/"+id : MALL+"/products";
+  }
+
   function fixAll(){
-    document.querySelectorAll('a').forEach(function(a){
-      var h=a.getAttribute('href')||'';
-      if(h.indexOf('smartstore.naver.com')!==-1){
-        a.setAttribute('href',MALL+'/products');
-        a.href=MALL+'/products';
+    document.querySelectorAll("a").forEach(function(a){
+      var h=a.getAttribute("href")||"";
+      if(h.indexOf("smartstore.naver.com")!==-1||(h.indexOf(MALL+"/products")!==-1&&h===MALL+"/products")){
+        var card=a.closest(".pc")||a.parentElement;
+        var nameEl=card?card.querySelector(".pn2"):null;
+        var pName=nameEl?nameEl.textContent.trim():"";
+        var url=getProductUrl(pName);
+        a.setAttribute("href",url);
+        a.href=url;
       }
     });
   }
-  // Run immediately and keep checking
-  setInterval(fixAll, 300);
-  // Also intercept clicks
-  document.addEventListener('click',function(e){
-    var a=e.target.closest('a');
-    if(a&&a.href&&a.href.indexOf('smartstore.naver.com')!==-1){
+  setInterval(fixAll,500);
+
+  document.addEventListener("click",function(e){
+    var a=e.target.closest("a");
+    if(!a) return;
+    var h=a.href||"";
+    if(h.indexOf("smartstore.naver.com")!==-1){
       e.preventDefault();
       e.stopPropagation();
-      window.open(MALL+'/products','_blank');
+      var card=a.closest(".pc")||a.parentElement;
+      var nameEl=card?card.querySelector(".pn2"):null;
+      var pName=nameEl?nameEl.textContent.trim():"";
+      window.open(getProductUrl(pName),"_blank");
     }
   },true);
-  // Intercept window.open
+
   var _o=window.open;
   window.open=function(u){
-    if(u&&typeof u==='string'&&u.indexOf('smartstore.naver.com')!==-1) arguments[0]=MALL+'/products';
+    if(u&&typeof u==="string"&&u.indexOf("smartstore.naver.com")!==-1){
+      arguments[0]=MALL+"/products";
+    }
     return _o.apply(window,arguments);
   };
 })();
