@@ -1415,7 +1415,7 @@ window.showResult = function(){
           <div style="font-family:var(--serif);font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
           <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()"
-            style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 스토어 보기</a>
+            style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 아비비의고물상 이동</a>
         </div>`;
       }).join('') + `</div>`;
   } else {
@@ -1433,7 +1433,7 @@ window.showResult = function(){
           </div>
         </div>
         <div class="ptgs">${(p.tags||[]).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 스마트스토어에서 보기</a>
+        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 아비비의고물상 이동</a>
       </div>`;
     }).join('');
   }
@@ -1766,7 +1766,7 @@ function showSavedResult(save){
           <div style="font-family:var(--serif);font-size:12px;line-height:1.3;margin-bottom:4px">${p.name}</div>
           <div style="font-family:var(--serif);font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 스토어 보기</a>
+          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 아비비의고물상 이동</a>
         </div>`;
       }).join('') + `</div>`;
   } else {
@@ -1784,7 +1784,7 @@ function showSavedResult(save){
           </div>
         </div>
         <div class="ptgs">${(p.tags||[]).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 스마트스토어에서 보기</a>
+        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 아비비의고물상 이동</a>
       </div>`;
     }).join('');
   }
@@ -2674,7 +2674,7 @@ function renderCards(){
           <div style="font-family:var(--serif);font-size:12px;line-height:1.3;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${p.name}</div>
           <div style="font-family:var(--serif);font-size:14px;color:var(--g1)">${formatPrice(p.price)}</div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${(p.tags||[]).slice(0,2).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 스토어 보기</a>
+          <a href="${p.storeUrl||CFG.url}" target="_blank" onclick="event.stopPropagation();recordStoreClick()" style="display:block;text-align:center;margin-top:8px;padding:6px 4px;background:linear-gradient(135deg,#03C75A,#029944);border-radius:8px;color:#fff;font-size:11px;font-family:var(--serif);text-decoration:none">🛒 아비비의고물상 이동</a>
         </div>`;
       }).join('') + `</div>`;
   } else {
@@ -2692,7 +2692,7 @@ function renderCards(){
           </div>
         </div>
         <div class="ptgs">${(p.tags||[]).map(t=>`<span class="ptg">#${t}</span>`).join('')}</div>
-        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 스마트스토어에서 보기</a>
+        <a class="btn bgr" href="${p.storeUrl||CFG.url}" target="_blank" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:5px" onclick="event.stopPropagation();recordStoreClick()">🛒 아비비의고물상 이동</a>
       </div>`;
     }).join('');
   }
