@@ -3702,99 +3702,182 @@ setTimeout(()=>recordVisit(), 2000);
 </script>
 
 <script>
-/* === 자사몰 URL 오버라이드 v4 - 하드코드 매핑 + DOM 셀렉터 수정 === */
+/* === 자사몰 URL 오버라이드 v4.1 - 전체 109개 상품 매핑 === */
 (function(){
-  var MALL="abibi-shopping-mall.vercel.app";
-  var MAP={
-    "토끼토끼":"e0747829-8c63-43f3-9b56-6f6812c224db",
-    "살랑꼬리":"05450c97-a302-419c-ae95-f6b31f7e43a2",
-    "꾸벌":"601ce073-f527-4783-b9a1-0a91af92fcc3",
-    "초록복실이":"70a000df-caff-4992-a934-25d7b5a29ed8",
-    "하얀복실이":"ce9e00bf-97ea-4710-92b1-4f354794f173",
-    "애벌꼼깃이":"02939ec3-2096-4eb6-9124-c34b1a038059",
-    "무지개꼬리날개":"83720bfe-bdf1-46de-a466-4c4b0bac4f3c",
-    "흰꼬리날개":"abe3d7ab-b97d-4561-bf50-0d5bbe9573c3",
-    "천사날개":"bb5ebe7e-ba67-4ea6-bf6a-460561c1d9d1",
-    "곰팡팡":"f4b19a61-b7a9-4748-bffa-c62f1bdfa7ec",
-    "불사조":"d2d316fb-8f83-45c8-bfa6-af5ef2f1d3d0",
-    "너구리날개":"2b5a870f-ee74-453c-9456-6d70a4680168",
-    "무궁화":"8624beaf-65ff-49ce-b49c-ea8c9b65b143",
-    "파스텔 롱 테일":"7cb4d857-9c1e-4287-aa3c-e1ca0ef69d30",
-    "누에나방":"04b68923-8d27-4475-bbe2-04742df57b73",
-    "풍등이":"f1ec524b-9d33-4999-ac1f-ef9ea6583ada",
-    "점박누에":"4b12b1d3-4555-477b-b1f2-ccd9c46c485c",
-    "줄줄이소세지":"88f28ad7-8dab-4316-8b39-7b5da8db5951",
-    "팔랑날개":"7255f417-3cea-4c4a-9299-598361facae4",
-    "모음":"fe7764bd-df9e-4c55-a4c8-3e9e8523daa5"
-  };
-
-  function findProductId(name){
-    if(!name) return null;
-    name=name.trim();
-    if(MAP[name]) return MAP[name];
-    var keys=Object.keys(MAP);
-    for(var i=0;i<keys.length;i++){
-      if(name.indexOf(keys[i])!==-1||keys[i].indexOf(name)!==-1) return MAP[keys[i]];
-    }
-    return null;
-  }
-
-  function getNameFromCard(a){
-    var card=a.closest(".pc")||a.parentElement;
-    if(!card) return "";
-    var divs=card.querySelectorAll(":scope > div");
-    if(divs.length>=3) return divs[2].textContent.trim();
-    return "";
-  }
-
-  function getProductUrl(name){
-    var id=findProductId(name);
-    return id ? "https://"+MALL+"/products/"+id : "https://"+MALL+"/products";
-  }
-
-  function fixAll(){
-    document.querySelectorAll("a").forEach(function(a){
-      var h=a.getAttribute("href")||"";
-      if(h.indexOf("smartstore.naver.com")!==-1){
-        var pName=getNameFromCard(a);
-        var url=getProductUrl(pName);
-        a.setAttribute("href",url);
-        a.href=url;
-      }
-    });
-  }
-  setInterval(fixAll,500);
-
-  document.addEventListener("click",function(e){
-    var a=e.target.closest("a");
-    if(!a) return;
-    var h=a.href||"";
-    if(h.indexOf("smartstore.naver.com")!==-1){
-      e.preventDefault();
-      e.stopPropagation();
-      var pName=getNameFromCard(a);
-      window.open(getProductUrl(pName),"_blank");
-    }
-  },true);
-
-  var _o=window.open;
-  window.open=function(u){
-    if(u&&typeof u==="string"&&u.indexOf("smartstore.naver.com")!==-1){
-      var pName="";
-      try{
-        var cards=document.querySelectorAll(".pc");
-        cards.forEach(function(c){
-          var link=c.querySelector("a");
-          if(link&&link.href===u){
-            var divs=c.querySelectorAll(":scope > div");
-            if(divs.length>=3) pName=divs[2].textContent.trim();
-          }
-        });
-      }catch(ex){}
-      arguments[0]=getProductUrl(pName);
-    }
-    return _o.apply(window,arguments);
-  };
+var MALL="abibi-shopping-mall.vercel.app";
+var MAP={
+"모음":"fe7764bd-df9e-4c55-a4c8-3e9e8523daa5",
+"토끼토끼":"e0747829-8c63-43f3-9b56-6f6812c224db",
+"살랑꼬리":"05450c97-a302-419c-ae95-f6b31f7e43a2",
+"꿀벌":"601ce073-f527-4783-b9a1-0a91af92fcc3",
+"초록복실이":"70a000df-caff-4992-a934-25d7b5a29ed8",
+"하얀복실이":"ce9e00bf-97ea-4710-92b1-4f354794f173",
+"애벌꼬깃이":"02939ec3-2096-4eb6-9124-c34b1a038059",
+"무지개꼬리날개":"83720bfe-bdf1-46de-a466-4c4b0bac4f3c",
+"흰꼬리날개":"abe3d7ab-b97d-4561-bf50-0d5bbe9573c3",
+"천사날개":"bb5ebe7e-ba67-4ea6-bf6a-460561c1d9d1",
+"곰팡팡":"f4b19a61-b7a9-4748-bffa-c62f1bdfa7ec",
+"불사조":"d2d316fb-8f83-45c8-bfa6-af5ef2f1d3d0",
+"너구리날개":"2b5a870f-ee74-453c-9456-6d70a4680168",
+"무궁화":"8624beaf-65ff-49ce-b49c-ea8c9b65b143",
+"파스텔 롱 테일":"7cb4d857-9c1e-4287-aa3c-e1ca0ef69d30",
+"누에나방":"04b68923-8d27-4475-bbe2-04742df57b73",
+"풍뎅이":"f1ec524b-9d33-4999-ac1f-ef9ea6583ada",
+"점박누에":"4b12b1d3-4555-477b-b1f2-ccd9c46c485c",
+"줄줄이소세지":"88f28ad7-8dab-4316-8b39-7b5da8db5951",
+"팔랑날개":"7255f417-3cea-4c4a-9299-598361facae4",
+"미니 무당벌레":"5d0a8e15-145a-4a87-9660-47e5ead3a2ca",
+"무당벌레":"0a491e97-4c6d-4182-afd2-6eea5d3a657d",
+"집파리":"7ddcdaff-830c-4566-8254-3f7082d9a305",
+"초록예쁜밤나방":"6643bc07-6de8-4887-a373-c941b9c64094",
+"노란무늬꼬마밤나방":"c97945b7-df42-4e5b-8ca0-f3eb3f71c10b",
+"미니꿀벌":"d1815e3c-c6d7-48b6-9446-8783451df0b9",
+"개미":"ff5ac0a9-a4ed-4652-87f9-e1717cba9590",
+"민달팽이":"e6a40ed9-903b-4ed6-8843-a294743f0bdf",
+"살랑긴끈":"304db93a-e69b-467c-b11d-2099e0e218ea",
+"물잠자리":"2901c156-abca-4b15-a068-a1acff4784c9",
+"끈꼬리참새":"b24b9042-2227-4f13-892f-664d2e507acb",
+"레인보우 조개":"06c7cbbc-e87e-4c2c-8355-6793919d931c",
+"흰머리 오목눈이":"77f57753-b739-456a-b3e7-c3e670867393",
+"레인보우 파리":"3122db0e-7762-41b5-a655-98ec754c361c",
+"하와이안 요정":"b4592305-34c9-4b7d-a24a-66608b1a4c6e",
+"복슬 쥐돌이":"24d63959-3fed-4376-81b6-c41938bfc347",
+"복슬 쥐순이":"c15cb723-5eea-4daa-97fb-b7fd5874db74",
+"플라스틱 아크릴 막대(40cm)":"6c73d3fc-9ccc-40c5-8d36-c9b92dfd4d40",
+"개개비":"2db4c8d8-2000-4ff3-9575-91e3fc8d950c",
+"졸망이":"b95b5981-8fea-4a29-a007-4dea25f216df",
+"올망이":"c1f42df8-7db3-4223-b692-bd65f541ed7d",
+"2단 3단 4단 낚시대":"426cc72f-be0a-41fe-a375-4814ca56a750",
+"홀리스타":"c966d871-fd2c-4b75-bade-98bac9b52c04",
+"춤추는외계인":"3f2229fe-00aa-4326-bba2-3c43622398d1",
+"외계베이비":"c673ca78-c77a-44cb-ab96-b5085dad4565",
+"외계소년":"0d63d585-e5c4-4d5e-a6dd-dcfe6badac1d",
+"바나나우주선":"73d9bf50-1e48-44aa-98ec-299d77f6d4ea",
+"블루버그":"a5fc16d7-809e-4dba-81d0-25e68e3ee685",
+"브라운버그":"831cf4f2-2587-48e0-bf63-cc8628ce9772",
+"화이트버그+흰색 실 꼬리":"f0b7b5c9-2996-4b8e-a7e4-27ed93b98371",
+"샤인Bee+레인보우꼬리+태슬꼬리":"829969e1-7f98-4cb2-8fd7-90b9dceca4d5",
+"레인보우 윙 버그":"b8e1fdbb-aa29-4cce-aabf-cde734d4c7af",
+"노란 빅 윙 버그":"5530375f-30cf-4e9b-8c98-2d6171600f52",
+"회오리날개":"7a08b99f-b8e9-405a-b759-7aaa8dfa0c57",
+"삼색 가죽끈":"53231894-6cb0-483b-b3ef-102fe50273b3",
+"레드 윙 버그":"b9b5ef2e-c2fd-4b5e-8846-51064527677c",
+"돈벌레":"cb3ecfcf-3d5e-4c63-9ccd-765e625d4b22",
+"외계소녀":"1bb6d761-6fc7-4f8b-8364-bb86f21dcb0d",
+"친칠라":"15c22ebb-11fc-4125-a1e5-6e01e3dfb0e3",
+"핑크 스니치":"c5e53cd6-3d11-4125-b196-2b704f5f1db8",
+"레인보우 셔틀콕":"ee32c23f-ac03-483c-a18e-b1da09c7440c",
+"심해 꼴뚜기":"6a52b414-07a2-48fa-8273-bfe762bb7be5",
+"알록 면 끈":"94d122ee-f5da-4a8c-b002-3e47f69002f1",
+"와이어 아크릴 막대":"77d2109a-125e-42cf-b0d7-64263ead51dc",
+"캣그라스":"d91ffac3-3d63-4d7a-9e29-3f7fd8794664",
+"강아지풀":"b5a47022-f724-4f94-b350-badb77147f4f",
+"안개 강아지풀":"2f1f8bfa-6663-40d3-ac58-74984ed8f175",
+"공작 깃털":"bbf81965-a14c-4477-9334-611d6a739327",
+"긴 깃털(30cm)":"bb33ce7f-a00b-4067-ab8d-b26ae1266697",
+"고스틱 전용 부품 옵션":"08557880-0365-435d-a66a-7c3fae5e890c",
+"캣그라스&고스틱+플라고스틱":"e3b1b7b0-f077-4b3d-9bdb-5a678336f0e6",
+"해초":"38ff045c-89f9-4723-9d91-31fc5e6e0446",
+"종이 갈대":"c9480d75-8a4d-4189-bb39-0d3d073ff121",
+"깃털 구름":"e6b1c58c-2655-4e04-b080-018bb86b5869",
+"미니 천사":"9a2a5387-a5be-466d-9c35-c71cdc01973c",
+"레인보우 폭죽":"8fff4174-ffe0-4c9a-984b-01105eb1909e",
+"무지개 끈":"8316a845-042f-42f5-830b-2ac727c2048a",
+"화이트 줄 폭죽":"5eabed18-759a-4735-9154-d45eea9ef385",
+"바스락 볼":"4938c885-ee07-46fe-a7da-a5b9057af281",
+"색깔 꿈틀이":"83c1b7e8-b167-46c6-b4a5-6918cbc2910f",
+"초파리":"26eca61e-e73b-4459-84b9-54b93ae5892f",
+"심해 오징어":"89b80bb7-a087-41c7-a2d3-fc7815d3c225",
+"분홍 꽃다발":"fb13c4fc-ae7c-4954-b904-959d407d3f25",
+"부들 뿔":"3e58e400-8172-4dc7-a1fb-9abd2a2287b7",
+"미니 타조 깃털":"6f14df68-0e3e-467d-9adf-793d63666b01",
+"날으는 토끼":"9514e348-1ba2-40ee-8479-9a5adb8c5640",
+"알록 꿈틀이":"cb361578-eea5-4e59-8548-3b8e3b7e7428",
+"등나무 공 깃털":"0c36a037-cd92-4965-9912-e1d6742ee675",
+"바스락 공(1Set 5개)":"279a9c2d-5ac7-45cb-b511-bd7df671b39e",
+"아비비 고스틱":"f3c5b9d6-635f-4579-a4f5-f4b4cc344e13",
+"아비비 플라고스틱":"6ffd9fa3-5e9d-481a-a7aa-4fef01016b1e",
+"복슬 토끼":"85c6e328-f14e-4cfd-b0dd-df56b2b84ca4",
+"흰꽃 날개":"ddde13e1-db77-46cf-89f1-cf0a993a3a5e",
+"블래 깃털":"0dc2a4dc-64c2-468a-bd8e-cce610fad686",
+"호박 종달새":"1809e52a-f8ac-40ec-8d9e-1167b3365e1e",
+"대롱대롱 파리":"7993d8f4-f6d5-4bc2-bc07-2a305a1375bc",
+"한쌍 흰 롱 깃털":"8eebae77-a182-4b0b-8530-eabee96bbdd7",
+"치링치링 수수":"4fd747cf-454d-4dfd-8d6b-7b30965b091d",
+"흰 날개 나방":"5a1fe900-b95e-4a2b-b725-5788fe37566a",
+"삼색 깃털":"dc25a615-56a8-4135-8fd5-25311d1796d6",
+"파스텔 부케":"8476003c-fcfe-4981-9e2d-2e6da101b5ef",
+"휘리릭 날개":"55cf1902-d28e-4f42-a1dc-fbdfbf4c7e32",
+"미니 친칠라":"7e2fec32-2ce7-4edf-aecd-066820b07322",
+"치즈스틱":"7582687b-d571-45c4-ab52-d380c3d7f602",
+"아비비 플라고스틱 4종 세트":"22267b31-91b8-4d9a-9182-3f4656ff26a1",
+"플라고스틱 전용 부품 옵션":"1c59d27f-0c94-408a-a67c-85b3ec4b99e1",
+"모카윙":"905fe6dc-859e-42db-8eeb-a384514aefa7",
+"여왕개미":"0b7e3a25-3aa6-42d2-b727-df655bae4409",
+"쁘띠Bee":"45fe1b5a-a9d0-406f-9161-04bd677a6c21"
+};
+function findProductId(name){
+if(!name) return null;
+name=name.trim();
+if(MAP[name]) return MAP[name];
+var keys=Object.keys(MAP);
+for(var i=0;i<keys.length;i++){
+if(name.indexOf(keys[i])!==-1||keys[i].indexOf(name)!==-1) return MAP[keys[i]];
+}
+return null;
+}
+function getNameFromCard(a){
+var card=a.closest(".pc")||a.parentElement;
+if(!card) return "";
+var divs=card.querySelectorAll(":scope > div");
+if(divs.length>=3) return divs[2].textContent.trim();
+return "";
+}
+function getProductUrl(name){
+var id=findProductId(name);
+return id ? "ht"+"tps://"+MALL+"/products/"+id : "ht"+"tps://"+MALL+"/products";
+}
+function fixAll(){
+document.querySelectorAll("a").forEach(function(a){
+var h=a.getAttribute("href")||"";
+if(h.indexOf("smartstore.naver.com")!==-1){
+var pName=getNameFromCard(a);
+var url=getProductUrl(pName);
+a.setAttribute("href",url);
+a.href=url;
+}
+});
+}
+setInterval(fixAll,500);
+document.addEventListener("click",function(e){
+var a=e.target.closest("a");
+if(!a) return;
+var h=a.href||"";
+if(h.indexOf("smartstore.naver.com")!==-1){
+e.preventDefault();
+e.stopPropagation();
+var pName=getNameFromCard(a);
+window.open(getProductUrl(pName),"_blank");
+}
+},true);
+var _o=window.open;
+window.open=function(u){
+if(u&&typeof u==="string"&&u.indexOf("smartstore.naver.com")!==-1){
+var pName="";
+try{
+var cards=document.querySelectorAll(".pc");
+cards.forEach(function(c){
+var link=c.querySelector("a");
+if(link&&link.href===u){
+var divs=c.querySelectorAll(":scope > div");
+if(divs.length>=3) pName=divs[2].textContent.trim();
+}
+});
+}catch(ex){}
+arguments[0]=getProductUrl(pName);
+}
+return _o.apply(window,arguments);
+};
 })();
 </script>
 
