@@ -3702,18 +3702,31 @@ setTimeout(()=>recordVisit(), 2000);
 </script>
 
 <script>
-/* === 자사몰 URL 오버라이드 v3 - 개별 상품 페이지 연결 === */
+/* === 자사몰 URL 오버라이드 v4 - 하드코드 매핑 + DOM 셀렉터 수정 === */
 (function(){
-  var MALL="https://abibi-shopping-mall.vercel.app";
-  var MAP={};
-  var READY=false;
-  fetch(MALL+"/api/products").then(function(r){return r.json()}).then(function(res){
-    var prods=res.data||res;
-    prods.forEach(function(p){
-      if(p.seller_code) MAP[p.seller_code.trim()]=p.id;
-    });
-    READY=true;
-  }).catch(function(){READY=true});
+  var MALL="abibi-shopping-mall.vercel.app";
+  var MAP={
+    "토끼토끼":"e0747829-8c63-43f3-9b56-6f6812c224db",
+    "살랑꼬리":"05450c97-a302-419c-ae95-f6b31f7e43a2",
+    "꾸벌":"601ce073-f527-4783-b9a1-0a91af92fcc3",
+    "초록복실이":"70a000df-caff-4992-a934-25d7b5a29ed8",
+    "하얀복실이":"ce9e00bf-97ea-4710-92b1-4f354794f173",
+    "애벌꼼깃이":"02939ec3-2096-4eb6-9124-c34b1a038059",
+    "무지개꼬리날개":"83720bfe-bdf1-46de-a466-4c4b0bac4f3c",
+    "흰꼬리날개":"abe3d7ab-b97d-4561-bf50-0d5bbe9573c3",
+    "천사날개":"bb5ebe7e-ba67-4ea6-bf6a-460561c1d9d1",
+    "곰팡팡":"f4b19a61-b7a9-4748-bffa-c62f1bdfa7ec",
+    "불사조":"d2d316fb-8f83-45c8-bfa6-af5ef2f1d3d0",
+    "너구리날개":"2b5a870f-ee74-453c-9456-6d70a4680168",
+    "무궁화":"8624beaf-65ff-49ce-b49c-ea8c9b65b143",
+    "파스텔 롱 테일":"7cb4d857-9c1e-4287-aa3c-e1ca0ef69d30",
+    "누에나방":"04b68923-8d27-4475-bbe2-04742df57b73",
+    "풍등이":"f1ec524b-9d33-4999-ac1f-ef9ea6583ada",
+    "점박누에":"4b12b1d3-4555-477b-b1f2-ccd9c46c485c",
+    "줄줄이소세지":"88f28ad7-8dab-4316-8b39-7b5da8db5951",
+    "팔랑날개":"7255f417-3cea-4c4a-9299-598361facae4",
+    "모음":"fe7764bd-df9e-4c55-a4c8-3e9e8523daa5"
+  };
 
   function findProductId(name){
     if(!name) return null;
@@ -3726,18 +3739,24 @@ setTimeout(()=>recordVisit(), 2000);
     return null;
   }
 
+  function getNameFromCard(a){
+    var card=a.closest(".pc")||a.parentElement;
+    if(!card) return "";
+    var divs=card.querySelectorAll(":scope > div");
+    if(divs.length>=3) return divs[2].textContent.trim();
+    return "";
+  }
+
   function getProductUrl(name){
     var id=findProductId(name);
-    return id ? MALL+"/products/"+id : MALL+"/products";
+    return id ? "https://"+MALL+"/products/"+id : "https://"+MALL+"/products";
   }
 
   function fixAll(){
     document.querySelectorAll("a").forEach(function(a){
       var h=a.getAttribute("href")||"";
-      if(h.indexOf("smartstore.naver.com")!==-1||(h.indexOf(MALL+"/products")!==-1&&h===MALL+"/products")){
-        var card=a.closest(".pc")||a.parentElement;
-        var nameEl=card?card.querySelector(".pn2"):null;
-        var pName=nameEl?nameEl.textContent.trim():"";
+      if(h.indexOf("smartstore.naver.com")!==-1){
+        var pName=getNameFromCard(a);
         var url=getProductUrl(pName);
         a.setAttribute("href",url);
         a.href=url;
@@ -3753,9 +3772,7 @@ setTimeout(()=>recordVisit(), 2000);
     if(h.indexOf("smartstore.naver.com")!==-1){
       e.preventDefault();
       e.stopPropagation();
-      var card=a.closest(".pc")||a.parentElement;
-      var nameEl=card?card.querySelector(".pn2"):null;
-      var pName=nameEl?nameEl.textContent.trim():"";
+      var pName=getNameFromCard(a);
       window.open(getProductUrl(pName),"_blank");
     }
   },true);
@@ -3763,7 +3780,18 @@ setTimeout(()=>recordVisit(), 2000);
   var _o=window.open;
   window.open=function(u){
     if(u&&typeof u==="string"&&u.indexOf("smartstore.naver.com")!==-1){
-      arguments[0]=MALL+"/products";
+      var pName="";
+      try{
+        var cards=document.querySelectorAll(".pc");
+        cards.forEach(function(c){
+          var link=c.querySelector("a");
+          if(link&&link.href===u){
+            var divs=c.querySelectorAll(":scope > div");
+            if(divs.length>=3) pName=divs[2].textContent.trim();
+          }
+        });
+      }catch(ex){}
+      arguments[0]=getProductUrl(pName);
     }
     return _o.apply(window,arguments);
   };
